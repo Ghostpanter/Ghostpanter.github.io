@@ -18,7 +18,7 @@
     "vuepress": "1.9.5",
     "vuepress-plugin-baidu-autopush": "^1.0.1",
     "vuepress-plugin-baidu-tongji": "^1.0.1",
-    "vuepress-plugin-comment": "^0.7.3",
+    "vuepress-plugin-comment": "^0.5.1",
     "vuepress-plugin-demo-block": "^0.7.2",
     "vuepress-plugin-fulltext-search": "^2.2.1",
     "vuepress-plugin-one-click-copy": "^1.0.2",
@@ -26,5 +26,11 @@
     "vuepress-plugin-zooming": "^1.1.7",
     "vuepress-theme-vdoing": "^1.11.1",
     "yamljs": "^0.3.0"
+  },
+  "dependencies": {
+    "@vue/component-compiler-utils": "^3.3.0",
+    "markdown-it-container": "^3.0.0",
+    "nprogress": "^0.2.0",
+    "yarn": "^1.22.18"
   }
 }
