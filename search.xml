@@ -1,35 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>ETCD使用中需要注意的问题--自动压缩--最大字节数--存储数据大小</title>
-    <url>/2022/12/29/ETCD%E4%BD%BF%E7%94%A8%E4%B8%AD%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98--%E8%87%AA%E5%8A%A8%E5%8E%8B%E7%BC%A9--%E6%9C%80%E5%A4%A7%E5%AD%97%E8%8A%82%E6%95%B0--%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F/</url>
-    <content><![CDATA[<h1 id="ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小"><a href="#ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小" class="headerlink" title="ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小"></a>ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小</h1><p>我们在实际生产中使用ETCD存储元数据，　起初集群规模不大的时候元数据信息不多没有发现什么问题。　随着集群规模越来越大问题逐渐暴露了</p>
-<p>有些实际的配置还是需要在初始化的时候就研究确定</p>
-<ol>
-<li><code>--auto-compaction-retention</code></li>
-</ol>
-<p>由于ETCD数据存储多版本数据，随着写入的主键增加历史版本需要定时清理，　默认的历史数据是不会清理的，数据达到2G就不能写入，必须要清理压缩历史数据才能继续写入；</p>
-<p>所以根据业务需求，在上生产环境之前就提前确定，历史数据多长时间压缩一次；　我们的生产环境现在升级后是默认一小时压缩一次数据。这样可以极大的保证集群稳定，减少内存和磁盘占用</p>
-<p>2.<code>--max-request-bytes</code></p>
-<p>etcd Raft消息最大字节数，ETCD默认该值为1.5M; 但是很多业务场景发现同步数据的时候1.5M完全没法满足要求，所以提前确定初始值很重要；　由于1.5M导致我们线上的业务无法写入元数据的问题，</p>
-<p>我们紧急升级之后把该值修改为默认32M,但是官方推荐的是10M(10485760byts)，大家可以根据业务情况自己调整</p>
-<p> #最好按照官方的默认限制来储存，单个value不要超过10M，只要不超过10M生产环境就会很稳定，一旦超过10M集群就会变的不稳定；</p>
-<p>3.<code>--quota-backend-bytes</code></p>
-<p>ETCDdb数据大小，默认是２G,当数据达到２G的时候就不允许写入，必须对历史数据进行压缩才能继续写入；　参加1里面说的，我们启动的时候就应该提前确定大小，官方推荐是8G,这里我们也使用8G的配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">＃启动命令</span><br><span class="line">/usr/bin/etcd --auto-compaction-retention &#x27;1&#x27; --max-request-bytes &#x27;33554432&#x27; --quota-backend-bytes &#x27;8589934592&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>我们只需要努力，然后剩下的交给时间。</p>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-        <category>etcd</category>
-      </categories>
-      <tags>
-        <tag>etcd</tag>
-        <tag>kubernetes</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Kubernetes 的 hostNetwork 和 NetworkPolicy (网络策略)</title>
     <url>/2022/12/29/Kubernetes%20%E7%9A%84%20hostNetwork%20%E5%92%8C%20NetworkPolicy%20(%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5)/</url>
     <content><![CDATA[<h2 id="1-hostNetwork-介绍"><a href="#1-hostNetwork-介绍" class="headerlink" title="1. hostNetwork 介绍"></a>1. hostNetwork 介绍</h2><blockquote>
@@ -129,6 +100,35 @@
       </tags>
   </entry>
   <entry>
+    <title>ETCD使用中需要注意的问题--自动压缩--最大字节数--存储数据大小</title>
+    <url>/2022/12/29/ETCD%E4%BD%BF%E7%94%A8%E4%B8%AD%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98--%E8%87%AA%E5%8A%A8%E5%8E%8B%E7%BC%A9--%E6%9C%80%E5%A4%A7%E5%AD%97%E8%8A%82%E6%95%B0--%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F/</url>
+    <content><![CDATA[<h1 id="ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小"><a href="#ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小" class="headerlink" title="ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小"></a>ETCD使用中需要注意的问题–自动压缩–最大字节数–存储数据大小</h1><p>我们在实际生产中使用ETCD存储元数据，　起初集群规模不大的时候元数据信息不多没有发现什么问题。　随着集群规模越来越大问题逐渐暴露了</p>
+<p>有些实际的配置还是需要在初始化的时候就研究确定</p>
+<ol>
+<li><code>--auto-compaction-retention</code></li>
+</ol>
+<p>由于ETCD数据存储多版本数据，随着写入的主键增加历史版本需要定时清理，　默认的历史数据是不会清理的，数据达到2G就不能写入，必须要清理压缩历史数据才能继续写入；</p>
+<p>所以根据业务需求，在上生产环境之前就提前确定，历史数据多长时间压缩一次；　我们的生产环境现在升级后是默认一小时压缩一次数据。这样可以极大的保证集群稳定，减少内存和磁盘占用</p>
+<p>2.<code>--max-request-bytes</code></p>
+<p>etcd Raft消息最大字节数，ETCD默认该值为1.5M; 但是很多业务场景发现同步数据的时候1.5M完全没法满足要求，所以提前确定初始值很重要；　由于1.5M导致我们线上的业务无法写入元数据的问题，</p>
+<p>我们紧急升级之后把该值修改为默认32M,但是官方推荐的是10M(10485760byts)，大家可以根据业务情况自己调整</p>
+<p> #最好按照官方的默认限制来储存，单个value不要超过10M，只要不超过10M生产环境就会很稳定，一旦超过10M集群就会变的不稳定；</p>
+<p>3.<code>--quota-backend-bytes</code></p>
+<p>ETCDdb数据大小，默认是２G,当数据达到２G的时候就不允许写入，必须对历史数据进行压缩才能继续写入；　参加1里面说的，我们启动的时候就应该提前确定大小，官方推荐是8G,这里我们也使用8G的配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">＃启动命令</span><br><span class="line">/usr/bin/etcd --auto-compaction-retention &#x27;1&#x27; --max-request-bytes &#x27;33554432&#x27; --quota-backend-bytes &#x27;8589934592&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>我们只需要努力，然后剩下的交给时间。</p>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>etcd</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
+        <tag>etcd</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>etcd 备份还原</title>
     <url>/2022/12/29/etcd%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/</url>
     <content><![CDATA[<h1 id="containerd"><a href="#containerd" class="headerlink" title="containerd"></a>containerd</h1><h2 id="etcd-备份还原"><a href="#etcd-备份还原" class="headerlink" title="etcd 备份还原"></a>etcd 备份还原</h2><h3 id="还原"><a href="#还原" class="headerlink" title="还原"></a>还原</h3><p>每台的master节点 IP 和主机名需要修改<br>停止集群<br>mv   &#x2F;etc&#x2F;kubernetes&#x2F;manifests.bak</p>
@@ -140,8 +140,8 @@
         <category>etcd</category>
       </categories>
       <tags>
-        <tag>etcd</tag>
         <tag>kubernetes</tag>
+        <tag>etcd</tag>
       </tags>
   </entry>
   <entry>
@@ -1054,9 +1054,9 @@ To learn more about the release, try:
     <content><![CDATA[<h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>Helm 针对 Kubernetes 的 Helm 包管理器。Helm 的一般操作：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 搜索 chart</span></span><br><span class="line">helm search: </span><br><span class="line"><span class="comment"># 下载 chart 到本地目录查看</span></span><br><span class="line">helm pull:    </span><br><span class="line"><span class="comment"># 上传 chart 到 Kubernetes</span></span><br><span class="line">helm install: </span><br><span class="line"><span class="comment"># 列出已发布的 chart</span></span><br><span class="line">helm list:      </span><br><span class="line"><span class="comment"># 查看帮助</span></span><br><span class="line">helm --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
 
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909090236244.png" alt="图片"><br>官方文档：<a href="https://helm.sh/zh/docs/helm/helm/">https://helm.sh/zh/docs/helm/helm/</a><br><a href="https://note.youdao.com/s/4XzxzJ0c">Helm 架构和基础语法讲解可以参考这篇文章</a></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909090236244.png" alt="图片"><br>官方文档：<a href="https://helm.sh/zh/docs/helm/helm/">https://helm.sh/zh/docs/helm/helm/</a><br><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">Helm 架构和基础语法讲解可以参考这篇文章</a></p>
 <h2 id="二、Helm-仓库（helm-repo）"><a href="#二、Helm-仓库（helm-repo）" class="headerlink" title="二、Helm 仓库（helm repo）"></a>二、Helm 仓库（helm repo）</h2><blockquote>
-<p><a href="https://note.youdao.com/s/4XzxzJ0c">添加、列出、删除、更新和索引 chart 仓库。</a></p>
+<p><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">添加、列出、删除、更新和索引 chart 仓库。</a></p>
 </blockquote>
 <h3 id="1）添加-chart-仓库"><a href="#1）添加-chart-仓库" class="headerlink" title="1）添加 chart 仓库"></a>1）添加 chart 仓库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add bitnami https://charts.bitnami.com/bitnami</span><br></pre></td></tr></table></figure>
 
@@ -1079,10 +1079,10 @@ To learn more about the release, try:
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm install -f myvalues.yaml myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --<span class="built_in">set</span> name=prod myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --set-string long_int=1234567890 myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --set-file my_script=dothings.sh myredis ./redis</span><br></pre></td></tr></table></figure>
 
 <h2 id="五、管理-chart-依赖（helm-dependency）"><a href="#五、管理-chart-依赖（helm-dependency）" class="headerlink" title="五、管理 chart 依赖（helm dependency）"></a>五、管理 chart 依赖（helm dependency）</h2><ul>
-<li><a href="https://note.youdao.com/s/4XzxzJ0c">Helm chart 将依赖存储在’charts&#x2F;‘。对于 chart 开发者，管理依赖比声明了所有依赖的’Chart.yaml’文件更容易。</a></li>
-<li><a href="https://note.youdao.com/s/4XzxzJ0c">依赖命令对该文件进行操作，使得存储在’charts&#x2F;‘目录的需要的依赖和实际依赖之间同步变得很容易。</a></li>
+<li><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">Helm chart 将依赖存储在’charts&#x2F;‘。对于 chart 开发者，管理依赖比声明了所有依赖的’Chart.yaml’文件更容易。</a></li>
+<li><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">依赖命令对该文件进行操作，使得存储在’charts&#x2F;‘目录的需要的依赖和实际依赖之间同步变得很容易。</a></li>
 </ul>
-<p><a href="https://note.youdao.com/s/4XzxzJ0c">比如 Chart.yaml 声明了两个依赖：</a></p>
+<p><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">比如 Chart.yaml 声明了两个依赖：</a></p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Chart.yaml</span></span><br><span class="line">dependencies:</span><br><span class="line">- name: nginx</span><br><span class="line">    version: <span class="string">&quot;1.2.3&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;https://example.com/charts&quot;</span></span><br><span class="line">- name: memcached</span><br><span class="line">    version: <span class="string">&quot;3.2.1&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;https://another.example.com/charts&quot;</span></span><br></pre></td></tr></table></figure>
 
 <ul>
@@ -1168,7 +1168,7 @@ To learn more about the release, try:
 </blockquote>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm lint PATH [flags]</span></span><br><span class="line">helm lint ./mysql</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720509.png" alt="图片"><br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212291321175.png"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720509.png" alt="图片"><br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212291321175.png" alt="图片"></p>
 <h2 id="十七、常用命令总结"><a href="#十七、常用命令总结" class="headerlink" title="十七、常用命令总结"></a>十七、常用命令总结</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version                            // 查看helm版本</span><br><span class="line">helm create xxx                         // 创建一个xxx charts</span><br><span class="line">helm lint ./xxx                         // 检查包的格式或信息是否有问题</span><br><span class="line">helm install xxx1 ./xxx                 // 部署安装xxx，设置名称为xxx1</span><br><span class="line">helm list                               // 列出已经部署的charts</span><br><span class="line">helm <span class="built_in">history</span>                            // 发布历史</span><br><span class="line">helm upgrade                            // 更新版本</span><br><span class="line">helm rollback                           // 回滚版本</span><br><span class="line">helm package ./xxx                      // 打包charts</span><br><span class="line">helm repo add --username admin --password password myharbor xxx  // 增加repo</span><br><span class="line">helm uninstall xxx1                     // 卸载删除xxx1</span><br><span class="line">helm pull                                // 拉取chart包</span><br><span class="line">helm cm-push                            // 推送chart包</span><br><span class="line">helm repo update                        // 更新仓库资源</span><br><span class="line">helm search hub                         // 从 Artifact Hub 中查找并列出 helm charts。Artifact Hub中存放了大量不同的仓库</span><br><span class="line">helm search repo                        // 从你添加（使用 helm repo add）到本地 helm 客户端中的仓库中进行查找。该命令基于本地数据进行搜索，无需连接互联网</span><br></pre></td></tr></table></figure>
 
 <p>Helm 常用命令（chart 安装、升级、回滚、卸载等操作）就先到这里，</p>
