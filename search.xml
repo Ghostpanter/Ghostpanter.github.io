@@ -20,6 +20,10 @@
 
 <p>我们只需要努力，然后剩下的交给时间。</p>
 ]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>etcd</category>
+      </categories>
       <tags>
         <tag>etcd</tag>
         <tag>kubernetes</tag>
@@ -211,6 +215,9 @@
 <p>一般来说，如果业务量小，扩容下coredns就足够了；如果业务量大(域名地址解析QPS高，比如访问RDS)，特别是php等不带连接池的开发语言，建议直接上localdns。如果是java等配置了连接池的应用，可以先扩容coredns观察，如果仍然有解析问题，再上localdns。</p>
 <h1 id="localdns缓存原理"><a href="#localdns缓存原理" class="headerlink" title="localdns缓存原理"></a>localdns缓存原理</h1><p>NodeLocalDNS 是一个 DaemonSet，会在Kubernetes集群的每个节点上运行一个专门处理 DNS 查询请求的 Pod，该 Pod 会将集群内部域名查询请求发往 CoreDNS；将集群外部请求直接发往外部域名解析服务器。同时能够Cache所有请求。可以被看作是节点级别的高效DNS 缓存，能够大幅提高集群整体 DNS 查询的 QPS。NodeLocalDNS 会在集群的每个节点上创建一个专用的虚拟接口（接口绑定的 IP 需要通过 local_dns_ip 这个值来指定），节点上所有发往该 IP 的 DNS 查询请求都会被拦截到 NodeLocalDNS Pod 内进行处理；通过集群原有的 kube-dns 服务（该服务的 clusterIP 值需要通过kube_dns_ip来指定）来与CoreDNS进行通信。<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/image.png" alt="image"></p>
 ]]></content>
+      <categories>
+        <category>kubernetes</category>
+      </categories>
       <tags>
         <tag>kubernetes</tag>
       </tags>
