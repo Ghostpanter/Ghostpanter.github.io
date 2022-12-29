@@ -199,13 +199,13 @@
 <p>示例演示：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add bitnami https://charts.bitnami.com/bitnami</span><br><span class="line">helm pull bitnami/wordpress</span><br><span class="line">tar -xf wordpress</span><br><span class="line"><span class="built_in">cat</span> wordpress/Chart.yaml</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/gIkzzLe4eUU8QaLlgU8srdbEObUdycIYosx6V1Gef4XlBqSqIXlw64iaLZTHShPGuRzBaDfibibCp6TZvFr0V3nibw/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"><br>一旦你定义好了依赖，运行 <code>helm dependency update</code> 就会使用你的依赖文件下载所有你指定的 chart 到你的 charts&#x2F;目录。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212291124189.png" alt="图片"><br>一旦你定义好了依赖，运行 <code>helm dependency update</code> 就会使用你的依赖文件下载所有你指定的 chart 到你的 charts&#x2F;目录。</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm dependency update ./wordpress</span><br></pre></td></tr></table></figure>
 
 <p>当 helm dependency update 拉取 chart 时，会在 charts&#x2F;目录中形成一个 chart 包。因此对于上面的示例，会在 chart 目录中期望看到以下文件：</p>
 <figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wordpress/charts/</span><br><span class="line">├── common</span><br><span class="line">├── common-2.0.1.tgz</span><br><span class="line">├── mariadb</span><br><span class="line">├── mariadb-11.2.2.tgz</span><br><span class="line">├── memcached</span><br><span class="line">└── memcached-6.2.3.tgz</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://mmbiz.qpic.cn/mmbiz_png/gIkzzLe4eUU8QaLlgU8srdbEObUdycIYYn4JPDh0qiceQn3Kgn33T1jgMppgibLozYuWr8lWvkphWW4fg3h1qjZg/640?wx_fmt=png&wxfrom=5&wx_lazy=1&wx_co=1" alt="图片"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/645.png"></p>
 <p><strong>依赖中的 tag 和条件字段</strong></p>
 <blockquote>
 <p>除了上面的其他字段外，每个需求项可以包含可选字段 <code>tags</code> 和 <code>condition</code>。<strong>所有的 chart 会默认加载</strong>。如果存在 tags 或者 condition 字段，它们将被评估并用于控制它们应用的 chart 的加载。</p>
