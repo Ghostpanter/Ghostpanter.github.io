@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>etcd 备份还原</title>
-    <url>/2022/12/29/etcd%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/</url>
-    <content><![CDATA[<h1 id="containerd"><a href="#containerd" class="headerlink" title="containerd"></a>containerd</h1><h2 id="etcd-备份还原"><a href="#etcd-备份还原" class="headerlink" title="etcd 备份还原"></a>etcd 备份还原</h2><h3 id="还原"><a href="#还原" class="headerlink" title="还原"></a>还原</h3><p>每台的master节点 IP 和主机名需要修改<br>停止集群<br>mv   &#x2F;etc&#x2F;kubernetes&#x2F;manifests.bak</p>
-<h1 id="备份原有etcd数据"><a href="#备份原有etcd数据" class="headerlink" title="备份原有etcd数据"></a>备份原有etcd数据</h1><p>mv &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd-<code>date &#39;+%Y%m%d-%H:%M:%S&#39;</code><br>​<br>#还原第一台master<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;u01&#x2F;local&#x2F;kube-system:&#x2F;u01&#x2F;local&#x2F;kube-system’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot restore <br>&#x2F;tmp&#x2F;etcd-snapshot-.db <br>--name node-9xct <br>--endpoints&#x3D;10.165.124.13:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt <br>--initial-advertise-peer-urls&#x3D;<a href="https://10.165.124.13:2380/">https://10.165.124.13:2380</a> <br>--initial-cluster&#x3D;node-9xct&#x3D;<a href="https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380">https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380</a> <br>--data-dir&#x3D;&#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd <br>--skip-hash-check&#x3D;true”<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;u01&#x2F;local&#x2F;kube-system:&#x2F;u01&#x2F;local&#x2F;kube-system’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot restore <br>&#x2F;tmp&#x2F;etcd-snapshot-.db <br>--name node-dfkb <br>--endpoints&#x3D;10.165.124.14:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt <br>--initial-advertise-peer-urls&#x3D;<a href="https://10.165.124.14:2380/">https://10.165.124.14:2380</a> <br>--initial-cluster&#x3D;node-9xct&#x3D;<a href="https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380">https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380</a> <br>--data-dir&#x3D;&#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd <br>--skip-hash-check&#x3D;true”</p>
-<p>=&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;<br>​<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;u01&#x2F;local&#x2F;kube-system:&#x2F;u01&#x2F;local&#x2F;kube-system’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot restore <br>&#x2F;tmp&#x2F;etcd-snapshot-.db <br>--name node-24ge <br>--endpoints&#x3D;10.165.124.15:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt <br>--initial-advertise-peer-urls&#x3D;<a href="https://10.165.124.15:2380/">https://10.165.124.15:2380</a> <br>--initial-cluster&#x3D;node-9xct&#x3D;<a href="https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380">https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380</a> <br>--data-dir&#x3D;&#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd <br>--skip-hash-check&#x3D;true”<br>​<br>#恢复集群<br>mv &#x2F;etc&#x2F;kubernetes&#x2F;manifests.bak &#x2F;etc&#x2F;kubernetes&#x2F;manifests<br>备份<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot save <br>&#x2F;tmp&#x2F;etcd-snapshot-134.db <br>--endpoints&#x3D;10.165.24.181:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt”<br>docker<br>备份<br>docker run –rm -e ETCDCTL_API&#x3D;3 -v &#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd -v &#x2F;data&#x2F;etcd_backup:&#x2F;data&#x2F;etcd_backup registry.cn-hangzhou.aliyuncs.com&#x2F;google_containers&#x2F;etcd:3.4.13-0 sh -c “etcdctl –endpoints&#x3D;<a href="https://11.1.100.194:2379/">https://11.1.100.194:2379</a> –cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt –cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;healthcheck-client.crt –key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;healthcheck-client.key snapshot save &#x2F;data&#x2F;etcd_backup&#x2F;etcd-snapshot-$(date +%Y-%m-%d_%H:%M:%S_%Z).db”</p>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-        <category>etcd</category>
-      </categories>
-      <tags>
-        <tag>etcd</tag>
-        <tag>kubernetes</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>ETCD使用中需要注意的问题</title>
     <url>/2022/12/29/ETCD%E4%BD%BF%E7%94%A8%E4%B8%AD%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98--%E8%87%AA%E5%8A%A8%E5%8E%8B%E7%BC%A9--%E6%9C%80%E5%A4%A7%E5%AD%97%E8%8A%82%E6%95%B0--%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F/</url>
     <content><![CDATA[<h1 id="ETCD使用中需要注意的问题"><a href="#ETCD使用中需要注意的问题" class="headerlink" title="ETCD使用中需要注意的问题"></a>ETCD使用中需要注意的问题</h1><p>我们在实际生产中使用ETCD存储元数据，　起初集群规模不大的时候元数据信息不多没有发现什么问题。　随着集群规模越来越大问题逐渐暴露了</p>
@@ -39,6 +23,150 @@
       </categories>
       <tags>
         <tag>etcd</tag>
+        <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>K8s 三种探针</title>
+    <url>/2022/12/30/K8s%20%E4%B8%89%E7%A7%8D%E6%8E%A2%E9%92%88/</url>
+    <content><![CDATA[<h2 id="▍POD-状-态"><a href="#▍POD-状-态" class="headerlink" title="▍POD 状****态"></a><strong>▍POD 状****态</strong></h2><h3 id="Pod-常见的状态"><a href="#Pod-常见的状态" class="headerlink" title="Pod 常见的状态"></a><strong>Pod 常见的状态</strong></h3><ul>
+<li><strong>Pending</strong>：挂起，我们在请求创建 pod 时，条件不满足，调度没有完成，没有任何一个节点能满足调度条件。已经创建了但是没有适合它运行的节点叫做挂起，这其中也包含集群为容器创建网络，或者下载镜像的过程。</li>
+<li><strong>Running</strong>：Pod 内所有的容器都已经被创建，且至少一个容器正在处于运行状态、正在启动状态或者重启状态。</li>
+<li><strong>Succeeded</strong>：Pod 中所以容器都执行成功后退出，并且没有处于重启的容器。</li>
+<li><strong>Failed</strong>：Pod 中所以容器都已退出，但是至少还有一个容器退出时为失败状态。</li>
+<li><strong>Unknown</strong>：未知状态，所谓 pod 是什么状态是 apiserver 和运行在 pod 节点的 kubelet 进行通信获取状态信息的，如果节点之上的 kubelet 本身出故障，那么 apiserver 就连不上 kubelet，得不到信息了，就会看 Unknown。</li>
+</ul>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212300819791.png" alt="图片"></p>
+<h4 id="Pod-重启策略"><a href="#Pod-重启策略" class="headerlink" title="Pod 重启策略"></a><strong>Pod 重启策略</strong></h4><ul>
+<li><strong>Always</strong>: 只要容器失效退出就重新启动容器。</li>
+<li><strong>OnFailure</strong>: 当容器以非正常(异常)退出后才自动重新启动容器。</li>
+<li><strong>Never</strong>: 无论容器状态如何，都不重新启动容器。</li>
+</ul>
+<h4 id="Pod-常见状态转换场景"><a href="#Pod-常见状态转换场景" class="headerlink" title="Pod 常见状态转换场景"></a><strong>Pod 常见状态转换场景</strong></h4><p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212300819808.png" alt="图片"></p>
+<h2 id="▍-探针简介"><a href="#▍-探针简介" class="headerlink" title="▍****探针简介"></a><strong>▍****探针简介</strong></h2><p>K8s提供了 3 种探针:</p>
+<ul>
+<li><strong>ReadinessProbe</strong></li>
+<li><strong>LivenessProbe</strong></li>
+<li><strong>StartupProbe</strong></li>
+</ul>
+<h3 id="探针存在的目的"><a href="#探针存在的目的" class="headerlink" title="探针存在的目的"></a><strong>探针存在的目的</strong></h3><p>在 Kubernetes 中 Pod 是最小的计算单元，而一个 Pod 又由多个容器组成，相当于每个容器就是一个应用，应用在运行期间，可能因为某也意外情况致使程序挂掉。</p>
+<p>那么如何监控这些容器状态稳定性，保证服务在运行期间不会发生问题，发生问题后进行重启等机制，就成为了重中之重的事情，考虑到这点 kubernetes 推出了活性探针机制。</p>
+<p>有了存活性探针能保证程序在运行中如果挂掉能够自动重启，但是还有个经常遇到的问题，比如说，在 Kubernetes 中启动 Pod，显示明明 Pod 已经启动成功，且能访问里面的端口，但是却返回错误信息。还有就是在执行滚动更新时候，总会出现一段时间，Pod 对外提供网络访问，但是访问却发生 404，这两个原因，都是因为 Pod 已经成功启动，但是 Pod 的的容器中应用程序还在启动中导致，考虑到这点 Kubernetes 推出了就绪性探针机制。</p>
+<ol>
+<li><strong>LivenessProbe</strong>：存活性探针，用于判断容器是不是健康，如果不满足健康条件，那么 Kubelet 将根据 Pod 中设置的 restartPolicy （重启策略）来判断，Pod 是否要进行重启操作。LivenessProbe 按照配置去探测 ( 进程、或者端口、或者命令执行后是否成功等等)，来判断容器是不是正常。如果探测不到，代表容器不健康（可以配置连续多少次失败才记为不健康），则 kubelet 会杀掉该容器，并根据容器的重启策略做相应的处理。如果未配置存活探针，则默认容器启动为通过（Success）状态。即探针返回的值永远是 Success。即 Success 后 pod 状态是 RUNING</li>
+<li><strong>ReadinessProbe</strong>：就绪性探针，用于判断容器内的程序是否存活（或者说是否健康），只有程序(服务)正常， 容器开始对外提供网络访问（启动完成并就绪）。容器启动后按照 ReadinessProbe 配置进行探测，无问题后结果为成功即状态为 Success。pod 的 READY 状态为 true，从 0&#x2F;1 变为 1&#x2F;1。如果失败继续为 0&#x2F;1，状态为 false。若未配置就绪探针，则默认状态容器启动后为 Success。对于此 pod、此 pod 关联的 Service 资源、EndPoint 的关系也将基于 Pod 的 Ready 状态进行设置，如果 Pod 运行过程中 Ready 状态变为 false，则系统自动从 Service 资源 关联的 EndPoint 列表中去除此 pod，届时 service 资源接收到 GET 请求后，kube-proxy 将一定不会把流量引入此 pod 中，通过这种机制就能防止将流量转发到不可用的 Pod 上。如果 Pod 恢复为 Ready 状态。将再会被加回 Endpoint 列表。kube-proxy 也将有概率通过负载机制会引入流量到此 pod 中。</li>
+<li><strong>StartupProbe</strong>: StartupProbe 探针，主要解决在复杂的程序中 ReadinessProbe、LivenessProbe 探针无法更好的判断程序是否启动、是否存活。进而引入 StartupProbe 探针为 ReadinessProbe、LivenessProbe 探针服务。</li>
+</ol>
+<h3 id="★-ReadinessProbe-与-LivenessProbe-的区别"><a href="#★-ReadinessProbe-与-LivenessProbe-的区别" class="headerlink" title="(★) ReadinessProbe 与 LivenessProbe 的区别"></a><strong>(★) ReadinessProbe 与 LivenessProbe 的区别</strong></h3><ul>
+<li>ReadinessProbe 当检测失败后，将 Pod 的 IP:Port 从对应的 EndPoint 列表中删除。</li>
+<li>LivenessProbe 当检测失败后，将杀死容器并根据 Pod 的重启策略来决定作出对应的措施。</li>
+</ul>
+<h3 id="★-StartupProbe-与-ReadinessProbe、LivenessProbe-的区别"><a href="#★-StartupProbe-与-ReadinessProbe、LivenessProbe-的区别" class="headerlink" title="(★) StartupProbe 与 ReadinessProbe、LivenessProbe 的区别"></a><strong>(★) StartupProbe 与 ReadinessProbe、LivenessProbe 的区别</strong></h3><p>如果三个探针同时存在，先执行 StartupProbe 探针，其他两个探针将会被暂时禁用，直到 pod 满足 StartupProbe 探针配置的条件，其他 2 个探针启动，如果不满足按照规则重启容器。</p>
+<p>另外两种探针在容器启动后，会按照配置，直到容器消亡才停止探测，而 StartupProbe 探针只是在容器启动后按照配置满足一次后，不在进行后续的探测。</p>
+<h3 id="正确的-ReadinessProbe-与-LivenessProbe-使用方式"><a href="#正确的-ReadinessProbe-与-LivenessProbe-使用方式" class="headerlink" title="正确的 ReadinessProbe 与 LivenessProbe 使用方式"></a><strong>正确的 ReadinessProbe 与 LivenessProbe 使用方式</strong></h3><p><strong>LivenessProbe 和 ReadinessProbe 两种探针都支持下面三种探测方法：</strong></p>
+<ul>
+<li><strong>ExecAction</strong>：在容器中执行指定的命令，如果执行成功，退出码为 0 则探测成功。</li>
+<li><strong>HTTPGetAction</strong>：通过容器的 IP 地址、端口号及路径调用 HTTP Get 方法，如果响应的状态码大于等于 - 200 且小于 400，则认为容器 健康。</li>
+<li><strong>TCPSocketAction</strong>：通过容器的 IP 地址和端口号执行 TCP 检 查，如果能够建立 TCP 连接，则表明容器健康。</li>
+</ul>
+<p><strong>探针探测结果有以下值：</strong></p>
+<ul>
+<li>Success：表示通过检测。</li>
+<li>Failure：表示未通过检测。</li>
+<li>Unknown：表示检测没有正常进行。</li>
+</ul>
+<p><strong>LivenessProbe 和 ReadinessProbe 两种探针的相关属性</strong>探针(Probe)有许多可选字段，可以用来更加精确的控制 Liveness 和 Readiness 两种探针的行为(Probe)：</p>
+<ul>
+<li><strong>initialDelaySeconds</strong>：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是 0 秒，最小值是 0</li>
+<li><strong>periodSeconds</strong>：执行探测的时间间隔（单位是秒），默认为 10s，单位“秒”，最小值是 1</li>
+<li><strong>timeoutSeconds</strong>：探针执行检测请求后，等待响应的超时时间，默认为 1s，单位“秒”，最小值是 1</li>
+<li><strong>successThreshold</strong>：探针检测失败后认为成功的最小连接成功次数，默认为 1s，在 Liveness 探针中必须为 1s，最小值为 1s。</li>
+<li><strong>failureThreshold</strong>：探测失败的重试次数，重试一定次数后将认为失败，在 readiness 探针中，Pod 会被标记为未就绪，默认为 3s，最小值为 1s</li>
+</ul>
+<p><strong>Tips</strong>：initialDelaySeconds 在 ReadinessProbe 其实可以不用配置，不配置默认 pod 刚启动，开始进行 ReadinessProbe 探测，但那有怎么样，除了 StartupProbe，ReadinessProbe、LivenessProbe 运行在 pod 的整个生命周期，刚启动的时候 ReadinessProbe 检测失败了，只不过显示 READY 状态一直是 0&#x2F;1，ReadinessProbe 失败并不会导致重启 pod，只有 StartupProbe、LivenessProbe 失败才会重启 pod。而等到多少 s 后，真正服务启动后，检查 success 成功后，READY 状态自然正常</p>
+<h3 id="正确的-StartupProbe-使用方式"><a href="#正确的-StartupProbe-使用方式" class="headerlink" title="正确的 StartupProbe 使用方式"></a><strong>正确的 StartupProbe 使用方式</strong></h3><p><strong>StartupProbe 探针支持下面三种探测方法：</strong></p>
+<ul>
+<li><p><strong>ExecAction</strong>：在容器中执行指定的命令，如果执行成功，退出码为 0 则探测成功。</p>
+</li>
+<li><p><strong>HTTPGetAction</strong>：通过容器的 IP 地址、端口号及路径调用 HTTP Get 方法，如果响应的状态码大于等于 200 且小于 400，则认为容器 健康。</p>
+</li>
+<li><p><strong>TCPSocketAction</strong>：通过容器的 IP 地址和端口号执行 TCP 检 查，如果能够建立 TCP 连接，则表明容器健康。</p>
+</li>
+</ul>
+<p><strong>探针探测结果有以下值：</strong></p>
+<ul>
+<li><p>Success：表示通过检测。</p>
+</li>
+<li><p>Failure：表示未通过检测。</p>
+</li>
+<li><p>Unknown：表示检测没有正常进行。</p>
+</li>
+</ul>
+<h3 id="StartupProbe-探针属性"><a href="#StartupProbe-探针属性" class="headerlink" title="StartupProbe 探针属性"></a><strong>StartupProbe 探针属性</strong></h3><ul>
+<li><p><strong>initialDelaySeconds</strong>：容器启动后要等待多少秒后就探针开始工作，单位“秒”，默认是 0 秒，最小值是 0</p>
+</li>
+<li><p><strong>periodSeconds</strong>：执行探测的时间间隔（单位是秒），默认为 10s，单位“秒”，最小值是 1</p>
+</li>
+<li><p><strong>timeoutSeconds</strong>：探针执行检测请求后，等待响应的超时时间，默认为 1s，单位“秒”，最小值是 1</p>
+</li>
+<li><p><strong>successThreshold</strong>：探针检测失败后认为成功的最小连接成功次数，默认为 1s，在 Liveness 探针中必须为 1s，最小值为 1s。</p>
+</li>
+<li><p><strong>failureThreshold</strong>：探测失败的重试次数，重试一定次数后将认为失败，在 readiness 探针中，Pod 会被标记为未就绪，默认为 3s，最小值为 1s</p>
+</li>
+</ul>
+<p><strong>Tips</strong>：在 StartupProbe 执行完之后，其他 2 种探针的所有配置才全部启动，相当于容器刚启动的时候，所以其他 2 种探针如果配置了 initialDelaySeconds，建议不要给太长。</p>
+<h2 id="▍使用举例"><a href="#▍使用举例" class="headerlink" title="▍使用举例"></a><strong>▍使用举例</strong></h2><h3 id="LivenessProbe-探针使用示例"><a href="#LivenessProbe-探针使用示例" class="headerlink" title="LivenessProbe 探针使用示例"></a><strong>LivenessProbe 探针使用示例</strong></h3><h4 id="1-通过-exec-方式做健康探测"><a href="#1-通过-exec-方式做健康探测" class="headerlink" title="1. 通过 exec 方式做健康探测"></a><strong>1. 通过 exec 方式做健康探测</strong></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vim liveness-exec.yaml</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">liveness-exec</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">liveness</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">          <span class="attr">args:</span> <span class="comment">#创建测试探针探测的文件</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">/bin/sh</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">touch</span> <span class="string">/tmp/healthy;</span> <span class="string">sleep</span> <span class="number">30</span><span class="string">;</span> <span class="string">rm</span> <span class="string">-rf</span> <span class="string">/tmp/healthy;</span> <span class="string">sleep</span> <span class="number">600</span></span><br><span class="line">          <span class="attr">LivenessProbe:</span></span><br><span class="line">              <span class="attr">initialDelaySeconds:</span> <span class="number">10</span> <span class="comment">#延迟检测时间</span></span><br><span class="line">              <span class="attr">periodSeconds:</span> <span class="number">5</span> <span class="comment">#检测时间间隔</span></span><br><span class="line">              <span class="attr">exec:</span> <span class="comment">#使用命令检查</span></span><br><span class="line">                  <span class="attr">command:</span> <span class="comment">#指令，类似于运行命令sh</span></span><br><span class="line">                      <span class="bullet">-</span> <span class="string">cat</span> <span class="comment">#sh 后的第一个内容，直到需要输入空格，变成下一行</span></span><br><span class="line">                      <span class="bullet">-</span> <span class="string">/tmp/healthy</span> <span class="comment">#由于不能输入空格，需要另外声明，结果为sh cat&quot;空格&quot;/tmp/healthy</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>思路整理：</strong></p>
+<p>容器在初始化后，执行（&#x2F;bin&#x2F;sh -c “touch &#x2F;tmp&#x2F;healthy; sleep 30; rm -rf &#x2F;tmp&#x2F;healthy; sleep 600”）首先创建一个 &#x2F;tmp&#x2F;healthy 文件，然后执行睡眠命令，睡眠 30 秒，到时间后执行删除 &#x2F;tmp&#x2F;healthy 文件命令。</p>
+<p>而设置的存活探针检检测方式为执行 shell 命令，用 cat 命令输出 healthy 文件的内容，如果能成功执行这条命令一次(默认 successThreshold:1)，存活探针就认为探测成功，由于没有配置(failureThreshold、timeoutSeconds)，所以执行（cat &#x2F;tmp&#x2F;healthy）并只等待 1s，如果 1s 内执行后返回失败，探测失败。</p>
+<p>在前 30 秒内，由于文件存在，所以存活探针探测时执行 cat &#x2F;tmp&#x2F;healthy 命令成功执行。30 秒后 healthy 文件被删除，所以执行命令失败，Kubernetes 会根据 Pod 设置的重启策略来判断，是否重启 Pod。</p>
+<h4 id="2-通过-HTTP-方式做健康探测"><a href="#2-通过-HTTP-方式做健康探测" class="headerlink" title="2. 通过 HTTP 方式做健康探测"></a><strong>2. 通过 HTTP 方式做健康探测</strong></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vi liveness-http.yaml</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">liveness-http</span></span><br><span class="line">  <span class="attr">labels:</span></span><br><span class="line">  <span class="attr">test:</span> <span class="string">liveness</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">containers:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">test.com/test-http-prober:v0.0.1</span></span><br><span class="line">    <span class="attr">LivenessProbe:</span></span><br><span class="line">      <span class="attr">failureThreshold:</span> <span class="number">5</span> <span class="comment">#检测失败5次表示未就绪</span></span><br><span class="line">      <span class="attr">initialDelaySeconds:</span> <span class="number">20</span> <span class="comment">#延迟加载时间</span></span><br><span class="line">      <span class="attr">periodSeconds:</span> <span class="number">10</span> <span class="comment">#重试时间间隔</span></span><br><span class="line">      <span class="attr">timeoutSeconds:</span> <span class="number">5</span> <span class="comment">#超时时间设置</span></span><br><span class="line">      <span class="attr">successThreshold:</span> <span class="number">2</span> <span class="comment">#检查成功为2次表示就绪</span></span><br><span class="line">      <span class="attr">httpGet:</span></span><br><span class="line">        <span class="attr">scheme:</span> </span><br><span class="line">        <span class="attr">HTTPport:</span> <span class="number">8081</span></span><br><span class="line">        <span class="attr">path:</span> <span class="string">/ping</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>思路整理：</strong></p>
+<p>在 pod 启动后，初始化等待 20s 后，LivenessProbe 开始工作，去请求 <code>http://Pod_IP:8081/ping</code> 接口，类似于 curl -I <code>http://Pod_IP:8081/ping</code> 接口,考虑到请求会有延迟(curl -I 后一直出现假死状态)，所以给这次请求操作一直持续 5s，如果 5s 内访问返回数值在&gt;&#x3D;200 且&lt;&#x3D;400 代表第一次检测 success，如果是其他的数值，或者 5s 后还是假死状态，执行类似（ctrl+c）中断，并反回 failure 失败。</p>
+<p>等待 10s 后，再一次的去请求 <code>http://Pod_IP:8081/ping</code> 接口。如果有连续的 2 次都是 success，代表无问题。如果期间有连续的 5 次都是 failure，代表有问题，直接重启 pod，此操作会伴随 pod 的整个生命周期。</p>
+<blockquote>
+<p>Tips</p>
+</blockquote>
+<p>Http Get 探测方式有如下可选的控制字段:</p>
+<ul>
+<li>scheme: 用于连接 host 的协议，默认为 HTTP。</li>
+<li>host：要连接的主机名，默认为 Pod IP，可以在 Http Request headers 中设置 host 头部。</li>
+<li>port：容器上要访问端口号或名称。</li>
+<li>path：http 服务器上的访问 URI。</li>
+<li>httpHeaders：自定义 HTTP 请求 headers，HTTP 允许重复 headers。</li>
+</ul>
+<h4 id="3-通过-TCP-方式做健康探测"><a href="#3-通过-TCP-方式做健康探测" class="headerlink" title="3. 通过 TCP 方式做健康探测"></a><strong>3. 通过 TCP 方式做健康探测</strong></h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vi liveness-tcp.yaml</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">liveness-tcp</span></span><br><span class="line"><span class="attr">labels:</span></span><br><span class="line"><span class="attr">app:</span> <span class="string">liveness</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">liveness</span></span><br><span class="line"><span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">LivenessProbe:</span></span><br><span class="line"><span class="attr">initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line"><span class="attr">periodSeconds:</span> <span class="number">20</span></span><br><span class="line"><span class="attr">tcpSocket:</span></span><br><span class="line"><span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>思路整理：</strong></p>
+<p>TCP 检查方式和 HTTP 检查方式非常相似，在容器启动 initialDelaySeconds 参数设定的时间后，kubelet 将发送第一个 LivenessProbe 探针，尝试连接容器的 80 端口，类似于 telnet 80 端口。每隔 20 秒(periodSeconds)做探测，如果连接失败则将杀死 Pod 重启容器。</p>
+<h2 id="ReadinessProbe-探针使用示例"><a href="#ReadinessProbe-探针使用示例" class="headerlink" title="ReadinessProbe 探针使用示例"></a><strong>ReadinessProbe 探针使用示例</strong></h2><p>ReadinessProbe 探针使用方式和 LivenessProbe 探针探测方法一样，也是支持三种，只是一个是用于探测应用的存活，一个是判断是否对外提供流量的条件。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vim readiness-exec.yaml</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">readiness-exec</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">readiness-exec</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-exec</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">busybox</span></span><br><span class="line">          <span class="attr">args:</span> <span class="comment">#创建测试探针探测的文件</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">/bin/sh</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">-c</span></span><br><span class="line">              <span class="bullet">-</span> <span class="string">touch</span> <span class="string">/tmp/healthy;</span> <span class="string">sleep</span> <span class="number">30</span><span class="string">;</span> <span class="string">rm</span> <span class="string">-rf</span> <span class="string">/tmp/healthy;</span> <span class="string">sleep</span> <span class="number">600</span></span><br><span class="line">          <span class="attr">LivenessProbe:</span></span><br><span class="line">              <span class="attr">initialDelaySeconds:</span> <span class="number">10</span></span><br><span class="line">              <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line">              <span class="attr">exec:</span></span><br><span class="line">                  <span class="attr">command:</span></span><br><span class="line">                      <span class="bullet">-</span> <span class="string">cat</span></span><br><span class="line">                      <span class="bullet">-</span> <span class="string">/tmp/healthy</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">readiness-http</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">readiness-http</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-http</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">test.com/test-http-prober:v0.0.1</span></span><br><span class="line">          <span class="attr">ports:</span></span><br><span class="line">              <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">server</span></span><br><span class="line">                <span class="attr">containerPort:</span> <span class="number">8080</span></span><br><span class="line">              <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">management</span></span><br><span class="line">                <span class="attr">containerPort:</span> <span class="number">8081</span></span><br><span class="line">          <span class="attr">ReadinessProbe:</span></span><br><span class="line">              <span class="attr">initialDelaySeconds:</span> <span class="number">20</span></span><br><span class="line">              <span class="attr">periodSeconds:</span> <span class="number">5</span></span><br><span class="line">              <span class="attr">timeoutSeconds:</span> <span class="number">10</span></span><br><span class="line">              <span class="attr">httpGet:</span></span><br><span class="line">                  <span class="attr">scheme:</span> <span class="string">HTTP</span></span><br><span class="line">                  <span class="attr">port:</span> <span class="number">8081</span></span><br><span class="line">                  <span class="attr">path:</span> <span class="string">/ping</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">readiness-tcp</span></span><br><span class="line">    <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">readiness-tcp</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">    <span class="attr">containers:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">readiness-tcp</span></span><br><span class="line">          <span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line">          <span class="attr">LivenessProbe:</span></span><br><span class="line">              <span class="attr">initialDelaySeconds:</span> <span class="number">15</span></span><br><span class="line">              <span class="attr">periodSeconds:</span> <span class="number">20</span></span><br><span class="line">              <span class="attr">tcpSocket:</span></span><br><span class="line">                  <span class="attr">port:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="这里说说-terminationGracePeriodSeconds"><a href="#这里说说-terminationGracePeriodSeconds" class="headerlink" title="这里说说 terminationGracePeriodSeconds"></a>这里说说 <strong>terminationGracePeriodSeconds</strong></h3><p>terminationGracePeriodSeconds 这个参数非常的重要，具体讲解。请参考我的另外一篇文章《详细解读 Kubernetes 中 Pod 优雅退出，帮你解决大问题》, 里面有详细的解释，我这里说下其他的内容。</p>
+<p><strong>Tips</strong>: terminationGracePeriodSeconds 不能用于 ReadinessProbe，如果将它应用于 ReadinessProbe 将会被 apiserver 接口所拒绝</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">LivenessProbe:</span></span><br><span class="line"><span class="attr">httpGet:</span></span><br><span class="line"><span class="attr">path:</span> <span class="string">/ping</span></span><br><span class="line"><span class="attr">port:</span> <span class="string">liveness-port</span></span><br><span class="line"><span class="attr">failureThreshold:</span> <span class="number">1</span></span><br><span class="line"><span class="attr">periodSeconds:</span> <span class="number">30</span></span><br><span class="line"><span class="attr">terminationGracePeriodSeconds:</span> <span class="number">30</span> <span class="comment"># 宽限时间30s</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="StartupProbe-探针使用示例"><a href="#StartupProbe-探针使用示例" class="headerlink" title="StartupProbe 探针使用示例"></a><strong>StartupProbe 探针使用示例</strong></h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@localhost ~]<span class="comment"># vim startup.yaml</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Pod</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line"><span class="attr">name:</span> <span class="string">startup</span></span><br><span class="line"><span class="attr">labels:</span></span><br><span class="line"><span class="attr">app:</span> <span class="string">startup</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line"><span class="attr">containers:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">startup</span></span><br><span class="line"><span class="attr">image:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">StartupProbe:</span></span><br><span class="line"><span class="attr">failureThreshold:</span> <span class="number">3</span> <span class="comment"># 失败阈值，连续几次失败才算真失败</span></span><br><span class="line"><span class="attr">initialDelaySeconds:</span> <span class="number">5</span> <span class="comment"># 指定的这个秒以后才执行探测</span></span><br><span class="line"><span class="attr">timeoutSeconds:</span> <span class="number">10</span> <span class="comment"># 探测超时，到了超时时间探测还没返回结果说明失败</span></span><br><span class="line"><span class="attr">periodSeconds:</span> <span class="number">5</span> <span class="comment"># 每隔几秒来运行这个</span></span><br><span class="line"><span class="attr">httpGet:</span></span><br><span class="line"><span class="attr">path:</span> <span class="string">/test</span></span><br><span class="line"><span class="attr">prot:</span> <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>思路整理：</strong></p>
+<p>在容器启动 initialDelaySeconds (5 秒) 参数设定的时间后，kubelet 将发送第一个 StartupProbe 探针，尝试连接容器的 80 端口。如果连续探测失败没有超过 3 次 (failureThreshold) ，且每次探测间隔为 5 秒 (periodSeconds) 和探测执行时间不超过超时时间 10 秒&#x2F;每次 (timeoutSeconds)，则认为探测成功，反之探测失败，kubelet 直接杀死 Pod。</p>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+      </categories>
+      <tags>
         <tag>kubernetes</tag>
       </tags>
   </entry>
@@ -273,196 +401,6 @@
       <tags>
         <tag>kubernetes</tag>
         <tag>Helm</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>kubelet垃圾回收机制</title>
-    <url>/2022/12/29/kubelet%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111058394.jpeg" alt="图片"></p>
-<h3 id="一、Tips"><a href="#一、Tips" class="headerlink" title="一、Tips"></a><strong>一、Tips</strong></h3><ol>
-<li>Kubernetes的垃圾回收由kubelet进行管理，每分钟会查询清理一次容器，每五分钟查询清理一次镜像。在kubelet刚启动时并不会立即进行GC，即第一次进行容器回收为kubelet启动一分钟后，第一次进行镜像回收为kubelet启动五分钟后。</li>
-<li>不推荐使用其它管理工具或手工进行容器和镜像的清理，因为kubelet需要通过容器来判断pod的运行状态，如果使用其它方式清除容器有可能影响kubelet的正常工作。</li>
-<li>镜像的回收针对node结点上由docker管理的所有镜像，无论该镜像是否是在创建pod时pull的。而容器的回收策略只应用于通过kubelet管理的容器。</li>
-<li>Kubernetes通过kubelet集成的cadvisor进行镜像的回收，有两个参数可以设置：<code>--image-gc-high-threshold</code>和<code>--image-gc-low-threshold</code>。当用于存储镜像的磁盘使用率达到百分之–image-gc-high-threshold时将触发镜像回收，删除最近最久未使用（LRU，Least Recently Used）的镜像直到磁盘使用率降为百分之<code>--image-gc-low-threshold</code>或无镜像可删为止。默认<code>--image-gc-high-threshold</code>为90，&#96;&#96;–image-gc-low-threshold&#96;为80。</li>
-<li>容器的回收有三个参数可设置：<code>--minimum-container-ttl-duration</code>，<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>。从容器停止运行时起经过<code>--minimum-container-ttl-duration</code>时间后，该容器标记为已过期将来可以被回收（只是标记，不是回收），默认值为1m0s。一般情况下每个pod最多可以保留<code>--maximum-dead-containers-per-container</code>个已停止运行的容器集，默认值为2。整个node节点可以保留<code>--maximum-dead-containers</code>个已停止运行的容器，默认值为100。</li>
-<li>如果需要关闭容器的垃圾回收策略，可以将<code>--minimum-container-ttl-duration</code>设为0（表示无限制），<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>设为负数。</li>
-<li><code>--minimum-container-ttl-duration</code>的值可以使用单位后缀，如h表示小时，m表示分钟，s表示秒。</li>
-<li>当<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>冲突时，&#96;&#96;–maximum-dead-containers&#96;优先考虑。</li>
-<li>对于那些由kubelet创建的但由于某些原因导致无名字（）的容器，会在到达GC时间点时被删除。</li>
-<li>回收容器时，按创建时间排序，优先删除那些创建时间最早的容器。</li>
-<li>到达GC时间点时，具体的GC过程如下：1）遍历所有pod，使其满足<code>--maximum-dead-containers-per-container</code>；2）经过上一步后如果不满足<code>--maximum-dead-containers</code>，计算值<code>X=（--maximum-dead-containers）/（pod总数）</code>，再遍历所有pod，使其满足已停止运行的容器集个数不大于X且至少为1；3）经过以上两步后如果还不满足<code>--maximum-dead-containers</code>，则对所有已停止的容器排序，优先删除创建时间最早的容器直到满足<code>--maximum-dead-containers</code>为止。</li>
-<li>当某个镜像重新pull或启动某个pod用到该镜像时，该镜像的最近使用时间都会被更新。</li>
-<li>Kubernetes的垃圾回收在1.1.4版本开始才渐渐完善，之前的版本存在比较多bug甚至不能发挥作用。</li>
-<li>关于容器的回收需要特别注意pod的概念，比如，通过同一个yaml文件create一个pod，再delete这个pod，然后再create这个pod，此时之前的那个pod对应的容器并不会作为新创建pod的已停止容器集，因为这两个pod虽然同名，但已经不是同一个pod了。只有同一个pod中在运行过程中由于意外或其它情况停止的容器才算是这个pod的已停止容器集。</li>
-</ol>
-<h3 id="二、Experiments"><a href="#二、Experiments" class="headerlink" title="二、Experiments"></a><strong>二、Experiments</strong></h3><ol>
-<li>镜像回收（使用docker默认 <code>--graph</code> 参数：<code>/var/lib/docker</code>）</li>
-</ol>
-<p>结点上运行的docker设置的参数 <code>--graph</code> 使用默认的<code>/var/lib/docker</code>，指向&#x2F;var文件系统，通过df -lh查看目前 &#x2F;var 磁盘使用率为30%，启动kubelet设置镜像回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=40 --image-gc-low-threshold=35</span><br></pre></td></tr></table></figure>
-
-<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images（pause镜像是启动pod必需的）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
-
-<p>此时查看&#x2F;var磁盘使用率达到了41%，然后将使用<code>10.11.150.76:5000/centos:7</code>镜像的pod删除，等待GC的镜像回收时间点。然而五分钟过去了，什么事情也没有发生&#x3D;_&#x3D;!!。还记得 docker rmi 镜像时有个前提条件是什么吗？没错，要求使用该镜像的容器都已经被删除了才可以。前面删除pod只是停止了容器，并没有将容器删除。因此手工将对应的容器docker rm掉，再等待五分钟后，可以看到镜像已经被删除回收了：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：只有相关联的容器都被停止并删除回收后，才能将Kubernetes的镜像垃圾回收策略应用到该镜像上。</p>
-</blockquote>
-<ol>
-<li>镜像回收（使用自定义docker <code>--graph</code> 参数：<code>/opt/docker</code>）</li>
-</ol>
-<p>结点上运行的docker设置的参数<code>--graph</code>指向 &#x2F;opt 磁盘，通过 df -lh 查看目前 &#x2F;opt 磁盘使用率为 48% ，启动 kubelet 设置镜像回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=50 --image-gc-low-threshold=40</span><br></pre></td></tr></table></figure>
-
-<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
-
-<p>此时查看&#x2F;opt磁盘使用率达到了51%，然后将使用10.11.150.76:5000&#x2F;centos:7镜像的pod删除，手工将对应的容器docker rm掉，等待GC的镜像回收时间点。然而五分钟过去了，十分钟过去了，docker images时centos镜像依旧顽固地坚守在阵地。</p>
-<blockquote>
-<p>结论：目前Kubernetes的镜像垃圾回收策略可以在docker  <code>--graph</code> 参数默认为 <code>/var/lib/docker</code> 时正常工作，当 <code>--graph</code> 设置为其它磁盘路径时还存在bug。</p>
-</blockquote>
-<p>问题反馈在 Github 的相关 issue 里：<a href="https://github.com/kubernetes/kubernetes/issues/17994">https://github.com/kubernetes/kubernetes/issues/17994</a>，可以继续跟进。</p>
-<p>Append: 根据Github上的反馈，这个bug将在后续版本中解决，目前版本需要让设置了–graph的镜像垃圾回收生效，在启动kubelet时还需要加上参数 <code>--docker-root=&lt;docker --graph参数值&gt;</code>。</p>
-<ol>
-<li>容器回收之 <code>--maximum-dead-containers-per-container</code> 参数</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
-
-<p>创建一个只包含一个容器且该容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">2fe969499164        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 2 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_68cc6f03</span><br><span class="line">555b5e7a8550        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         24 seconds ago      Exited (0) 22 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_ad4a5e39</span><br><span class="line">94b30a0b32c2        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         34 seconds ago      Exited (0) 32 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_4027e3e1</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            34 seconds ago      Up 33 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
-
-<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器只剩下一个（pause容器不计算），且先创建的容器被优先删除：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">5aae6157aeff        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         46 seconds ago      Exited (0) 45 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_f126d2a8</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            2 minutes ago       Up 2 minutes                                    k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的<code>--maximum-dead-containers-per-container</code>参数设置可正常工作。</p>
-</blockquote>
-<ol>
-<li><code>--maximum-dead-containers-per-container</code> 针对容器还是容器集</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
-
-<p>创建一个包含三个容器且这些容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">dec04bd28a03        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_830a9375</span><br><span class="line">7c94d4a963a7        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_975d44d3</span><br><span class="line">4f3e7e8ddfd5        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         8 seconds ago       Exited (0) 7 seconds ago                        k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_d024eb06</span><br><span class="line">cb48cf2ba133        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         12 seconds ago      Exited (0) 11 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b5ff7373</span><br><span class="line">ec2941f046f0        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_69b1a996</span><br><span class="line">f831e8ed5687        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_fbc02e2e</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            14 seconds ago      Up 13 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
-
-<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器剩下三个（pause容器不计算），且这三个容器正好是一组：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED              STATUS                      PORTS               NAMES</span><br><span class="line">e4351e6855ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         51 seconds ago       Exited (0) 50 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_263dd820</span><br><span class="line">990baa6e6a7a        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         52 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b16b5eaa</span><br><span class="line">c6916fb06d65        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         53 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_1d8ea284</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            About a minute ago   Up About a minute                               k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：<code>--maximum-dead-containers-per-container</code> 的计数针对一个pod内的容器集而不是容器的个数。</p>
-</blockquote>
-<ol>
-<li>容器回收之 <code>--maximum-dead-containers</code> 参数</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=2 --minimum-container-ttl-duration=30s --maximum-dead-containers=3</span><br></pre></td></tr></table></figure>
-
-<p>创建一个包含三个容器的pod，再删除该pod，再创建该pod，再删除该pod，这样就产生了8个已退出容器（包括两个pause容器）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                              PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         1 seconds ago       Exited (0) Less than a second ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         2 seconds ago       Exited (0) 1 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         3 seconds ago       Exited (0) 2 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br><span class="line">12588fce1433        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            3 seconds ago       Exited (2) Less than a second ago                       k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_c9d4cbaa</span><br><span class="line">621ed207d452        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 3 seconds ago                                k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_a91278cd</span><br><span class="line">023c10fad4fd        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_6cc03f37</span><br><span class="line">756eb7bb4b53        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_83312ec2</span><br><span class="line">d54bdc22773e        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            6 seconds ago       Exited (2) 3 seconds ago                                k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_ccb57220</span><br></pre></td></tr></table></figure>
-
-<p>GC的容器回收时间点到达时，可以看到已退出容器只剩下了三个，pause容器也被回收了：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS                     PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的 <code>--maximum-dead-containers</code> 参数设置可正常工作；pause容器也作为可回收容器被管理着；Tips第11条第3）点。</p>
-</blockquote>
-<ol>
-<li><code>--maximum-dead-containers</code> 对于非kubelet管理的容器是否计数</li>
-</ol>
-<p>在第5个实验的基础上，手工创建一个container，等待GC的容器回收时间点到达，一分钟过去了，两分钟过去了，docker ps -a 显示的依然是4个容器：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker run -it 10.11.150.76:5000/openxxs/iperf:1.2 /bin/sh</span><br><span class="line">sh-4.2# exit</span><br><span class="line">exit</span><br><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                 COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">939b932dc7db        10.11.150.76:5000/openxxs/iperf:1.2   &quot;/bin/sh&quot;           2 minutes ago       Exited (0) 2 minutes ago                        backstabbing_aryabhata</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的策略不适用于非kubelet管理的容器。</p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-        <category>Kubelet</category>
-      </categories>
-      <tags>
-        <tag>kubernetes</tag>
-        <tag>Kubelet</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>k8s常见的问题处理</title>
-    <url>/2022/12/28/k8s%E5%B8%B8%E8%A7%81%E7%9A%84%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<h1 id="Coredns容器或local-dns容器重启"><a href="#Coredns容器或local-dns容器重启" class="headerlink" title="Coredns容器或local-dns容器重启"></a>Coredns容器或local-dns容器重启</h1><p>集群中的coredns组件发生重启(重新创建)，一般是由于coredns组件压力较大导致oom，请检查业务是否异常，是否存在应用容器无法解析域名的异常。</p>
-<p>如果是local-dns重启，说明local-dns的性能也不够了，需要优化</p>
-<h1 id="Pod-was-OOM-killed"><a href="#Pod-was-OOM-killed" class="headerlink" title="Pod was OOM killed"></a>Pod was OOM killed</h1><p>云应用容器实例发生OOM，请检查云应用是否正常。一般地，如果云应用配置了健康检查，当进程OOM了，健康检查如果失败，集群会自动重启容器。</p>
-<p>OOM问题排查步骤：</p>
-<p>检查应用进程内存配置，如Java的jvm参数，对比应用监控-基础监控中的内存指标，判断是否是参数设置低导致进程内存不够用，适当进行参数优化</p>
-<h1 id="Out-of-memory-Kill-process"><a href="#Out-of-memory-Kill-process" class="headerlink" title="Out of memory: Kill process"></a>Out of memory: Kill process</h1><h2 id="原因描述："><a href="#原因描述：" class="headerlink" title="原因描述："></a>原因描述：</h2><p>一般是操作系统把容器内进程Kill而导致的系统内核事件。比如一个java应用，当实际占用内存超过堆内存配置大小时，就会出现OOM错误。发生进程被Kill之后，容器依旧是存活状态，容器的健康检查还会继续进行。所以后面通常会伴随出现健康检查失败的错误。</p>
-<h2 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h2><p>要具体分析进程被Kill的原因，适当的调整进程内存的限制值。可以结合应用监控来参考进程内存的变化趋势。</p>
-<h1 id="Memory-cgroup-out-of-memory-Kill-process"><a href="#Memory-cgroup-out-of-memory-Kill-process" class="headerlink" title="Memory cgroup out of memory: Kill process"></a>Memory cgroup out of memory: Kill process</h1><h2 id="原因描述：-1"><a href="#原因描述：-1" class="headerlink" title="原因描述："></a>原因描述：</h2><p>一般是由于容器的内存实际使用量超过了容器内存限制值而导致的事件。比如容器的内存限制值配置了1Gi，而容器的内存随着容器内进程内存使用量的增加超过了1Gi，就会导致容器被操作系统Cgroup Kill。发生容器被Kill之后，容器已经被停止，所以后续会出现应用实例被重启的情况。</p>
-<h2 id="解决方案：-1"><a href="#解决方案：-1" class="headerlink" title="解决方案："></a>解决方案：</h2><p>检查容器内进程是否有内存泄漏问题，同时适当调整容器内存的限制值大小。可以结合应用监控来看变化趋势。需要注意的是，容器内存限制值大小不应该过大，否则可能导致极端资源争抢情况下，容器被迫驱逐的问题。</p>
-<h1 id="System-OOM-encountered"><a href="#System-OOM-encountered" class="headerlink" title="System OOM encountered"></a>System OOM encountered</h1><h2 id="原因描述：-2"><a href="#原因描述：-2" class="headerlink" title="原因描述："></a>原因描述：</h2><p>上述两种OOM（进程OOM，容器OOM）发生后，都可能会伴随一个系统OOM事件，该事件的原因是由上述OOM事件伴随导致。</p>
-<h2 id="解决方案：-2"><a href="#解决方案：-2" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要解决上面进程OOM或者容器CgroupOOM的问题。</p>
-<h1 id="failed-to-garbage-collect-required-amount-of-images"><a href="#failed-to-garbage-collect-required-amount-of-images" class="headerlink" title="failed to garbage collect required amount of images"></a>failed to garbage collect required amount of images</h1><h2 id="原因描述：-3"><a href="#原因描述：-3" class="headerlink" title="原因描述："></a>原因描述：</h2><p>当容器集群中的节点（宿主机）磁盘使用率达到85%之后，会触发自动的容器镜像回收策略，以便于释放足够的宿主机磁盘。该事件发生于当触发镜像回收策略之后，磁盘空间仍然不足以达到健康阈值（默认为80%）。通常该错误是由于宿主机磁盘被占用太多导致。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
-<h2 id="解决方案：-3"><a href="#解决方案：-3" class="headerlink" title="解决方案："></a>解决方案：</h2><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
-<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
-<h1 id="Attempting-to-xxxx"><a href="#Attempting-to-xxxx" class="headerlink" title="Attempting to xxxx"></a>Attempting to xxxx</h1><p>节点资源不足(EvictionThresholdMet)，一般是节点资源将要达到阈值，可能会触发Pod驱逐。如 Attempting to reclaim ephemeral-storage</p>
-<h2 id="原因描述：-4"><a href="#原因描述：-4" class="headerlink" title="原因描述："></a>原因描述：</h2><p>ephemeral storage是临时存储空间，当磁盘空间使用率达到阈值，会触发临时存储空间的回收任务。回收任务会尝试回收系统日志，以及没有正在使用的镜像缓存等数据。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
-<h2 id="解决方案：-4"><a href="#解决方案：-4" class="headerlink" title="解决方案："></a>解决方案：</h2><p>请注意磁盘空间的使用：</p>
-<p>避免使用“空目录”类型的挂载方式；使用NAS或者其他类似方式替代。<br>尽量避免使用“宿主机目录”类型的挂载方式，以便于保证容器是无状态的，可以迁移的。<br>要注意避免在容器内大量写文件，而导致容器运行时可写数据层过大（imagefs）。</p>
-<h1 id="NTP-service-is-not-running"><a href="#NTP-service-is-not-running" class="headerlink" title="NTP service is not running"></a>NTP service is not running</h1><h2 id="原因描述：-5"><a href="#原因描述：-5" class="headerlink" title="原因描述："></a>原因描述：</h2><p>NTP service是系统时间校准服务，由操作系统systemd管理的服务。可以通过 systemctl status chronyd 查看对应服务的状态。</p>
-<h2 id="解决方案：-5"><a href="#解决方案：-5" class="headerlink" title="解决方案："></a>解决方案：</h2><p>使用命令systemctl start chronyd尝试重新启动。也可以通过命令 journalctl -u chronyd 查看服务的日志。</p>
-<h1 id="节点PLEG异常"><a href="#节点PLEG异常" class="headerlink" title="节点PLEG异常"></a>节点PLEG异常</h1><h2 id="原因描述：-6"><a href="#原因描述：-6" class="headerlink" title="原因描述："></a>原因描述：</h2><p>PLEG是pod生命周期事件生成器，会记录Pod生命周期中的各种事件，如容器的启动、终止等。一般是由于节点上的daemon进程异常或者节点systemd版本bug导致。出现该问题会导致集群节点不可用</p>
-<h2 id="解决方案：-6"><a href="#解决方案：-6" class="headerlink" title="解决方案："></a>解决方案：</h2><p>可以尝试重启kubelet；再尝试重启Docker进程。重启这两个进程过程中，不会对已运行容器造成影响</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启kubelet</span><br><span class="line">systemctl restart kubelet</span><br><span class="line"></span><br><span class="line">//重启docker</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br><span class="line">如果是由于systemd版本问题导致，重启节点可短暂修复，彻底解决的话需要升级节点的systemd</span><br><span class="line"></span><br><span class="line">systemd: (rpm -qa | grep systemd, 版本&lt;219-67.el7需要升级)</span><br><span class="line">升级systemd指令: </span><br><span class="line">yum update -y systemd &amp;&amp; systemctl daemon-reexec &amp;&amp; killall runc</span><br></pre></td></tr></table></figure>
-<h1 id="节点PID不足"><a href="#节点PID不足" class="headerlink" title="节点PID不足"></a>节点PID不足</h1><h2 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h2><p>通常是节点上的容器占用PID过多导致节点的PID不足</p>
-<h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>当节点的可用PID低于pid.available配置项时，则节点状态中NodePIDPressure为True，同时该节点上的容器被驱逐。关于节点驱逐，请参见节点压力驱逐。<br>若集群配置了集群节点异常报警，则节点PID不足时可收到相关报警。关于配置报警，请参见容器服务报警管理。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>执行如下命令，查看节点的最大PID数和节点当前的最大PID。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sysctl kernel.pid_max  #查看最大PID数。</span><br><span class="line">ps -eLf|awk &#x27;&#123;print $2&#125;&#x27; | sort -rn| head -n 1   #查看当前的最大PID。</span><br><span class="line">执行如下命令，查看占用PID最多的前5个进程。</span><br><span class="line">ps -elT | awk &#x27;&#123;print $4&#125;&#x27; | sort | uniq -c | sort -k1 -g | tail -5</span><br><span class="line">预期输出：</span><br><span class="line"></span><br><span class="line">#第一列为进程占用的PID数，第二列为当前进程号。</span><br><span class="line">73 9743</span><br><span class="line">75 9316</span><br><span class="line">76 2812</span><br><span class="line">77 5726</span><br><span class="line">93 5691</span><br></pre></td></tr></table></figure>
-<p>根据进程号找到对应进程和所属的Pod，分析占用PID过多的原因并优化对应代码。<br>降低节点的负载。具体操作，请参见节点调度资源不足。<br>如需重启节点，可尝试重启异常节点。具体操作，请参见重启实例。</p>
-<h1 id="节点FD不足"><a href="#节点FD不足" class="headerlink" title="节点FD不足"></a>节点FD不足</h1><h2 id="原因描述：-7"><a href="#原因描述：-7" class="headerlink" title="原因描述："></a>原因描述：</h2><p>节点文件句柄使用数量超过80%，具体原因与节点上进程使用情况相关打开文件未释放打开管道未释放建立网络连接未释放（pipe,eventpoll多出现在 NIO 网络编程未释放资源 —— selector.close()）创建进程调用命令未释放（Runtime.exe(…) 得到的 Process, InputStream, OutputStream 未关闭，这也会导致 pipe,eventpoll 未释放）</p>
-<h2 id="解决方案：-7"><a href="#解决方案：-7" class="headerlink" title="解决方案："></a>解决方案：</h2><p>删除不需要的文件，调整应用代码，文件流等操作结束后记得关闭。或者尝试先排空再重启主机</p>
-<h1 id="节点Docker-Hung"><a href="#节点Docker-Hung" class="headerlink" title="节点Docker Hung"></a>节点Docker Hung</h1><h2 id="原因描述：-8"><a href="#原因描述：-8" class="headerlink" title="原因描述："></a>原因描述：</h2><p>节点docker daemon异常，导致集群无法与之通信，伴随有docker ps、docker exec等命令hung住或异常失败</p>
-<h2 id="解决方案：-8"><a href="#解决方案：-8" class="headerlink" title="解决方案："></a>解决方案：</h2><p>尝试重启docker服务，重启过程不会影响已存在容器的运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启节点上的docker daemon，对运行中容器没有影响</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br></pre></td></tr></table></figure>
-<p>如果docker服务重启后依然无法解决，可以尝试重启主机。主机重启过程会对容器有影响，谨慎操作。</p>
-<h1 id="节点磁盘资源不足"><a href="#节点磁盘资源不足" class="headerlink" title="节点磁盘资源不足"></a>节点磁盘资源不足</h1><p>InvalidDiskCapacity</p>
-<h2 id="原因描述：-9"><a href="#原因描述：-9" class="headerlink" title="原因描述："></a>原因描述：</h2><p>节点磁盘不足，无法分配空间给容器镜像</p>
-<h2 id="解决方案：-9"><a href="#解决方案：-9" class="headerlink" title="解决方案："></a>解决方案：</h2><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
-<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
-<h1 id="应用相关"><a href="#应用相关" class="headerlink" title="应用相关"></a>应用相关</h1><h1 id="Container-Restart"><a href="#Container-Restart" class="headerlink" title="Container Restart"></a>Container Restart</h1><h2 id="原因描述：-10"><a href="#原因描述：-10" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示应用实例(重启)重启，一般是由于配置了健康检查且健康检查失败导致，会伴随有Readiness probe failed和Liveness probe failed等事件。健康检查失败的原因有很多，通常情况下，比如进程OOM被Kill、比如高负载情况下应用无法正常响应(例如RDS瓶颈导致应用线程全部hang住)，都可能会导致健康检查失败</p>
-<h2 id="解决方案：-10"><a href="#解决方案：-10" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合临近的相关事件定位具体的Pod重启原因。如伴随有集群相关的Out of memory事件，参考此文档上面Out of memory事件的解决方案；其他情况下，结合应用监控或者云产品自身监控来定位问题</p>
-<h1 id="The-node-had-condition-XXX"><a href="#The-node-had-condition-XXX" class="headerlink" title="The node had condition: [XXX]"></a>The node had condition: [XXX]</h1><h2 id="原因描述：-11"><a href="#原因描述：-11" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示Pod由于节点上的异常情况被驱逐，比如<em>The node had condition: [DiskPressure]，</em>表示节点磁盘使用率比较高，通常会伴随有 failed to garbage collect required amount of images 和 Attempting to reclaim ephemeral-storage 等集群维度(节点)的异常事件</p>
-<h2 id="解决方案：-11"><a href="#解决方案：-11" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合临近的相关事件定位具体的驱逐原因。对于已经被驱逐的Pod实例，可以通过kubectl get po 进行查看和手动清理</p>
-<h1 id="K8S-Pod-Pending"><a href="#K8S-Pod-Pending" class="headerlink" title="K8S Pod Pending"></a>K8S Pod Pending</h1><h2 id="原因描述：-12"><a href="#原因描述：-12" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示集群调度Pod被挂起，一般是由于节点资源不足以调度容器或者Volume挂载失败（比如持久化存储卷找不到）或者其他原因导致。</p>
-<h2 id="解决方案：-12"><a href="#解决方案：-12" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合临近的相关事件定位具体的Pod挂起原因</p>
-<h1 id="Readiness-probe-failed"><a href="#Readiness-probe-failed" class="headerlink" title="Readiness probe failed"></a>Readiness probe failed</h1><h2 id="原因描述：-13"><a href="#原因描述：-13" class="headerlink" title="原因描述："></a>原因描述：</h2><p>由于应用就绪探针失败而引发的异常事件。应用就绪探针失败会导致相应容器的流量被摘除，例如被动从SLB摘掉该容器的流量入口。</p>
-<h2 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h2><p>需要结合应用就绪探针的配置，定位应用就绪探针失败的原因。</p>
-<h1 id="Liveness-probe-failed"><a href="#Liveness-probe-failed" class="headerlink" title="Liveness probe failed"></a>Liveness probe failed</h1><h2 id="原因描述：-14"><a href="#原因描述：-14" class="headerlink" title="原因描述："></a>原因描述：</h2><p>由于应用存活探针失败而引发的异常事件。该事件可能会导致后续达到一定阈值之后，容器被动重启。具体要看应用就绪探针的配置。</p>
-<h2 id="解决方案：-13"><a href="#解决方案：-13" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合应用存活探针的配置，定位探针检查失败的原因。</p>
-<h1 id="Container-runtime-did-not-kill-the-pod-within-specified-grace-period"><a href="#Container-runtime-did-not-kill-the-pod-within-specified-grace-period" class="headerlink" title="Container runtime did not kill the pod within specified grace period."></a>Container runtime did not kill the pod within specified grace period.</h1><h2 id="原因描述：-15"><a href="#原因描述：-15" class="headerlink" title="原因描述："></a>原因描述：</h2><p>此事件表示容器没有在优雅下线的时间段内正常退出。比如如果配置了优雅下线脚本，脚本执行时长需要60s，而优雅下线时间（默认为30s）配置为30s。就会在容器下线期间触发这个事件。</p>
-<h2 id="解决方案：-14"><a href="#解决方案：-14" class="headerlink" title="解决方案："></a>解决方案：</h2><p>调整优雅下线探针的配置，或者优雅下线时间的配置。</p>
-<h1 id="Back-off-restarting-failed-container"><a href="#Back-off-restarting-failed-container" class="headerlink" title="Back-off restarting failed container"></a>Back-off restarting failed container</h1><h2 id="原因描述：-16"><a href="#原因描述：-16" class="headerlink" title="原因描述："></a>原因描述：</h2><p>此事件表示容器启动失败，而被再次拉起尝试启动。通常常见与应用发布过程中的容器启动失败。具体的原因常见为镜像拉取失败，或者容器启动失败（容器没有打到running状态）。</p>
-<h2 id="解决方案：-15"><a href="#解决方案：-15" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要在发布页查看容器启动日志或者调度日志，进一步定位容器启动失败的原因。</p>
-<h1 id="The-node-was-low-on-resource-xxxx"><a href="#The-node-was-low-on-resource-xxxx" class="headerlink" title="The node was low on resource: xxxx"></a>The node was low on resource: xxxx</h1><h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2020-07-21 10:24:43.000 [Event] Type: Warning, Reason: Evicted, Message: The node was low on resource: ephemeral-storage. </span><br></pre></td></tr></table></figure>
-<h2 id="原因描述：-17"><a href="#原因描述：-17" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示Pod由于节点上的异常情况(资源不足)被驱逐</p>
-<h2 id="解决方案：-16"><a href="#解决方案：-16" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要看具体哪类资源不足，例如示例中的ephemeral-storage，表示集群节点临时存储空间不足，一般是由于磁盘使用量较大导致。请参考文档上方解决方案</p>
-<p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
-<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。<br>可以对系统盘进行扩容，扩大磁盘空间。</p>
-<h1 id="集群DNS性能瓶颈"><a href="#集群DNS性能瓶颈" class="headerlink" title="集群DNS性能瓶颈"></a>集群DNS性能瓶颈</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>集群中的容器实例，DNS解析均依赖集群内的DNS组件，应用中业务请求的地址都需要经过集群DNS组件。例如，代码中访问RDS、REDIS、TOP api等。如果集群dns性能不足，会出现业务请求失败的问题。</p>
-<p>集群DNS组件：</p>
-<p>默认已安装的集群组件为coredns，副本数为2<br>可选的高性能组件为localdns</p>
-<h2 id="是否有性能瓶颈"><a href="#是否有性能瓶颈" class="headerlink" title="是否有性能瓶颈"></a>是否有性能瓶颈</h2><p>应用有大量DNS请求的场景(比如连接rds，凡是涉及到域名地址解析的)<br>PHP等语言自身没有连接池特性的，或者应用自身没有DNS缓存的<br>偶尔出现域名地址无法解析错误的</p>
-<h2 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h2><p>一、集群默认已安装的coredns组件，进行扩容。扩容比例为1&#x2F;5的节点数(如15台ecs，那么coredns数量为3)</p>
-<p>二、为集群安装更高性能的localdns组件(该组件为daemonset，会在每个ECS节点起一个本地缓存)</p>
-<p>一般来说，如果业务量小，扩容下coredns就足够了；如果业务量大(域名地址解析QPS高，比如访问RDS)，特别是php等不带连接池的开发语言，建议直接上localdns。如果是java等配置了连接池的应用，可以先扩容coredns观察，如果仍然有解析问题，再上localdns。</p>
-<h1 id="localdns缓存原理"><a href="#localdns缓存原理" class="headerlink" title="localdns缓存原理"></a>localdns缓存原理</h1><p>NodeLocalDNS 是一个 DaemonSet，会在Kubernetes集群的每个节点上运行一个专门处理 DNS 查询请求的 Pod，该 Pod 会将集群内部域名查询请求发往 CoreDNS；将集群外部请求直接发往外部域名解析服务器。同时能够Cache所有请求。可以被看作是节点级别的高效DNS 缓存，能够大幅提高集群整体 DNS 查询的 QPS。NodeLocalDNS 会在集群的每个节点上创建一个专用的虚拟接口（接口绑定的 IP 需要通过 local_dns_ip 这个值来指定），节点上所有发往该 IP 的 DNS 查询请求都会被拦截到 NodeLocalDNS Pod 内进行处理；通过集群原有的 kube-dns 服务（该服务的 clusterIP 值需要通过kube_dns_ip来指定）来与CoreDNS进行通信。<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/image.png" alt="image"></p>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-      </categories>
-      <tags>
-        <tag>kubernetes</tag>
       </tags>
   </entry>
   <entry>
@@ -1257,6 +1195,212 @@ To learn more about the release, try:
       <tags>
         <tag>kubernetes</tag>
         <tag>Helm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>etcd 备份还原</title>
+    <url>/2022/12/29/etcd%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/</url>
+    <content><![CDATA[<h1 id="containerd"><a href="#containerd" class="headerlink" title="containerd"></a>containerd</h1><h2 id="etcd-备份还原"><a href="#etcd-备份还原" class="headerlink" title="etcd 备份还原"></a>etcd 备份还原</h2><h3 id="还原"><a href="#还原" class="headerlink" title="还原"></a>还原</h3><p>每台的master节点 IP 和主机名需要修改<br>停止集群<br>mv   &#x2F;etc&#x2F;kubernetes&#x2F;manifests.bak</p>
+<h1 id="备份原有etcd数据"><a href="#备份原有etcd数据" class="headerlink" title="备份原有etcd数据"></a>备份原有etcd数据</h1><p>mv &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd-<code>date &#39;+%Y%m%d-%H:%M:%S&#39;</code><br>​<br>#还原第一台master<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;u01&#x2F;local&#x2F;kube-system:&#x2F;u01&#x2F;local&#x2F;kube-system’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot restore <br>&#x2F;tmp&#x2F;etcd-snapshot-.db <br>--name node-9xct <br>--endpoints&#x3D;10.165.124.13:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt <br>--initial-advertise-peer-urls&#x3D;<a href="https://10.165.124.13:2380/">https://10.165.124.13:2380</a> <br>--initial-cluster&#x3D;node-9xct&#x3D;<a href="https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380">https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380</a> <br>--data-dir&#x3D;&#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd <br>--skip-hash-check&#x3D;true”<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;u01&#x2F;local&#x2F;kube-system:&#x2F;u01&#x2F;local&#x2F;kube-system’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot restore <br>&#x2F;tmp&#x2F;etcd-snapshot-.db <br>--name node-dfkb <br>--endpoints&#x3D;10.165.124.14:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt <br>--initial-advertise-peer-urls&#x3D;<a href="https://10.165.124.14:2380/">https://10.165.124.14:2380</a> <br>--initial-cluster&#x3D;node-9xct&#x3D;<a href="https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380">https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380</a> <br>--data-dir&#x3D;&#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd <br>--skip-hash-check&#x3D;true”</p>
+<p>=&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;<br>​<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;u01&#x2F;local&#x2F;kube-system:&#x2F;u01&#x2F;local&#x2F;kube-system’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot restore <br>&#x2F;tmp&#x2F;etcd-snapshot-.db <br>--name node-24ge <br>--endpoints&#x3D;10.165.124.15:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt <br>--initial-advertise-peer-urls&#x3D;<a href="https://10.165.124.15:2380/">https://10.165.124.15:2380</a> <br>--initial-cluster&#x3D;node-9xct&#x3D;<a href="https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380">https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380</a> <br>--data-dir&#x3D;&#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd <br>--skip-hash-check&#x3D;true”<br>​<br>#恢复集群<br>mv &#x2F;etc&#x2F;kubernetes&#x2F;manifests.bak &#x2F;etc&#x2F;kubernetes&#x2F;manifests<br>备份<br>nerdctl  -n k8s.io run –rm <br>-v ‘&#x2F;tmp:&#x2F;tmp’ <br>-v ‘&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd’ <br>--env ETCDCTL_API&#x3D;3 <br>‘docker.kedacom.com:15000&#x2F;etcd:3.5.0-0’ <br>&#x2F;bin&#x2F;sh -c “etcdctl snapshot save <br>&#x2F;tmp&#x2F;etcd-snapshot-134.db <br>--endpoints&#x3D;10.165.24.181:2379 <br>--cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.crt <br>--key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;server.key <br>--cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt”<br>docker<br>备份<br>docker run –rm -e ETCDCTL_API&#x3D;3 -v &#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd:&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd -v &#x2F;data&#x2F;etcd_backup:&#x2F;data&#x2F;etcd_backup registry.cn-hangzhou.aliyuncs.com&#x2F;google_containers&#x2F;etcd:3.4.13-0 sh -c “etcdctl –endpoints&#x3D;<a href="https://11.1.100.194:2379/">https://11.1.100.194:2379</a> –cacert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;ca.crt –cert&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;healthcheck-client.crt –key&#x3D;&#x2F;etc&#x2F;kubernetes&#x2F;pki&#x2F;etcd&#x2F;healthcheck-client.key snapshot save &#x2F;data&#x2F;etcd_backup&#x2F;etcd-snapshot-$(date +%Y-%m-%d_%H:%M:%S_%Z).db”</p>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>etcd</category>
+      </categories>
+      <tags>
+        <tag>etcd</tag>
+        <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>kubelet垃圾回收机制</title>
+    <url>/2022/12/29/kubelet%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111058394.jpeg" alt="图片"></p>
+<h3 id="一、Tips"><a href="#一、Tips" class="headerlink" title="一、Tips"></a><strong>一、Tips</strong></h3><ol>
+<li>Kubernetes的垃圾回收由kubelet进行管理，每分钟会查询清理一次容器，每五分钟查询清理一次镜像。在kubelet刚启动时并不会立即进行GC，即第一次进行容器回收为kubelet启动一分钟后，第一次进行镜像回收为kubelet启动五分钟后。</li>
+<li>不推荐使用其它管理工具或手工进行容器和镜像的清理，因为kubelet需要通过容器来判断pod的运行状态，如果使用其它方式清除容器有可能影响kubelet的正常工作。</li>
+<li>镜像的回收针对node结点上由docker管理的所有镜像，无论该镜像是否是在创建pod时pull的。而容器的回收策略只应用于通过kubelet管理的容器。</li>
+<li>Kubernetes通过kubelet集成的cadvisor进行镜像的回收，有两个参数可以设置：<code>--image-gc-high-threshold</code>和<code>--image-gc-low-threshold</code>。当用于存储镜像的磁盘使用率达到百分之–image-gc-high-threshold时将触发镜像回收，删除最近最久未使用（LRU，Least Recently Used）的镜像直到磁盘使用率降为百分之<code>--image-gc-low-threshold</code>或无镜像可删为止。默认<code>--image-gc-high-threshold</code>为90，&#96;&#96;–image-gc-low-threshold&#96;为80。</li>
+<li>容器的回收有三个参数可设置：<code>--minimum-container-ttl-duration</code>，<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>。从容器停止运行时起经过<code>--minimum-container-ttl-duration</code>时间后，该容器标记为已过期将来可以被回收（只是标记，不是回收），默认值为1m0s。一般情况下每个pod最多可以保留<code>--maximum-dead-containers-per-container</code>个已停止运行的容器集，默认值为2。整个node节点可以保留<code>--maximum-dead-containers</code>个已停止运行的容器，默认值为100。</li>
+<li>如果需要关闭容器的垃圾回收策略，可以将<code>--minimum-container-ttl-duration</code>设为0（表示无限制），<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>设为负数。</li>
+<li><code>--minimum-container-ttl-duration</code>的值可以使用单位后缀，如h表示小时，m表示分钟，s表示秒。</li>
+<li>当<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>冲突时，&#96;&#96;–maximum-dead-containers&#96;优先考虑。</li>
+<li>对于那些由kubelet创建的但由于某些原因导致无名字（）的容器，会在到达GC时间点时被删除。</li>
+<li>回收容器时，按创建时间排序，优先删除那些创建时间最早的容器。</li>
+<li>到达GC时间点时，具体的GC过程如下：1）遍历所有pod，使其满足<code>--maximum-dead-containers-per-container</code>；2）经过上一步后如果不满足<code>--maximum-dead-containers</code>，计算值<code>X=（--maximum-dead-containers）/（pod总数）</code>，再遍历所有pod，使其满足已停止运行的容器集个数不大于X且至少为1；3）经过以上两步后如果还不满足<code>--maximum-dead-containers</code>，则对所有已停止的容器排序，优先删除创建时间最早的容器直到满足<code>--maximum-dead-containers</code>为止。</li>
+<li>当某个镜像重新pull或启动某个pod用到该镜像时，该镜像的最近使用时间都会被更新。</li>
+<li>Kubernetes的垃圾回收在1.1.4版本开始才渐渐完善，之前的版本存在比较多bug甚至不能发挥作用。</li>
+<li>关于容器的回收需要特别注意pod的概念，比如，通过同一个yaml文件create一个pod，再delete这个pod，然后再create这个pod，此时之前的那个pod对应的容器并不会作为新创建pod的已停止容器集，因为这两个pod虽然同名，但已经不是同一个pod了。只有同一个pod中在运行过程中由于意外或其它情况停止的容器才算是这个pod的已停止容器集。</li>
+</ol>
+<h3 id="二、Experiments"><a href="#二、Experiments" class="headerlink" title="二、Experiments"></a><strong>二、Experiments</strong></h3><ol>
+<li>镜像回收（使用docker默认 <code>--graph</code> 参数：<code>/var/lib/docker</code>）</li>
+</ol>
+<p>结点上运行的docker设置的参数 <code>--graph</code> 使用默认的<code>/var/lib/docker</code>，指向&#x2F;var文件系统，通过df -lh查看目前 &#x2F;var 磁盘使用率为30%，启动kubelet设置镜像回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=40 --image-gc-low-threshold=35</span><br></pre></td></tr></table></figure>
+
+<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images（pause镜像是启动pod必需的）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<p>此时查看&#x2F;var磁盘使用率达到了41%，然后将使用<code>10.11.150.76:5000/centos:7</code>镜像的pod删除，等待GC的镜像回收时间点。然而五分钟过去了，什么事情也没有发生&#x3D;_&#x3D;!!。还记得 docker rmi 镜像时有个前提条件是什么吗？没错，要求使用该镜像的容器都已经被删除了才可以。前面删除pod只是停止了容器，并没有将容器删除。因此手工将对应的容器docker rm掉，再等待五分钟后，可以看到镜像已经被删除回收了：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：只有相关联的容器都被停止并删除回收后，才能将Kubernetes的镜像垃圾回收策略应用到该镜像上。</p>
+</blockquote>
+<ol>
+<li>镜像回收（使用自定义docker <code>--graph</code> 参数：<code>/opt/docker</code>）</li>
+</ol>
+<p>结点上运行的docker设置的参数<code>--graph</code>指向 &#x2F;opt 磁盘，通过 df -lh 查看目前 &#x2F;opt 磁盘使用率为 48% ，启动 kubelet 设置镜像回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=50 --image-gc-low-threshold=40</span><br></pre></td></tr></table></figure>
+
+<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<p>此时查看&#x2F;opt磁盘使用率达到了51%，然后将使用10.11.150.76:5000&#x2F;centos:7镜像的pod删除，手工将对应的容器docker rm掉，等待GC的镜像回收时间点。然而五分钟过去了，十分钟过去了，docker images时centos镜像依旧顽固地坚守在阵地。</p>
+<blockquote>
+<p>结论：目前Kubernetes的镜像垃圾回收策略可以在docker  <code>--graph</code> 参数默认为 <code>/var/lib/docker</code> 时正常工作，当 <code>--graph</code> 设置为其它磁盘路径时还存在bug。</p>
+</blockquote>
+<p>问题反馈在 Github 的相关 issue 里：<a href="https://github.com/kubernetes/kubernetes/issues/17994">https://github.com/kubernetes/kubernetes/issues/17994</a>，可以继续跟进。</p>
+<p>Append: 根据Github上的反馈，这个bug将在后续版本中解决，目前版本需要让设置了–graph的镜像垃圾回收生效，在启动kubelet时还需要加上参数 <code>--docker-root=&lt;docker --graph参数值&gt;</code>。</p>
+<ol>
+<li>容器回收之 <code>--maximum-dead-containers-per-container</code> 参数</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
+
+<p>创建一个只包含一个容器且该容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">2fe969499164        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 2 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_68cc6f03</span><br><span class="line">555b5e7a8550        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         24 seconds ago      Exited (0) 22 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_ad4a5e39</span><br><span class="line">94b30a0b32c2        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         34 seconds ago      Exited (0) 32 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_4027e3e1</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            34 seconds ago      Up 33 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器只剩下一个（pause容器不计算），且先创建的容器被优先删除：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">5aae6157aeff        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         46 seconds ago      Exited (0) 45 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_f126d2a8</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            2 minutes ago       Up 2 minutes                                    k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的<code>--maximum-dead-containers-per-container</code>参数设置可正常工作。</p>
+</blockquote>
+<ol>
+<li><code>--maximum-dead-containers-per-container</code> 针对容器还是容器集</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
+
+<p>创建一个包含三个容器且这些容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">dec04bd28a03        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_830a9375</span><br><span class="line">7c94d4a963a7        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_975d44d3</span><br><span class="line">4f3e7e8ddfd5        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         8 seconds ago       Exited (0) 7 seconds ago                        k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_d024eb06</span><br><span class="line">cb48cf2ba133        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         12 seconds ago      Exited (0) 11 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b5ff7373</span><br><span class="line">ec2941f046f0        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_69b1a996</span><br><span class="line">f831e8ed5687        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_fbc02e2e</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            14 seconds ago      Up 13 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器剩下三个（pause容器不计算），且这三个容器正好是一组：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED              STATUS                      PORTS               NAMES</span><br><span class="line">e4351e6855ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         51 seconds ago       Exited (0) 50 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_263dd820</span><br><span class="line">990baa6e6a7a        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         52 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b16b5eaa</span><br><span class="line">c6916fb06d65        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         53 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_1d8ea284</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            About a minute ago   Up About a minute                               k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：<code>--maximum-dead-containers-per-container</code> 的计数针对一个pod内的容器集而不是容器的个数。</p>
+</blockquote>
+<ol>
+<li>容器回收之 <code>--maximum-dead-containers</code> 参数</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=2 --minimum-container-ttl-duration=30s --maximum-dead-containers=3</span><br></pre></td></tr></table></figure>
+
+<p>创建一个包含三个容器的pod，再删除该pod，再创建该pod，再删除该pod，这样就产生了8个已退出容器（包括两个pause容器）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                              PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         1 seconds ago       Exited (0) Less than a second ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         2 seconds ago       Exited (0) 1 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         3 seconds ago       Exited (0) 2 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br><span class="line">12588fce1433        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            3 seconds ago       Exited (2) Less than a second ago                       k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_c9d4cbaa</span><br><span class="line">621ed207d452        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 3 seconds ago                                k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_a91278cd</span><br><span class="line">023c10fad4fd        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_6cc03f37</span><br><span class="line">756eb7bb4b53        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_83312ec2</span><br><span class="line">d54bdc22773e        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            6 seconds ago       Exited (2) 3 seconds ago                                k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_ccb57220</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到已退出容器只剩下了三个，pause容器也被回收了：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS                     PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的 <code>--maximum-dead-containers</code> 参数设置可正常工作；pause容器也作为可回收容器被管理着；Tips第11条第3）点。</p>
+</blockquote>
+<ol>
+<li><code>--maximum-dead-containers</code> 对于非kubelet管理的容器是否计数</li>
+</ol>
+<p>在第5个实验的基础上，手工创建一个container，等待GC的容器回收时间点到达，一分钟过去了，两分钟过去了，docker ps -a 显示的依然是4个容器：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker run -it 10.11.150.76:5000/openxxs/iperf:1.2 /bin/sh</span><br><span class="line">sh-4.2# exit</span><br><span class="line">exit</span><br><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                 COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">939b932dc7db        10.11.150.76:5000/openxxs/iperf:1.2   &quot;/bin/sh&quot;           2 minutes ago       Exited (0) 2 minutes ago                        backstabbing_aryabhata</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的策略不适用于非kubelet管理的容器。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>Kubelet</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
+        <tag>Kubelet</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s常见的问题处理</title>
+    <url>/2022/12/28/k8s%E5%B8%B8%E8%A7%81%E7%9A%84%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<h1 id="Coredns容器或local-dns容器重启"><a href="#Coredns容器或local-dns容器重启" class="headerlink" title="Coredns容器或local-dns容器重启"></a>Coredns容器或local-dns容器重启</h1><p>集群中的coredns组件发生重启(重新创建)，一般是由于coredns组件压力较大导致oom，请检查业务是否异常，是否存在应用容器无法解析域名的异常。</p>
+<p>如果是local-dns重启，说明local-dns的性能也不够了，需要优化</p>
+<h1 id="Pod-was-OOM-killed"><a href="#Pod-was-OOM-killed" class="headerlink" title="Pod was OOM killed"></a>Pod was OOM killed</h1><p>云应用容器实例发生OOM，请检查云应用是否正常。一般地，如果云应用配置了健康检查，当进程OOM了，健康检查如果失败，集群会自动重启容器。</p>
+<p>OOM问题排查步骤：</p>
+<p>检查应用进程内存配置，如Java的jvm参数，对比应用监控-基础监控中的内存指标，判断是否是参数设置低导致进程内存不够用，适当进行参数优化</p>
+<h1 id="Out-of-memory-Kill-process"><a href="#Out-of-memory-Kill-process" class="headerlink" title="Out of memory: Kill process"></a>Out of memory: Kill process</h1><h2 id="原因描述："><a href="#原因描述：" class="headerlink" title="原因描述："></a>原因描述：</h2><p>一般是操作系统把容器内进程Kill而导致的系统内核事件。比如一个java应用，当实际占用内存超过堆内存配置大小时，就会出现OOM错误。发生进程被Kill之后，容器依旧是存活状态，容器的健康检查还会继续进行。所以后面通常会伴随出现健康检查失败的错误。</p>
+<h2 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h2><p>要具体分析进程被Kill的原因，适当的调整进程内存的限制值。可以结合应用监控来参考进程内存的变化趋势。</p>
+<h1 id="Memory-cgroup-out-of-memory-Kill-process"><a href="#Memory-cgroup-out-of-memory-Kill-process" class="headerlink" title="Memory cgroup out of memory: Kill process"></a>Memory cgroup out of memory: Kill process</h1><h2 id="原因描述：-1"><a href="#原因描述：-1" class="headerlink" title="原因描述："></a>原因描述：</h2><p>一般是由于容器的内存实际使用量超过了容器内存限制值而导致的事件。比如容器的内存限制值配置了1Gi，而容器的内存随着容器内进程内存使用量的增加超过了1Gi，就会导致容器被操作系统Cgroup Kill。发生容器被Kill之后，容器已经被停止，所以后续会出现应用实例被重启的情况。</p>
+<h2 id="解决方案：-1"><a href="#解决方案：-1" class="headerlink" title="解决方案："></a>解决方案：</h2><p>检查容器内进程是否有内存泄漏问题，同时适当调整容器内存的限制值大小。可以结合应用监控来看变化趋势。需要注意的是，容器内存限制值大小不应该过大，否则可能导致极端资源争抢情况下，容器被迫驱逐的问题。</p>
+<h1 id="System-OOM-encountered"><a href="#System-OOM-encountered" class="headerlink" title="System OOM encountered"></a>System OOM encountered</h1><h2 id="原因描述：-2"><a href="#原因描述：-2" class="headerlink" title="原因描述："></a>原因描述：</h2><p>上述两种OOM（进程OOM，容器OOM）发生后，都可能会伴随一个系统OOM事件，该事件的原因是由上述OOM事件伴随导致。</p>
+<h2 id="解决方案：-2"><a href="#解决方案：-2" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要解决上面进程OOM或者容器CgroupOOM的问题。</p>
+<h1 id="failed-to-garbage-collect-required-amount-of-images"><a href="#failed-to-garbage-collect-required-amount-of-images" class="headerlink" title="failed to garbage collect required amount of images"></a>failed to garbage collect required amount of images</h1><h2 id="原因描述：-3"><a href="#原因描述：-3" class="headerlink" title="原因描述："></a>原因描述：</h2><p>当容器集群中的节点（宿主机）磁盘使用率达到85%之后，会触发自动的容器镜像回收策略，以便于释放足够的宿主机磁盘。该事件发生于当触发镜像回收策略之后，磁盘空间仍然不足以达到健康阈值（默认为80%）。通常该错误是由于宿主机磁盘被占用太多导致。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
+<h2 id="解决方案：-3"><a href="#解决方案：-3" class="headerlink" title="解决方案："></a>解决方案：</h2><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
+<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
+<h1 id="Attempting-to-xxxx"><a href="#Attempting-to-xxxx" class="headerlink" title="Attempting to xxxx"></a>Attempting to xxxx</h1><p>节点资源不足(EvictionThresholdMet)，一般是节点资源将要达到阈值，可能会触发Pod驱逐。如 Attempting to reclaim ephemeral-storage</p>
+<h2 id="原因描述：-4"><a href="#原因描述：-4" class="headerlink" title="原因描述："></a>原因描述：</h2><p>ephemeral storage是临时存储空间，当磁盘空间使用率达到阈值，会触发临时存储空间的回收任务。回收任务会尝试回收系统日志，以及没有正在使用的镜像缓存等数据。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
+<h2 id="解决方案：-4"><a href="#解决方案：-4" class="headerlink" title="解决方案："></a>解决方案：</h2><p>请注意磁盘空间的使用：</p>
+<p>避免使用“空目录”类型的挂载方式；使用NAS或者其他类似方式替代。<br>尽量避免使用“宿主机目录”类型的挂载方式，以便于保证容器是无状态的，可以迁移的。<br>要注意避免在容器内大量写文件，而导致容器运行时可写数据层过大（imagefs）。</p>
+<h1 id="NTP-service-is-not-running"><a href="#NTP-service-is-not-running" class="headerlink" title="NTP service is not running"></a>NTP service is not running</h1><h2 id="原因描述：-5"><a href="#原因描述：-5" class="headerlink" title="原因描述："></a>原因描述：</h2><p>NTP service是系统时间校准服务，由操作系统systemd管理的服务。可以通过 systemctl status chronyd 查看对应服务的状态。</p>
+<h2 id="解决方案：-5"><a href="#解决方案：-5" class="headerlink" title="解决方案："></a>解决方案：</h2><p>使用命令systemctl start chronyd尝试重新启动。也可以通过命令 journalctl -u chronyd 查看服务的日志。</p>
+<h1 id="节点PLEG异常"><a href="#节点PLEG异常" class="headerlink" title="节点PLEG异常"></a>节点PLEG异常</h1><h2 id="原因描述：-6"><a href="#原因描述：-6" class="headerlink" title="原因描述："></a>原因描述：</h2><p>PLEG是pod生命周期事件生成器，会记录Pod生命周期中的各种事件，如容器的启动、终止等。一般是由于节点上的daemon进程异常或者节点systemd版本bug导致。出现该问题会导致集群节点不可用</p>
+<h2 id="解决方案：-6"><a href="#解决方案：-6" class="headerlink" title="解决方案："></a>解决方案：</h2><p>可以尝试重启kubelet；再尝试重启Docker进程。重启这两个进程过程中，不会对已运行容器造成影响</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启kubelet</span><br><span class="line">systemctl restart kubelet</span><br><span class="line"></span><br><span class="line">//重启docker</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br><span class="line">如果是由于systemd版本问题导致，重启节点可短暂修复，彻底解决的话需要升级节点的systemd</span><br><span class="line"></span><br><span class="line">systemd: (rpm -qa | grep systemd, 版本&lt;219-67.el7需要升级)</span><br><span class="line">升级systemd指令: </span><br><span class="line">yum update -y systemd &amp;&amp; systemctl daemon-reexec &amp;&amp; killall runc</span><br></pre></td></tr></table></figure>
+<h1 id="节点PID不足"><a href="#节点PID不足" class="headerlink" title="节点PID不足"></a>节点PID不足</h1><h2 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h2><p>通常是节点上的容器占用PID过多导致节点的PID不足</p>
+<h2 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h2><p>当节点的可用PID低于pid.available配置项时，则节点状态中NodePIDPressure为True，同时该节点上的容器被驱逐。关于节点驱逐，请参见节点压力驱逐。<br>若集群配置了集群节点异常报警，则节点PID不足时可收到相关报警。关于配置报警，请参见容器服务报警管理。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><p>执行如下命令，查看节点的最大PID数和节点当前的最大PID。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sysctl kernel.pid_max  #查看最大PID数。</span><br><span class="line">ps -eLf|awk &#x27;&#123;print $2&#125;&#x27; | sort -rn| head -n 1   #查看当前的最大PID。</span><br><span class="line">执行如下命令，查看占用PID最多的前5个进程。</span><br><span class="line">ps -elT | awk &#x27;&#123;print $4&#125;&#x27; | sort | uniq -c | sort -k1 -g | tail -5</span><br><span class="line">预期输出：</span><br><span class="line"></span><br><span class="line">#第一列为进程占用的PID数，第二列为当前进程号。</span><br><span class="line">73 9743</span><br><span class="line">75 9316</span><br><span class="line">76 2812</span><br><span class="line">77 5726</span><br><span class="line">93 5691</span><br></pre></td></tr></table></figure>
+<p>根据进程号找到对应进程和所属的Pod，分析占用PID过多的原因并优化对应代码。<br>降低节点的负载。具体操作，请参见节点调度资源不足。<br>如需重启节点，可尝试重启异常节点。具体操作，请参见重启实例。</p>
+<h1 id="节点FD不足"><a href="#节点FD不足" class="headerlink" title="节点FD不足"></a>节点FD不足</h1><h2 id="原因描述：-7"><a href="#原因描述：-7" class="headerlink" title="原因描述："></a>原因描述：</h2><p>节点文件句柄使用数量超过80%，具体原因与节点上进程使用情况相关打开文件未释放打开管道未释放建立网络连接未释放（pipe,eventpoll多出现在 NIO 网络编程未释放资源 —— selector.close()）创建进程调用命令未释放（Runtime.exe(…) 得到的 Process, InputStream, OutputStream 未关闭，这也会导致 pipe,eventpoll 未释放）</p>
+<h2 id="解决方案：-7"><a href="#解决方案：-7" class="headerlink" title="解决方案："></a>解决方案：</h2><p>删除不需要的文件，调整应用代码，文件流等操作结束后记得关闭。或者尝试先排空再重启主机</p>
+<h1 id="节点Docker-Hung"><a href="#节点Docker-Hung" class="headerlink" title="节点Docker Hung"></a>节点Docker Hung</h1><h2 id="原因描述：-8"><a href="#原因描述：-8" class="headerlink" title="原因描述："></a>原因描述：</h2><p>节点docker daemon异常，导致集群无法与之通信，伴随有docker ps、docker exec等命令hung住或异常失败</p>
+<h2 id="解决方案：-8"><a href="#解决方案：-8" class="headerlink" title="解决方案："></a>解决方案：</h2><p>尝试重启docker服务，重启过程不会影响已存在容器的运行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启节点上的docker daemon，对运行中容器没有影响</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br></pre></td></tr></table></figure>
+<p>如果docker服务重启后依然无法解决，可以尝试重启主机。主机重启过程会对容器有影响，谨慎操作。</p>
+<h1 id="节点磁盘资源不足"><a href="#节点磁盘资源不足" class="headerlink" title="节点磁盘资源不足"></a>节点磁盘资源不足</h1><p>InvalidDiskCapacity</p>
+<h2 id="原因描述：-9"><a href="#原因描述：-9" class="headerlink" title="原因描述："></a>原因描述：</h2><p>节点磁盘不足，无法分配空间给容器镜像</p>
+<h2 id="解决方案：-9"><a href="#解决方案：-9" class="headerlink" title="解决方案："></a>解决方案：</h2><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
+<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
+<h1 id="应用相关"><a href="#应用相关" class="headerlink" title="应用相关"></a>应用相关</h1><h1 id="Container-Restart"><a href="#Container-Restart" class="headerlink" title="Container Restart"></a>Container Restart</h1><h2 id="原因描述：-10"><a href="#原因描述：-10" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示应用实例(重启)重启，一般是由于配置了健康检查且健康检查失败导致，会伴随有Readiness probe failed和Liveness probe failed等事件。健康检查失败的原因有很多，通常情况下，比如进程OOM被Kill、比如高负载情况下应用无法正常响应(例如RDS瓶颈导致应用线程全部hang住)，都可能会导致健康检查失败</p>
+<h2 id="解决方案：-10"><a href="#解决方案：-10" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合临近的相关事件定位具体的Pod重启原因。如伴随有集群相关的Out of memory事件，参考此文档上面Out of memory事件的解决方案；其他情况下，结合应用监控或者云产品自身监控来定位问题</p>
+<h1 id="The-node-had-condition-XXX"><a href="#The-node-had-condition-XXX" class="headerlink" title="The node had condition: [XXX]"></a>The node had condition: [XXX]</h1><h2 id="原因描述：-11"><a href="#原因描述：-11" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示Pod由于节点上的异常情况被驱逐，比如<em>The node had condition: [DiskPressure]，</em>表示节点磁盘使用率比较高，通常会伴随有 failed to garbage collect required amount of images 和 Attempting to reclaim ephemeral-storage 等集群维度(节点)的异常事件</p>
+<h2 id="解决方案：-11"><a href="#解决方案：-11" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合临近的相关事件定位具体的驱逐原因。对于已经被驱逐的Pod实例，可以通过kubectl get po 进行查看和手动清理</p>
+<h1 id="K8S-Pod-Pending"><a href="#K8S-Pod-Pending" class="headerlink" title="K8S Pod Pending"></a>K8S Pod Pending</h1><h2 id="原因描述：-12"><a href="#原因描述：-12" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示集群调度Pod被挂起，一般是由于节点资源不足以调度容器或者Volume挂载失败（比如持久化存储卷找不到）或者其他原因导致。</p>
+<h2 id="解决方案：-12"><a href="#解决方案：-12" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合临近的相关事件定位具体的Pod挂起原因</p>
+<h1 id="Readiness-probe-failed"><a href="#Readiness-probe-failed" class="headerlink" title="Readiness probe failed"></a>Readiness probe failed</h1><h2 id="原因描述：-13"><a href="#原因描述：-13" class="headerlink" title="原因描述："></a>原因描述：</h2><p>由于应用就绪探针失败而引发的异常事件。应用就绪探针失败会导致相应容器的流量被摘除，例如被动从SLB摘掉该容器的流量入口。</p>
+<h2 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h2><p>需要结合应用就绪探针的配置，定位应用就绪探针失败的原因。</p>
+<h1 id="Liveness-probe-failed"><a href="#Liveness-probe-failed" class="headerlink" title="Liveness probe failed"></a>Liveness probe failed</h1><h2 id="原因描述：-14"><a href="#原因描述：-14" class="headerlink" title="原因描述："></a>原因描述：</h2><p>由于应用存活探针失败而引发的异常事件。该事件可能会导致后续达到一定阈值之后，容器被动重启。具体要看应用就绪探针的配置。</p>
+<h2 id="解决方案：-13"><a href="#解决方案：-13" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要结合应用存活探针的配置，定位探针检查失败的原因。</p>
+<h1 id="Container-runtime-did-not-kill-the-pod-within-specified-grace-period"><a href="#Container-runtime-did-not-kill-the-pod-within-specified-grace-period" class="headerlink" title="Container runtime did not kill the pod within specified grace period."></a>Container runtime did not kill the pod within specified grace period.</h1><h2 id="原因描述：-15"><a href="#原因描述：-15" class="headerlink" title="原因描述："></a>原因描述：</h2><p>此事件表示容器没有在优雅下线的时间段内正常退出。比如如果配置了优雅下线脚本，脚本执行时长需要60s，而优雅下线时间（默认为30s）配置为30s。就会在容器下线期间触发这个事件。</p>
+<h2 id="解决方案：-14"><a href="#解决方案：-14" class="headerlink" title="解决方案："></a>解决方案：</h2><p>调整优雅下线探针的配置，或者优雅下线时间的配置。</p>
+<h1 id="Back-off-restarting-failed-container"><a href="#Back-off-restarting-failed-container" class="headerlink" title="Back-off restarting failed container"></a>Back-off restarting failed container</h1><h2 id="原因描述：-16"><a href="#原因描述：-16" class="headerlink" title="原因描述："></a>原因描述：</h2><p>此事件表示容器启动失败，而被再次拉起尝试启动。通常常见与应用发布过程中的容器启动失败。具体的原因常见为镜像拉取失败，或者容器启动失败（容器没有打到running状态）。</p>
+<h2 id="解决方案：-15"><a href="#解决方案：-15" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要在发布页查看容器启动日志或者调度日志，进一步定位容器启动失败的原因。</p>
+<h1 id="The-node-was-low-on-resource-xxxx"><a href="#The-node-was-low-on-resource-xxxx" class="headerlink" title="The node was low on resource: xxxx"></a>The node was low on resource: xxxx</h1><h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2020-07-21 10:24:43.000 [Event] Type: Warning, Reason: Evicted, Message: The node was low on resource: ephemeral-storage. </span><br></pre></td></tr></table></figure>
+<h2 id="原因描述：-17"><a href="#原因描述：-17" class="headerlink" title="原因描述："></a>原因描述：</h2><p>该事件表示Pod由于节点上的异常情况(资源不足)被驱逐</p>
+<h2 id="解决方案：-16"><a href="#解决方案：-16" class="headerlink" title="解决方案："></a>解决方案：</h2><p>需要看具体哪类资源不足，例如示例中的ephemeral-storage，表示集群节点临时存储空间不足，一般是由于磁盘使用量较大导致。请参考文档上方解决方案</p>
+<p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
+<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。<br>可以对系统盘进行扩容，扩大磁盘空间。</p>
+<h1 id="集群DNS性能瓶颈"><a href="#集群DNS性能瓶颈" class="headerlink" title="集群DNS性能瓶颈"></a>集群DNS性能瓶颈</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>集群中的容器实例，DNS解析均依赖集群内的DNS组件，应用中业务请求的地址都需要经过集群DNS组件。例如，代码中访问RDS、REDIS、TOP api等。如果集群dns性能不足，会出现业务请求失败的问题。</p>
+<p>集群DNS组件：</p>
+<p>默认已安装的集群组件为coredns，副本数为2<br>可选的高性能组件为localdns</p>
+<h2 id="是否有性能瓶颈"><a href="#是否有性能瓶颈" class="headerlink" title="是否有性能瓶颈"></a>是否有性能瓶颈</h2><p>应用有大量DNS请求的场景(比如连接rds，凡是涉及到域名地址解析的)<br>PHP等语言自身没有连接池特性的，或者应用自身没有DNS缓存的<br>偶尔出现域名地址无法解析错误的</p>
+<h2 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h2><p>一、集群默认已安装的coredns组件，进行扩容。扩容比例为1&#x2F;5的节点数(如15台ecs，那么coredns数量为3)</p>
+<p>二、为集群安装更高性能的localdns组件(该组件为daemonset，会在每个ECS节点起一个本地缓存)</p>
+<p>一般来说，如果业务量小，扩容下coredns就足够了；如果业务量大(域名地址解析QPS高，比如访问RDS)，特别是php等不带连接池的开发语言，建议直接上localdns。如果是java等配置了连接池的应用，可以先扩容coredns观察，如果仍然有解析问题，再上localdns。</p>
+<h1 id="localdns缓存原理"><a href="#localdns缓存原理" class="headerlink" title="localdns缓存原理"></a>localdns缓存原理</h1><p>NodeLocalDNS 是一个 DaemonSet，会在Kubernetes集群的每个节点上运行一个专门处理 DNS 查询请求的 Pod，该 Pod 会将集群内部域名查询请求发往 CoreDNS；将集群外部请求直接发往外部域名解析服务器。同时能够Cache所有请求。可以被看作是节点级别的高效DNS 缓存，能够大幅提高集群整体 DNS 查询的 QPS。NodeLocalDNS 会在集群的每个节点上创建一个专用的虚拟接口（接口绑定的 IP 需要通过 local_dns_ip 这个值来指定），节点上所有发往该 IP 的 DNS 查询请求都会被拦截到 NodeLocalDNS Pod 内进行处理；通过集群原有的 kube-dns 服务（该服务的 clusterIP 值需要通过kube_dns_ip来指定）来与CoreDNS进行通信。<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/image.png" alt="image"></p>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
       </tags>
   </entry>
   <entry>
