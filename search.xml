@@ -270,140 +270,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Helm进阶使用</title>
-    <url>/2022/12/29/helm%E8%BF%9B%E9%98%B6%E4%BD%BF%E7%94%A8/</url>
-    <content><![CDATA[<h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>Helm 针对 Kubernetes 的 Helm 包管理器。Helm 的一般操作：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 搜索 chart</span></span><br><span class="line">helm search: </span><br><span class="line"><span class="comment"># 下载 chart 到本地目录查看</span></span><br><span class="line">helm pull:    </span><br><span class="line"><span class="comment"># 上传 chart 到 Kubernetes</span></span><br><span class="line">helm install: </span><br><span class="line"><span class="comment"># 列出已发布的 chart</span></span><br><span class="line">helm list:      </span><br><span class="line"><span class="comment"># 查看帮助</span></span><br><span class="line">helm --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909090236244.png" alt="图片"><br>官方文档：<a href="https://helm.sh/zh/docs/helm/helm/">https://helm.sh/zh/docs/helm/helm/</a><br><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">Helm 架构和基础语法讲解可以参考这篇文章</a></p>
-<h2 id="二、Helm-仓库（helm-repo）"><a href="#二、Helm-仓库（helm-repo）" class="headerlink" title="二、Helm 仓库（helm repo）"></a>二、Helm 仓库（helm repo）</h2><blockquote>
-<p><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">添加、列出、删除、更新和索引 chart 仓库。</a></p>
-</blockquote>
-<h3 id="1）添加-chart-仓库"><a href="#1）添加-chart-仓库" class="headerlink" title="1）添加 chart 仓库"></a>1）添加 chart 仓库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add bitnami https://charts.bitnami.com/bitnami</span><br></pre></td></tr></table></figure>
-
-<h3 id="2）列出已添加的仓库"><a href="#2）列出已添加的仓库" class="headerlink" title="2）列出已添加的仓库"></a>2）列出已添加的仓库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
-
-<h3 id="3）从-chart-仓库中更新本地可用-chart-的信息"><a href="#3）从-chart-仓库中更新本地可用-chart-的信息" class="headerlink" title="3）从 chart 仓库中更新本地可用 chart 的信息"></a>3）从 chart 仓库中更新本地可用 chart 的信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo update bitnami</span><br></pre></td></tr></table></figure>
-
-<h3 id="4）删除一个或多个仓库"><a href="#4）删除一个或多个仓库" class="headerlink" title="4）删除一个或多个仓库"></a>4）删除一个或多个仓库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo remove bitnami</span><br></pre></td></tr></table></figure>
-
-<h2 id="三、创建-chart（helm-create）"><a href="#三、创建-chart（helm-create）" class="headerlink" title="三、创建 chart（helm create）"></a>三、创建 chart（helm create）</h2><blockquote>
-<p>使用给定名称创建新的 chart，该命令创建 chart 目录和 chart 用到的公共文件目录。</p>
-</blockquote>
-<p>比如’helm create foo’会创建一个目录结构看起来像这样：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm create foo</span><br><span class="line">foo/</span><br><span class="line">├── .helmignore   <span class="comment"># Contains patterns to ignore when packaging Helm charts.</span></span><br><span class="line">├── Chart.yaml    <span class="comment"># Information about your chart</span></span><br><span class="line">├── values.yaml   <span class="comment"># The default values for your templates</span></span><br><span class="line">├── charts/       <span class="comment"># Charts that this chart depends on</span></span><br><span class="line">└── templates/    <span class="comment"># The template files</span></span><br><span class="line">    └── tests/    <span class="comment"># The test files</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="四、chart-包安装（helm-install）"><a href="#四、chart-包安装（helm-install）" class="headerlink" title="四、chart 包安装（helm install）"></a>四、chart 包安装（helm install）</h2><blockquote>
-<p>该命令用于<strong>安装 chart 包</strong>。安装参数必须是 chart 的引用，一个<strong>打包后的 chart 路径</strong>，<strong>未打包的 chart 目录或者是一个 URL</strong>。</p>
-</blockquote>
-<p>要重写 chart 中的值，使用<code>--values</code>参数传递一个文件或者使用<code>--set</code>参数在命令行传递配置，强制使用字符串要用<code>--set-string</code>。当值本身对于命令行太长或者是动态生成的时候，可以使用<code>--set-file</code>设置独立的值。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm install -f myvalues.yaml myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --<span class="built_in">set</span> name=prod myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --set-string long_int=1234567890 myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --set-file my_script=dothings.sh myredis ./redis</span><br></pre></td></tr></table></figure>
-
-<h2 id="五、管理-chart-依赖（helm-dependency）"><a href="#五、管理-chart-依赖（helm-dependency）" class="headerlink" title="五、管理 chart 依赖（helm dependency）"></a>五、管理 chart 依赖（helm dependency）</h2><ul>
-<li><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">Helm chart 将依赖存储在’charts&#x2F;‘。对于 chart 开发者，管理依赖比声明了所有依赖的’Chart.yaml’文件更容易。</a></li>
-<li><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">依赖命令对该文件进行操作，使得存储在’charts&#x2F;‘目录的需要的依赖和实际依赖之间同步变得很容易。</a></li>
-</ul>
-<p><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">比如 Chart.yaml 声明了两个依赖：</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Chart.yaml</span></span><br><span class="line">dependencies:</span><br><span class="line">- name: nginx</span><br><span class="line">    version: <span class="string">&quot;1.2.3&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;https://example.com/charts&quot;</span></span><br><span class="line">- name: memcached</span><br><span class="line">    version: <span class="string">&quot;3.2.1&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;https://another.example.com/charts&quot;</span></span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>name</code> 是 chart 名称，<strong>必须匹配<code>Chart.yaml</code>文件中名称</strong>。</li>
-<li><code>version</code> 字段应该包含一个语义化的版本或版本范围。</li>
-</ul>
-<p>从 2.2.0 开始，仓库可以被定义为本地存储的依赖 chart 的目录路径。路径应该以”file:&#x2F;&#x2F;“前缀开头，比如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Chart.yaml</span></span><br><span class="line">dependencies:</span><br><span class="line">- name: nginx</span><br><span class="line">    version: <span class="string">&quot;1.2.3&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;file://../dependency_chart/nginx&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="1）列举指定-chart-的依赖"><a href="#1）列举指定-chart-的依赖" class="headerlink" title="1）列举指定 chart 的依赖"></a>1）列举指定 chart 的依赖</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm dependency list CHART</span></span><br><span class="line">helm dependency list wordpress</span><br></pre></td></tr></table></figure>
-
-<h3 id="2）依赖升级"><a href="#2）依赖升级" class="headerlink" title="2）依赖升级"></a>2）依赖升级</h3><p>基于 Chart.yaml 内容升级 charts&#x2F;</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm dependency update CHART [flags]</span></span><br><span class="line">helm dependency update wordpress</span><br></pre></td></tr></table></figure>
-
-<h2 id="六、Helm-列表（helm-list）"><a href="#六、Helm-列表（helm-list）" class="headerlink" title="六、Helm 列表（helm list）"></a>六、Helm 列表（helm list）</h2><ul>
-<li><strong>列举发布版本</strong>，该命令会列举出指定命名空间的所有发布版本，(如果没有指定命名空间，会使用当前命名空间)。</li>
-<li><strong>默认</strong>情况下，只会<strong>列举出部署的或者失败的发布</strong>，像<code>--uninstalled</code>或者<code>--all</code>会修改默认行为。这些参数可以组合使用：<code>--uninstalled --failed</code>。</li>
-<li>默认情况下，最多返回<code>256</code>项，使用<code>--max</code>限制数量，<code>--max</code>设置为<strong>0 不会返回所有结果</strong>，而是返回服务器默认值，可能要比 256 更多。同时使用<code>--max</code>和<code>--offset</code>参数可以<strong>翻页</strong>显示。</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -A显示所有</span></span><br><span class="line">helm list --max=10 --offset=2 -A</span><br></pre></td></tr></table></figure>
-
-<h2 id="七、升级版本（helm-upgrade）"><a href="#七、升级版本（helm-upgrade）" class="headerlink" title="七、升级版本（helm upgrade）"></a>七、升级版本（helm upgrade）</h2><blockquote>
-<p>该命令将发布升级到新版的 chart。升级参数必须是发布和 chart。chart 参数可以是：<code>chart引用(&#39;example/mariadb&#39;)</code>，<code>chart目录路径</code>，打包的 chart 或者完整 URL。对于 chart 引用，除非使用’–version’参数指定，否则会使用最新版本。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm upgrade --<span class="built_in">set</span> foo=bar --<span class="built_in">set</span> foo=newbar redis ./redis</span><br></pre></td></tr></table></figure>
-
-<h2 id="八、发布历史（helm-history）"><a href="#八、发布历史（helm-history）" class="headerlink" title="八、发布历史（helm history）"></a>八、发布历史（helm history）</h2><blockquote>
-<p>检索发布历史，打印给定版本的历史修订。<strong>默认</strong>会返回最大的<code>256</code>个历史版本。设置<code>--max</code>配置返回历史列表的最大长度。</p>
-</blockquote>
-<p>历史发布集合会被打印成格式化的表格，例如：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm <span class="built_in">history</span> angry-bird</span><br><span class="line">REVISION    UPDATED                     STATUS          CHART             APP VERSION     DESCRIPTION</span><br><span class="line">1           Mon Oct 3 10:15:13 2016     superseded      alpine-0.1.0      1.0             Initial install</span><br><span class="line">2           Mon Oct 3 10:15:13 2016     superseded      alpine-0.1.0      1.0             Upgraded successfully</span><br><span class="line">3           Mon Oct 3 10:15:13 2016     superseded      alpine-0.1.0      1.0             Rolled back to 2</span><br><span class="line">4           Mon Oct 3 10:15:13 2016     deployed        alpine-0.1.0      1.0             Upgraded successfully</span><br></pre></td></tr></table></figure>
-
-<h2 id="九、回滚版本（helm-rollback）"><a href="#九、回滚版本（helm-rollback）" class="headerlink" title="九、回滚版本（helm rollback）"></a>九、回滚版本（helm rollback）</h2><blockquote>
-<p>回滚发布到上一个版本，回滚命令的第一个参数是发布的名称，第二是修订（版本）号，如果省略此参数，会回滚到上一个版本。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm rollback &lt;RELEASE&gt; [REVISION] [flags]</span></span><br><span class="line"><span class="comment"># 先查看历史版本</span></span><br><span class="line">helm <span class="built_in">history</span> myharbor -n harbor</span><br><span class="line"><span class="comment"># 不指定版本就回退上个版本</span></span><br><span class="line">helm rollback myharbor 1 -n harbor</span><br><span class="line">helm rollback myharbor -n harbor</span><br></pre></td></tr></table></figure>
-
-<h2 id="十、展示-chart（helm-show）"><a href="#十、展示-chart（helm-show）" class="headerlink" title="十、展示 chart（helm show）"></a>十、展示 chart（helm show）</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm show all [CHART] [flags]</span></span><br><span class="line"><span class="comment"># 该命令检查chart(目录、文件或URL)并显示所有的内容（values.yaml, Chart.yaml, README）</span></span><br><span class="line">helm show all mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># helm show values [CHART] [flags]</span></span><br><span class="line"><span class="comment"># 该命令检查chart(目录、文件或URL)并显示values.yaml文件的内容</span></span><br><span class="line">helm show values mysql</span><br></pre></td></tr></table></figure>
-
-<h2 id="十一、拉取-chart（helm-pull）"><a href="#十一、拉取-chart（helm-pull）" class="headerlink" title="十一、拉取 chart（helm pull）"></a>十一、拉取 chart（helm pull）</h2><p>从仓库下载并（可选）在本地目录解压。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm pull [chart URL | repo/chartname] [...] [flags]</span></span><br><span class="line"><span class="comment"># 仅下载</span></span><br><span class="line">helm pull bitnami/redis</span><br><span class="line"><span class="comment"># 下载并解压到当前目录</span></span><br><span class="line">helm pull bitnami/redis --untar</span><br></pre></td></tr></table></figure>
-
-<h2 id="十二、Helm-打包（helm-package）"><a href="#十二、Helm-打包（helm-package）" class="headerlink" title="十二、Helm 打包（helm package）"></a>十二、Helm 打包（helm package）</h2><ul>
-<li><strong>将 chart 目录打包到 chart 归档中</strong>，该命令将 chart 打包成一个 chart 版本包文件。如果给定路径，就会在该路径中查找 chart（必须包含 Chart.yaml 文件）然后将目录打包。</li>
-<li>要签名一个 chart，使用<code>--sign</code>参数，在大多数场景中，也要提供<code>--keyring path/to/secret/keys</code>和<code>--key keyname</code>。</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm package mysql/</span><br><span class="line"><span class="comment"># Successfully packaged chart and saved it to: /opt/k8s/helm/mysql-9.3.1.tgz</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>如果<strong>想忽略 helm 中的文件</strong>，可以在<code>.helmignore</code>进行匹配，该.helmignore 文件支持 Unix shell 全局匹配，相对路径匹配和否定（以！前缀反向匹配）。每行仅考虑一种模式。示例如下：</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># .helmignore</span></span><br><span class="line">.git</span><br><span class="line">*/temp*</span><br><span class="line">*/*/temp*</span><br><span class="line">temp?</span><br></pre></td></tr></table></figure>
-
-<h2 id="十三、推送-chart-到-harbor（helm-cm-push）"><a href="#十三、推送-chart-到-harbor（helm-cm-push）" class="headerlink" title="十三、推送 chart 到 harbor（helm cm-push）"></a>十三、推送 chart 到 harbor（helm cm-push）</h2><blockquote>
-<p>将 chart 推送到远程。</p>
-</blockquote>
-<h3 id="1）在线安装"><a href="#1）在线安装" class="headerlink" title="1）在线安装"></a>1）在线安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm plugin install https://github.com/chartmuseum/helm-push</span><br></pre></td></tr></table></figure>
-
-<h3 id="2）离线安装"><a href="#2）离线安装" class="headerlink" title="2）离线安装"></a>2）离线安装</h3><p>下载地址：<a href="https://github.com/chartmuseum/helm-push/tags">https://github.com/chartmuseum/helm-push/tags</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1、下载安装包</span></span><br><span class="line">wget https://github.com/chartmuseum/helm-push/releases/tag/v0.10.3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2、查看helm的plugin路径：helm env</span></span><br><span class="line">helm <span class="built_in">env</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3、在该路径下创建helm-push文件夹，并将安装包拷贝到该文件夹下解压即可</span></span><br><span class="line"><span class="built_in">mkdir</span> /root/.local/share/helm/plugins/helm-push</span><br><span class="line"></span><br><span class="line">wget https://github.com/chartmuseum/helm-push/releases/download/v0.10.3/helm-push_0.10.3_linux_amd64.tar.gz</span><br><span class="line"></span><br><span class="line">tar zxvf /root/.local/share/helm/plugins/helm-push/helm-push_0.10.3_linux_amd64.tar.gz -C /root/.local/share/helm/plugins/helm-push</span><br></pre></td></tr></table></figure>
-
-<p>查看插件</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm plugin list</span><br></pre></td></tr></table></figure>
-
-<h3 id="3）helm-增加-harbor-repo"><a href="#3）helm-增加-harbor-repo" class="headerlink" title="3）helm 增加 harbor repo"></a>3）helm 增加 harbor repo</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># chartrepo，固定参数，bigdata自定义项目</span></span><br><span class="line">helm repo add local-harbor --username=admin --password=Harbor12345 https://myharbor.com/chartrepo/bigdata/ --ca-file /opt/k8s/helm/ca.crt</span><br></pre></td></tr></table></figure>
-
-<p>证书直接在 harbor 上下载<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720442.png" alt="图片"></p>
-<h3 id="4）示例演示"><a href="#4）示例演示" class="headerlink" title="4）示例演示"></a>4）示例演示</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看帮助</span></span><br><span class="line">helm cm-push --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送，接【目录】</span></span><br><span class="line">helm cm-push mysql/ local-harbor --ca-file /opt/k8s/helm/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送，接【压缩包】</span></span><br><span class="line">helm cm-push wordpress-15.1.5.tgz local-harbor --ca-file /opt/k8s/helm/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送，指定版本，--version</span></span><br><span class="line">helm cm-push mychart/ --version=<span class="string">&quot;1.2.3&quot;</span> local-harbor --ca-file /opt/k8s/helm/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制推送，--force</span></span><br><span class="line">helm cm-push --force mychart-0.3.2.tgz local-harbor</span><br></pre></td></tr></table></figure>
-
-<p>查看<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909090058216.png" alt="图片"></p>
-<h2 id="十四、搜索-hub（helm-search-hub）"><a href="#十四、搜索-hub（helm-search-hub）" class="headerlink" title="十四、搜索 hub（helm search hub）"></a>十四、搜索 hub（helm search hub）</h2><p>在Artifact Hub或自己的 hub 实例中搜索 chart。</p>
-<p><code>Artifact Hub</code> 是<strong>基于 web 页面的应用</strong>，支持 CNCF 项目的查找、安装和发布包及配置项，包括了公开发布的 Helm chart。它是 CNCF 的沙盒项目。可以访问<a href="https://artifacthub.io/">https://artifacthub.io/</a></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 不带参数，列出所有</span></span><br><span class="line">helm search hub</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定chart</span></span><br><span class="line">helm search hub mysql</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720501.png" alt="图片"></p>
-<h2 id="十五、搜索仓库（helm-search-repo）"><a href="#十五、搜索仓库（helm-search-repo）" class="headerlink" title="十五、搜索仓库（helm search repo）"></a>十五、搜索仓库（helm search repo）</h2><blockquote>
-<p>用 chart 中关键字搜索仓库，搜索会读取系统上配置的所有仓库，并查找匹配。搜索这些仓库会使用存储在系统中的元数据。它会展示找到<strong>最新稳定版本的 chart</strong>。如果指定了<code>--devel</code>参数，输出会包括预发布版本。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Search for stable release versions matching the keyword &quot;nginx&quot;</span></span><br><span class="line">$ helm search repo nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># Search for release versions matching the keyword &quot;nginx&quot;, including pre-release versions</span></span><br><span class="line">$ helm search repo nginx --devel</span><br><span class="line"></span><br><span class="line"><span class="comment"># Search for the latest stable release for nginx-ingress with a major version of 1</span></span><br><span class="line">$ helm search repo nginx-ingress --version ^1.0.0</span><br></pre></td></tr></table></figure>
-
-<h2 id="十六、验证-chart（helm-lint）"><a href="#十六、验证-chart（helm-lint）" class="headerlink" title="十六、验证 chart（helm lint）"></a>十六、验证 chart（helm lint）</h2><blockquote>
-<p>该命令使用一个 chart 路径并运行一系列的<strong>测试来验证 chart 的格式是否正确</strong>。如果遇到引起 chart 安装失败的情况，会触发[ERROR]信息，如果遇到违反惯例或建议的问题，会触发[WARNING]。</p>
-</blockquote>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm lint PATH [flags]</span></span><br><span class="line">helm lint ./mysql</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720509.png" alt="图片"><br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212291321175.png" alt="图片"></p>
-<h2 id="十七、常用命令总结"><a href="#十七、常用命令总结" class="headerlink" title="十七、常用命令总结"></a>十七、常用命令总结</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version                            // 查看helm版本</span><br><span class="line">helm create xxx                         // 创建一个xxx charts</span><br><span class="line">helm lint ./xxx                         // 检查包的格式或信息是否有问题</span><br><span class="line">helm install xxx1 ./xxx                 // 部署安装xxx，设置名称为xxx1</span><br><span class="line">helm list                               // 列出已经部署的charts</span><br><span class="line">helm <span class="built_in">history</span>                            // 发布历史</span><br><span class="line">helm upgrade                            // 更新版本</span><br><span class="line">helm rollback                           // 回滚版本</span><br><span class="line">helm package ./xxx                      // 打包charts</span><br><span class="line">helm repo add --username admin --password password myharbor xxx  // 增加repo</span><br><span class="line">helm uninstall xxx1                     // 卸载删除xxx1</span><br><span class="line">helm pull                                // 拉取chart包</span><br><span class="line">helm cm-push                            // 推送chart包</span><br><span class="line">helm repo update                        // 更新仓库资源</span><br><span class="line">helm search hub                         // 从 Artifact Hub 中查找并列出 helm charts。Artifact Hub中存放了大量不同的仓库</span><br><span class="line">helm search repo                        // 从你添加（使用 helm repo add）到本地 helm 客户端中的仓库中进行查找。该命令基于本地数据进行搜索，无需连接互联网</span><br></pre></td></tr></table></figure>
-
-<p>Helm 常用命令（chart 安装、升级、回滚、卸载等操作）就先到这里，</p>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-        <category>Helm</category>
-      </categories>
-      <tags>
-        <tag>kubernetes</tag>
-        <tag>Helm</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Helm基础使用及语法</title>
     <url>/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/</url>
     <content><![CDATA[<h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><blockquote>
@@ -1214,117 +1080,157 @@ To learn more about the release, try:
       </tags>
   </entry>
   <entry>
-    <title>kubelet垃圾回收机制</title>
-    <url>/2022/12/29/kubelet%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111058394.jpeg" alt="图片"></p>
-<h3 id="一、Tips"><a href="#一、Tips" class="headerlink" title="一、Tips"></a><strong>一、Tips</strong></h3><ol>
-<li>Kubernetes的垃圾回收由kubelet进行管理，每分钟会查询清理一次容器，每五分钟查询清理一次镜像。在kubelet刚启动时并不会立即进行GC，即第一次进行容器回收为kubelet启动一分钟后，第一次进行镜像回收为kubelet启动五分钟后。</li>
-<li>不推荐使用其它管理工具或手工进行容器和镜像的清理，因为kubelet需要通过容器来判断pod的运行状态，如果使用其它方式清除容器有可能影响kubelet的正常工作。</li>
-<li>镜像的回收针对node结点上由docker管理的所有镜像，无论该镜像是否是在创建pod时pull的。而容器的回收策略只应用于通过kubelet管理的容器。</li>
-<li>Kubernetes通过kubelet集成的cadvisor进行镜像的回收，有两个参数可以设置：<code>--image-gc-high-threshold</code>和<code>--image-gc-low-threshold</code>。当用于存储镜像的磁盘使用率达到百分之–image-gc-high-threshold时将触发镜像回收，删除最近最久未使用（LRU，Least Recently Used）的镜像直到磁盘使用率降为百分之<code>--image-gc-low-threshold</code>或无镜像可删为止。默认<code>--image-gc-high-threshold</code>为90，&#96;&#96;–image-gc-low-threshold&#96;为80。</li>
-<li>容器的回收有三个参数可设置：<code>--minimum-container-ttl-duration</code>，<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>。从容器停止运行时起经过<code>--minimum-container-ttl-duration</code>时间后，该容器标记为已过期将来可以被回收（只是标记，不是回收），默认值为1m0s。一般情况下每个pod最多可以保留<code>--maximum-dead-containers-per-container</code>个已停止运行的容器集，默认值为2。整个node节点可以保留<code>--maximum-dead-containers</code>个已停止运行的容器，默认值为100。</li>
-<li>如果需要关闭容器的垃圾回收策略，可以将<code>--minimum-container-ttl-duration</code>设为0（表示无限制），<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>设为负数。</li>
-<li><code>--minimum-container-ttl-duration</code>的值可以使用单位后缀，如h表示小时，m表示分钟，s表示秒。</li>
-<li>当<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>冲突时，&#96;&#96;–maximum-dead-containers&#96;优先考虑。</li>
-<li>对于那些由kubelet创建的但由于某些原因导致无名字（）的容器，会在到达GC时间点时被删除。</li>
-<li>回收容器时，按创建时间排序，优先删除那些创建时间最早的容器。</li>
-<li>到达GC时间点时，具体的GC过程如下：1）遍历所有pod，使其满足<code>--maximum-dead-containers-per-container</code>；2）经过上一步后如果不满足<code>--maximum-dead-containers</code>，计算值<code>X=（--maximum-dead-containers）/（pod总数）</code>，再遍历所有pod，使其满足已停止运行的容器集个数不大于X且至少为1；3）经过以上两步后如果还不满足<code>--maximum-dead-containers</code>，则对所有已停止的容器排序，优先删除创建时间最早的容器直到满足<code>--maximum-dead-containers</code>为止。</li>
-<li>当某个镜像重新pull或启动某个pod用到该镜像时，该镜像的最近使用时间都会被更新。</li>
-<li>Kubernetes的垃圾回收在1.1.4版本开始才渐渐完善，之前的版本存在比较多bug甚至不能发挥作用。</li>
-<li>关于容器的回收需要特别注意pod的概念，比如，通过同一个yaml文件create一个pod，再delete这个pod，然后再create这个pod，此时之前的那个pod对应的容器并不会作为新创建pod的已停止容器集，因为这两个pod虽然同名，但已经不是同一个pod了。只有同一个pod中在运行过程中由于意外或其它情况停止的容器才算是这个pod的已停止容器集。</li>
-</ol>
-<h3 id="二、Experiments"><a href="#二、Experiments" class="headerlink" title="二、Experiments"></a><strong>二、Experiments</strong></h3><ol>
-<li>镜像回收（使用docker默认 <code>--graph</code> 参数：<code>/var/lib/docker</code>）</li>
-</ol>
-<p>结点上运行的docker设置的参数 <code>--graph</code> 使用默认的<code>/var/lib/docker</code>，指向&#x2F;var文件系统，通过df -lh查看目前 &#x2F;var 磁盘使用率为30%，启动kubelet设置镜像回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=40 --image-gc-low-threshold=35</span><br></pre></td></tr></table></figure>
+    <title>Helm进阶使用</title>
+    <url>/2022/12/29/helm%E8%BF%9B%E9%98%B6%E4%BD%BF%E7%94%A8/</url>
+    <content><![CDATA[<h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>Helm 针对 Kubernetes 的 Helm 包管理器。Helm 的一般操作：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 搜索 chart</span></span><br><span class="line">helm search: </span><br><span class="line"><span class="comment"># 下载 chart 到本地目录查看</span></span><br><span class="line">helm pull:    </span><br><span class="line"><span class="comment"># 上传 chart 到 Kubernetes</span></span><br><span class="line">helm install: </span><br><span class="line"><span class="comment"># 列出已发布的 chart</span></span><br><span class="line">helm list:      </span><br><span class="line"><span class="comment"># 查看帮助</span></span><br><span class="line">helm --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
 
-<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images（pause镜像是启动pod必需的）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909090236244.png" alt="图片"><br>官方文档：<a href="https://helm.sh/zh/docs/helm/helm/">https://helm.sh/zh/docs/helm/helm/</a><br><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">Helm 架构和基础语法讲解可以参考这篇文章</a></p>
+<h2 id="二、Helm-仓库（helm-repo）"><a href="#二、Helm-仓库（helm-repo）" class="headerlink" title="二、Helm 仓库（helm repo）"></a>二、Helm 仓库（helm repo）</h2><blockquote>
+<p><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">添加、列出、删除、更新和索引 chart 仓库。</a></p>
+</blockquote>
+<h3 id="1）添加-chart-仓库"><a href="#1）添加-chart-仓库" class="headerlink" title="1）添加 chart 仓库"></a>1）添加 chart 仓库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo add bitnami https://charts.bitnami.com/bitnami</span><br></pre></td></tr></table></figure>
 
-<p>此时查看&#x2F;var磁盘使用率达到了41%，然后将使用<code>10.11.150.76:5000/centos:7</code>镜像的pod删除，等待GC的镜像回收时间点。然而五分钟过去了，什么事情也没有发生&#x3D;_&#x3D;!!。还记得 docker rmi 镜像时有个前提条件是什么吗？没错，要求使用该镜像的容器都已经被删除了才可以。前面删除pod只是停止了容器，并没有将容器删除。因此手工将对应的容器docker rm掉，再等待五分钟后，可以看到镜像已经被删除回收了：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+<h3 id="2）列出已添加的仓库"><a href="#2）列出已添加的仓库" class="headerlink" title="2）列出已添加的仓库"></a>2）列出已添加的仓库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo list</span><br></pre></td></tr></table></figure>
+
+<h3 id="3）从-chart-仓库中更新本地可用-chart-的信息"><a href="#3）从-chart-仓库中更新本地可用-chart-的信息" class="headerlink" title="3）从 chart 仓库中更新本地可用 chart 的信息"></a>3）从 chart 仓库中更新本地可用 chart 的信息</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo update bitnami</span><br></pre></td></tr></table></figure>
+
+<h3 id="4）删除一个或多个仓库"><a href="#4）删除一个或多个仓库" class="headerlink" title="4）删除一个或多个仓库"></a>4）删除一个或多个仓库</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm repo remove bitnami</span><br></pre></td></tr></table></figure>
+
+<h2 id="三、创建-chart（helm-create）"><a href="#三、创建-chart（helm-create）" class="headerlink" title="三、创建 chart（helm create）"></a>三、创建 chart（helm create）</h2><blockquote>
+<p>使用给定名称创建新的 chart，该命令创建 chart 目录和 chart 用到的公共文件目录。</p>
+</blockquote>
+<p>比如’helm create foo’会创建一个目录结构看起来像这样：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm create foo</span><br><span class="line">foo/</span><br><span class="line">├── .helmignore   <span class="comment"># Contains patterns to ignore when packaging Helm charts.</span></span><br><span class="line">├── Chart.yaml    <span class="comment"># Information about your chart</span></span><br><span class="line">├── values.yaml   <span class="comment"># The default values for your templates</span></span><br><span class="line">├── charts/       <span class="comment"># Charts that this chart depends on</span></span><br><span class="line">└── templates/    <span class="comment"># The template files</span></span><br><span class="line">    └── tests/    <span class="comment"># The test files</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="四、chart-包安装（helm-install）"><a href="#四、chart-包安装（helm-install）" class="headerlink" title="四、chart 包安装（helm install）"></a>四、chart 包安装（helm install）</h2><blockquote>
+<p>该命令用于<strong>安装 chart 包</strong>。安装参数必须是 chart 的引用，一个<strong>打包后的 chart 路径</strong>，<strong>未打包的 chart 目录或者是一个 URL</strong>。</p>
+</blockquote>
+<p>要重写 chart 中的值，使用<code>--values</code>参数传递一个文件或者使用<code>--set</code>参数在命令行传递配置，强制使用字符串要用<code>--set-string</code>。当值本身对于命令行太长或者是动态生成的时候，可以使用<code>--set-file</code>设置独立的值。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm install -f myvalues.yaml myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --<span class="built_in">set</span> name=prod myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --set-string long_int=1234567890 myredis ./redis</span><br><span class="line"></span><br><span class="line">helm install --set-file my_script=dothings.sh myredis ./redis</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、管理-chart-依赖（helm-dependency）"><a href="#五、管理-chart-依赖（helm-dependency）" class="headerlink" title="五、管理 chart 依赖（helm dependency）"></a>五、管理 chart 依赖（helm dependency）</h2><ul>
+<li><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">Helm chart 将依赖存储在’charts&#x2F;‘。对于 chart 开发者，管理依赖比声明了所有依赖的’Chart.yaml’文件更容易。</a></li>
+<li><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">依赖命令对该文件进行操作，使得存储在’charts&#x2F;‘目录的需要的依赖和实际依赖之间同步变得很容易。</a></li>
+</ul>
+<p><a href="https://blog.kkun.site/2022/12/29/helm%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8%E5%8F%8A%E8%AF%AD%E6%B3%95/">比如 Chart.yaml 声明了两个依赖：</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Chart.yaml</span></span><br><span class="line">dependencies:</span><br><span class="line">- name: nginx</span><br><span class="line">    version: <span class="string">&quot;1.2.3&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;https://example.com/charts&quot;</span></span><br><span class="line">- name: memcached</span><br><span class="line">    version: <span class="string">&quot;3.2.1&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;https://another.example.com/charts&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>name</code> 是 chart 名称，<strong>必须匹配<code>Chart.yaml</code>文件中名称</strong>。</li>
+<li><code>version</code> 字段应该包含一个语义化的版本或版本范围。</li>
+</ul>
+<p>从 2.2.0 开始，仓库可以被定义为本地存储的依赖 chart 的目录路径。路径应该以”file:&#x2F;&#x2F;“前缀开头，比如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Chart.yaml</span></span><br><span class="line">dependencies:</span><br><span class="line">- name: nginx</span><br><span class="line">    version: <span class="string">&quot;1.2.3&quot;</span></span><br><span class="line">    repository: <span class="string">&quot;file://../dependency_chart/nginx&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1）列举指定-chart-的依赖"><a href="#1）列举指定-chart-的依赖" class="headerlink" title="1）列举指定 chart 的依赖"></a>1）列举指定 chart 的依赖</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm dependency list CHART</span></span><br><span class="line">helm dependency list wordpress</span><br></pre></td></tr></table></figure>
+
+<h3 id="2）依赖升级"><a href="#2）依赖升级" class="headerlink" title="2）依赖升级"></a>2）依赖升级</h3><p>基于 Chart.yaml 内容升级 charts&#x2F;</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm dependency update CHART [flags]</span></span><br><span class="line">helm dependency update wordpress</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、Helm-列表（helm-list）"><a href="#六、Helm-列表（helm-list）" class="headerlink" title="六、Helm 列表（helm list）"></a>六、Helm 列表（helm list）</h2><ul>
+<li><strong>列举发布版本</strong>，该命令会列举出指定命名空间的所有发布版本，(如果没有指定命名空间，会使用当前命名空间)。</li>
+<li><strong>默认</strong>情况下，只会<strong>列举出部署的或者失败的发布</strong>，像<code>--uninstalled</code>或者<code>--all</code>会修改默认行为。这些参数可以组合使用：<code>--uninstalled --failed</code>。</li>
+<li>默认情况下，最多返回<code>256</code>项，使用<code>--max</code>限制数量，<code>--max</code>设置为<strong>0 不会返回所有结果</strong>，而是返回服务器默认值，可能要比 256 更多。同时使用<code>--max</code>和<code>--offset</code>参数可以<strong>翻页</strong>显示。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># -A显示所有</span></span><br><span class="line">helm list --max=10 --offset=2 -A</span><br></pre></td></tr></table></figure>
+
+<h2 id="七、升级版本（helm-upgrade）"><a href="#七、升级版本（helm-upgrade）" class="headerlink" title="七、升级版本（helm upgrade）"></a>七、升级版本（helm upgrade）</h2><blockquote>
+<p>该命令将发布升级到新版的 chart。升级参数必须是发布和 chart。chart 参数可以是：<code>chart引用(&#39;example/mariadb&#39;)</code>，<code>chart目录路径</code>，打包的 chart 或者完整 URL。对于 chart 引用，除非使用’–version’参数指定，否则会使用最新版本。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm upgrade --<span class="built_in">set</span> foo=bar --<span class="built_in">set</span> foo=newbar redis ./redis</span><br></pre></td></tr></table></figure>
+
+<h2 id="八、发布历史（helm-history）"><a href="#八、发布历史（helm-history）" class="headerlink" title="八、发布历史（helm history）"></a>八、发布历史（helm history）</h2><blockquote>
+<p>检索发布历史，打印给定版本的历史修订。<strong>默认</strong>会返回最大的<code>256</code>个历史版本。设置<code>--max</code>配置返回历史列表的最大长度。</p>
+</blockquote>
+<p>历史发布集合会被打印成格式化的表格，例如：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ helm <span class="built_in">history</span> angry-bird</span><br><span class="line">REVISION    UPDATED                     STATUS          CHART             APP VERSION     DESCRIPTION</span><br><span class="line">1           Mon Oct 3 10:15:13 2016     superseded      alpine-0.1.0      1.0             Initial install</span><br><span class="line">2           Mon Oct 3 10:15:13 2016     superseded      alpine-0.1.0      1.0             Upgraded successfully</span><br><span class="line">3           Mon Oct 3 10:15:13 2016     superseded      alpine-0.1.0      1.0             Rolled back to 2</span><br><span class="line">4           Mon Oct 3 10:15:13 2016     deployed        alpine-0.1.0      1.0             Upgraded successfully</span><br></pre></td></tr></table></figure>
+
+<h2 id="九、回滚版本（helm-rollback）"><a href="#九、回滚版本（helm-rollback）" class="headerlink" title="九、回滚版本（helm rollback）"></a>九、回滚版本（helm rollback）</h2><blockquote>
+<p>回滚发布到上一个版本，回滚命令的第一个参数是发布的名称，第二是修订（版本）号，如果省略此参数，会回滚到上一个版本。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm rollback &lt;RELEASE&gt; [REVISION] [flags]</span></span><br><span class="line"><span class="comment"># 先查看历史版本</span></span><br><span class="line">helm <span class="built_in">history</span> myharbor -n harbor</span><br><span class="line"><span class="comment"># 不指定版本就回退上个版本</span></span><br><span class="line">helm rollback myharbor 1 -n harbor</span><br><span class="line">helm rollback myharbor -n harbor</span><br></pre></td></tr></table></figure>
+
+<h2 id="十、展示-chart（helm-show）"><a href="#十、展示-chart（helm-show）" class="headerlink" title="十、展示 chart（helm show）"></a>十、展示 chart（helm show）</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm show all [CHART] [flags]</span></span><br><span class="line"><span class="comment"># 该命令检查chart(目录、文件或URL)并显示所有的内容（values.yaml, Chart.yaml, README）</span></span><br><span class="line">helm show all mysql</span><br><span class="line"></span><br><span class="line"><span class="comment"># helm show values [CHART] [flags]</span></span><br><span class="line"><span class="comment"># 该命令检查chart(目录、文件或URL)并显示values.yaml文件的内容</span></span><br><span class="line">helm show values mysql</span><br></pre></td></tr></table></figure>
+
+<h2 id="十一、拉取-chart（helm-pull）"><a href="#十一、拉取-chart（helm-pull）" class="headerlink" title="十一、拉取 chart（helm pull）"></a>十一、拉取 chart（helm pull）</h2><p>从仓库下载并（可选）在本地目录解压。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm pull [chart URL | repo/chartname] [...] [flags]</span></span><br><span class="line"><span class="comment"># 仅下载</span></span><br><span class="line">helm pull bitnami/redis</span><br><span class="line"><span class="comment"># 下载并解压到当前目录</span></span><br><span class="line">helm pull bitnami/redis --untar</span><br></pre></td></tr></table></figure>
+
+<h2 id="十二、Helm-打包（helm-package）"><a href="#十二、Helm-打包（helm-package）" class="headerlink" title="十二、Helm 打包（helm package）"></a>十二、Helm 打包（helm package）</h2><ul>
+<li><strong>将 chart 目录打包到 chart 归档中</strong>，该命令将 chart 打包成一个 chart 版本包文件。如果给定路径，就会在该路径中查找 chart（必须包含 Chart.yaml 文件）然后将目录打包。</li>
+<li>要签名一个 chart，使用<code>--sign</code>参数，在大多数场景中，也要提供<code>--keyring path/to/secret/keys</code>和<code>--key keyname</code>。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm package mysql/</span><br><span class="line"><span class="comment"># Successfully packaged chart and saved it to: /opt/k8s/helm/mysql-9.3.1.tgz</span></span><br></pre></td></tr></table></figure>
 
 <blockquote>
-<p>结论：只有相关联的容器都被停止并删除回收后，才能将Kubernetes的镜像垃圾回收策略应用到该镜像上。</p>
+<p>如果<strong>想忽略 helm 中的文件</strong>，可以在<code>.helmignore</code>进行匹配，该.helmignore 文件支持 Unix shell 全局匹配，相对路径匹配和否定（以！前缀反向匹配）。每行仅考虑一种模式。示例如下：</p>
 </blockquote>
-<ol>
-<li>镜像回收（使用自定义docker <code>--graph</code> 参数：<code>/opt/docker</code>）</li>
-</ol>
-<p>结点上运行的docker设置的参数<code>--graph</code>指向 &#x2F;opt 磁盘，通过 df -lh 查看目前 &#x2F;opt 磁盘使用率为 48% ，启动 kubelet 设置镜像回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=50 --image-gc-low-threshold=40</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># .helmignore</span></span><br><span class="line">.git</span><br><span class="line">*/temp*</span><br><span class="line">*/*/temp*</span><br><span class="line">temp?</span><br></pre></td></tr></table></figure>
 
-<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
-
-<p>此时查看&#x2F;opt磁盘使用率达到了51%，然后将使用10.11.150.76:5000&#x2F;centos:7镜像的pod删除，手工将对应的容器docker rm掉，等待GC的镜像回收时间点。然而五分钟过去了，十分钟过去了，docker images时centos镜像依旧顽固地坚守在阵地。</p>
-<blockquote>
-<p>结论：目前Kubernetes的镜像垃圾回收策略可以在docker  <code>--graph</code> 参数默认为 <code>/var/lib/docker</code> 时正常工作，当 <code>--graph</code> 设置为其它磁盘路径时还存在bug。</p>
+<h2 id="十三、推送-chart-到-harbor（helm-cm-push）"><a href="#十三、推送-chart-到-harbor（helm-cm-push）" class="headerlink" title="十三、推送 chart 到 harbor（helm cm-push）"></a>十三、推送 chart 到 harbor（helm cm-push）</h2><blockquote>
+<p>将 chart 推送到远程。</p>
 </blockquote>
-<p>问题反馈在 Github 的相关 issue 里：<a href="https://github.com/kubernetes/kubernetes/issues/17994">https://github.com/kubernetes/kubernetes/issues/17994</a>，可以继续跟进。</p>
-<p>Append: 根据Github上的反馈，这个bug将在后续版本中解决，目前版本需要让设置了–graph的镜像垃圾回收生效，在启动kubelet时还需要加上参数 <code>--docker-root=&lt;docker --graph参数值&gt;</code>。</p>
-<ol>
-<li>容器回收之 <code>--maximum-dead-containers-per-container</code> 参数</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
+<h3 id="1）在线安装"><a href="#1）在线安装" class="headerlink" title="1）在线安装"></a>1）在线安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm plugin install https://github.com/chartmuseum/helm-push</span><br></pre></td></tr></table></figure>
 
-<p>创建一个只包含一个容器且该容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">2fe969499164        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 2 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_68cc6f03</span><br><span class="line">555b5e7a8550        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         24 seconds ago      Exited (0) 22 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_ad4a5e39</span><br><span class="line">94b30a0b32c2        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         34 seconds ago      Exited (0) 32 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_4027e3e1</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            34 seconds ago      Up 33 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+<h3 id="2）离线安装"><a href="#2）离线安装" class="headerlink" title="2）离线安装"></a>2）离线安装</h3><p>下载地址：<a href="https://github.com/chartmuseum/helm-push/tags">https://github.com/chartmuseum/helm-push/tags</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 1、下载安装包</span></span><br><span class="line">wget https://github.com/chartmuseum/helm-push/releases/tag/v0.10.3</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2、查看helm的plugin路径：helm env</span></span><br><span class="line">helm <span class="built_in">env</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3、在该路径下创建helm-push文件夹，并将安装包拷贝到该文件夹下解压即可</span></span><br><span class="line"><span class="built_in">mkdir</span> /root/.local/share/helm/plugins/helm-push</span><br><span class="line"></span><br><span class="line">wget https://github.com/chartmuseum/helm-push/releases/download/v0.10.3/helm-push_0.10.3_linux_amd64.tar.gz</span><br><span class="line"></span><br><span class="line">tar zxvf /root/.local/share/helm/plugins/helm-push/helm-push_0.10.3_linux_amd64.tar.gz -C /root/.local/share/helm/plugins/helm-push</span><br></pre></td></tr></table></figure>
 
-<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器只剩下一个（pause容器不计算），且先创建的容器被优先删除：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">5aae6157aeff        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         46 seconds ago      Exited (0) 45 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_f126d2a8</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            2 minutes ago       Up 2 minutes                                    k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+<p>查看插件</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm plugin list</span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的<code>--maximum-dead-containers-per-container</code>参数设置可正常工作。</p>
+<h3 id="3）helm-增加-harbor-repo"><a href="#3）helm-增加-harbor-repo" class="headerlink" title="3）helm 增加 harbor repo"></a>3）helm 增加 harbor repo</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># chartrepo，固定参数，bigdata自定义项目</span></span><br><span class="line">helm repo add local-harbor --username=admin --password=Harbor12345 https://myharbor.com/chartrepo/bigdata/ --ca-file /opt/k8s/helm/ca.crt</span><br></pre></td></tr></table></figure>
+
+<p>证书直接在 harbor 上下载<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720442.png" alt="图片"></p>
+<h3 id="4）示例演示"><a href="#4）示例演示" class="headerlink" title="4）示例演示"></a>4）示例演示</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 查看帮助</span></span><br><span class="line">helm cm-push --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送，接【目录】</span></span><br><span class="line">helm cm-push mysql/ local-harbor --ca-file /opt/k8s/helm/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送，接【压缩包】</span></span><br><span class="line">helm cm-push wordpress-15.1.5.tgz local-harbor --ca-file /opt/k8s/helm/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 推送，指定版本，--version</span></span><br><span class="line">helm cm-push mychart/ --version=<span class="string">&quot;1.2.3&quot;</span> local-harbor --ca-file /opt/k8s/helm/ca.crt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制推送，--force</span></span><br><span class="line">helm cm-push --force mychart-0.3.2.tgz local-harbor</span><br></pre></td></tr></table></figure>
+
+<p>查看<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909090058216.png" alt="图片"></p>
+<h2 id="十四、搜索-hub（helm-search-hub）"><a href="#十四、搜索-hub（helm-search-hub）" class="headerlink" title="十四、搜索 hub（helm search hub）"></a>十四、搜索 hub（helm search hub）</h2><p>在Artifact Hub或自己的 hub 实例中搜索 chart。</p>
+<p><code>Artifact Hub</code> 是<strong>基于 web 页面的应用</strong>，支持 CNCF 项目的查找、安装和发布包及配置项，包括了公开发布的 Helm chart。它是 CNCF 的沙盒项目。可以访问<a href="https://artifacthub.io/">https://artifacthub.io/</a></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 不带参数，列出所有</span></span><br><span class="line">helm search hub</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定chart</span></span><br><span class="line">helm search hub mysql</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720501.png" alt="图片"></p>
+<h2 id="十五、搜索仓库（helm-search-repo）"><a href="#十五、搜索仓库（helm-search-repo）" class="headerlink" title="十五、搜索仓库（helm search repo）"></a>十五、搜索仓库（helm search repo）</h2><blockquote>
+<p>用 chart 中关键字搜索仓库，搜索会读取系统上配置的所有仓库，并查找匹配。搜索这些仓库会使用存储在系统中的元数据。它会展示找到<strong>最新稳定版本的 chart</strong>。如果指定了<code>--devel</code>参数，输出会包括预发布版本。</p>
 </blockquote>
-<ol>
-<li><code>--maximum-dead-containers-per-container</code> 针对容器还是容器集</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Search for stable release versions matching the keyword &quot;nginx&quot;</span></span><br><span class="line">$ helm search repo nginx</span><br><span class="line"></span><br><span class="line"><span class="comment"># Search for release versions matching the keyword &quot;nginx&quot;, including pre-release versions</span></span><br><span class="line">$ helm search repo nginx --devel</span><br><span class="line"></span><br><span class="line"><span class="comment"># Search for the latest stable release for nginx-ingress with a major version of 1</span></span><br><span class="line">$ helm search repo nginx-ingress --version ^1.0.0</span><br></pre></td></tr></table></figure>
 
-<p>创建一个包含三个容器且这些容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">dec04bd28a03        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_830a9375</span><br><span class="line">7c94d4a963a7        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_975d44d3</span><br><span class="line">4f3e7e8ddfd5        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         8 seconds ago       Exited (0) 7 seconds ago                        k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_d024eb06</span><br><span class="line">cb48cf2ba133        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         12 seconds ago      Exited (0) 11 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b5ff7373</span><br><span class="line">ec2941f046f0        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_69b1a996</span><br><span class="line">f831e8ed5687        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_fbc02e2e</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            14 seconds ago      Up 13 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
-
-<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器剩下三个（pause容器不计算），且这三个容器正好是一组：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED              STATUS                      PORTS               NAMES</span><br><span class="line">e4351e6855ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         51 seconds ago       Exited (0) 50 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_263dd820</span><br><span class="line">990baa6e6a7a        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         52 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b16b5eaa</span><br><span class="line">c6916fb06d65        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         53 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_1d8ea284</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            About a minute ago   Up About a minute                               k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：<code>--maximum-dead-containers-per-container</code> 的计数针对一个pod内的容器集而不是容器的个数。</p>
+<h2 id="十六、验证-chart（helm-lint）"><a href="#十六、验证-chart（helm-lint）" class="headerlink" title="十六、验证 chart（helm lint）"></a>十六、验证 chart（helm lint）</h2><blockquote>
+<p>该命令使用一个 chart 路径并运行一系列的<strong>测试来验证 chart 的格式是否正确</strong>。如果遇到引起 chart 安装失败的情况，会触发[ERROR]信息，如果遇到违反惯例或建议的问题，会触发[WARNING]。</p>
 </blockquote>
-<ol>
-<li>容器回收之 <code>--maximum-dead-containers</code> 参数</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=2 --minimum-container-ttl-duration=30s --maximum-dead-containers=3</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># helm lint PATH [flags]</span></span><br><span class="line">helm lint ./mysql</span><br></pre></td></tr></table></figure>
 
-<p>创建一个包含三个容器的pod，再删除该pod，再创建该pod，再删除该pod，这样就产生了8个已退出容器（包括两个pause容器）：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                              PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         1 seconds ago       Exited (0) Less than a second ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         2 seconds ago       Exited (0) 1 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         3 seconds ago       Exited (0) 2 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br><span class="line">12588fce1433        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            3 seconds ago       Exited (2) Less than a second ago                       k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_c9d4cbaa</span><br><span class="line">621ed207d452        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 3 seconds ago                                k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_a91278cd</span><br><span class="line">023c10fad4fd        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_6cc03f37</span><br><span class="line">756eb7bb4b53        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_83312ec2</span><br><span class="line">d54bdc22773e        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            6 seconds ago       Exited (2) 3 seconds ago                                k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_ccb57220</span><br></pre></td></tr></table></figure>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640-20220909085720509.png" alt="图片"><br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212291321175.png" alt="图片"></p>
+<h2 id="十七、常用命令总结"><a href="#十七、常用命令总结" class="headerlink" title="十七、常用命令总结"></a>十七、常用命令总结</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">helm version                            // 查看helm版本</span><br><span class="line">helm create xxx                         // 创建一个xxx charts</span><br><span class="line">helm lint ./xxx                         // 检查包的格式或信息是否有问题</span><br><span class="line">helm install xxx1 ./xxx                 // 部署安装xxx，设置名称为xxx1</span><br><span class="line">helm list                               // 列出已经部署的charts</span><br><span class="line">helm <span class="built_in">history</span>                            // 发布历史</span><br><span class="line">helm upgrade                            // 更新版本</span><br><span class="line">helm rollback                           // 回滚版本</span><br><span class="line">helm package ./xxx                      // 打包charts</span><br><span class="line">helm repo add --username admin --password password myharbor xxx  // 增加repo</span><br><span class="line">helm uninstall xxx1                     // 卸载删除xxx1</span><br><span class="line">helm pull                                // 拉取chart包</span><br><span class="line">helm cm-push                            // 推送chart包</span><br><span class="line">helm repo update                        // 更新仓库资源</span><br><span class="line">helm search hub                         // 从 Artifact Hub 中查找并列出 helm charts。Artifact Hub中存放了大量不同的仓库</span><br><span class="line">helm search repo                        // 从你添加（使用 helm repo add）到本地 helm 客户端中的仓库中进行查找。该命令基于本地数据进行搜索，无需连接互联网</span><br></pre></td></tr></table></figure>
 
-<p>GC的容器回收时间点到达时，可以看到已退出容器只剩下了三个，pause容器也被回收了：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS                     PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的 <code>--maximum-dead-containers</code> 参数设置可正常工作；pause容器也作为可回收容器被管理着；Tips第11条第3）点。</p>
-</blockquote>
-<ol>
-<li><code>--maximum-dead-containers</code> 对于非kubelet管理的容器是否计数</li>
-</ol>
-<p>在第5个实验的基础上，手工创建一个container，等待GC的容器回收时间点到达，一分钟过去了，两分钟过去了，docker ps -a 显示的依然是4个容器：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker run -it 10.11.150.76:5000/openxxs/iperf:1.2 /bin/sh</span><br><span class="line">sh-4.2# exit</span><br><span class="line">exit</span><br><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                 COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">939b932dc7db        10.11.150.76:5000/openxxs/iperf:1.2   &quot;/bin/sh&quot;           2 minutes ago       Exited (0) 2 minutes ago                        backstabbing_aryabhata</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的策略不适用于非kubelet管理的容器。</p>
-</blockquote>
+<p>Helm 常用命令（chart 安装、升级、回滚、卸载等操作）就先到这里，</p>
 ]]></content>
       <categories>
         <category>kubernetes</category>
-        <category>Kubelet</category>
+        <category>Helm</category>
       </categories>
       <tags>
         <tag>kubernetes</tag>
-        <tag>Kubelet</tag>
+        <tag>Helm</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>k8s集群修改cidr</title>
+    <url>/2022/12/30/k8s%E9%9B%86%E7%BE%A4%E4%BF%AE%E6%94%B9cidr/</url>
+    <content><![CDATA[<h2 id="kubeadm-config"><a href="#kubeadm-config" class="headerlink" title="kubeadm-config"></a>kubeadm-config</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[root@master1 ~]<span class="comment"># kubectl -n kube-system edit cm kubeadm-config</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment"># Please edit the object below. Lines beginning with a &#x27;#&#x27; will be ignored,</span></span><br><span class="line"><span class="comment"># and an empty file will abort the edit. If an error occurs while saving this file will be</span></span><br><span class="line"><span class="comment"># reopened with the relevant failures.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">data:</span></span><br><span class="line">  <span class="attr">ClusterConfiguration:</span> <span class="string">|</span></span><br><span class="line"><span class="string">    apiServer:</span></span><br><span class="line"><span class="string">      certSANs:</span></span><br><span class="line"><span class="string">      - kubernetes</span></span><br><span class="line"><span class="string">      - kubernetes.default</span></span><br><span class="line"><span class="string">      - kubernetes.default.svc</span></span><br><span class="line"><span class="string">      - kubernetes.default.svc.cluster.local</span></span><br><span class="line"><span class="string">      - localhost</span></span><br><span class="line"><span class="string">      - 127.0.0.1</span></span><br><span class="line"><span class="string">      - lb.kubesphere.local</span></span><br><span class="line"><span class="string">      - 11.1.100.131</span></span><br><span class="line"><span class="string">      - master1</span></span><br><span class="line"><span class="string">      - master1.cluster.local</span></span><br><span class="line"><span class="string">      - master2</span></span><br><span class="line"><span class="string">      - master2.cluster.local</span></span><br><span class="line"><span class="string">      - 11.1.100.132</span></span><br><span class="line"><span class="string">      - master3</span></span><br><span class="line"><span class="string">      - master3.cluster.local</span></span><br><span class="line"><span class="string">      - 11.1.100.133</span></span><br><span class="line"><span class="string">      - 10.96.0.1</span></span><br><span class="line"><span class="string">      extraArgs:</span></span><br><span class="line"><span class="string">        audit-log-maxage: &quot;30&quot;</span></span><br><span class="line"><span class="string">        audit-log-maxbackup: &quot;10&quot;</span></span><br><span class="line"><span class="string">        audit-log-maxsize: &quot;100&quot;</span></span><br><span class="line"><span class="string">        authorization-mode: Node,RBAC</span></span><br><span class="line"><span class="string">        bind-address: 0.0.0.0</span></span><br><span class="line"><span class="string">        feature-gates: TTLAfterFinished=true,ExpandCSIVolumes=true,CSIStorageCapacity=true,RotateKubeletServerCertificate=true</span></span><br><span class="line"><span class="string">      timeoutForControlPlane: 4m0s</span></span><br><span class="line"><span class="string">    apiVersion: kubeadm.k8s.io/v1beta3</span></span><br><span class="line"><span class="string">    certificatesDir: /etc/kubernetes/pki</span></span><br><span class="line"><span class="string">    clusterName: test</span></span><br><span class="line"><span class="string">    controlPlaneEndpoint: lb.kubesphere.local:6443</span></span><br><span class="line"><span class="string">    controllerManager:</span></span><br><span class="line"><span class="string">      extraArgs:</span></span><br><span class="line"><span class="string">        bind-address: 0.0.0.0</span></span><br><span class="line"><span class="string">        cluster-signing-duration: 87600h</span></span><br><span class="line"><span class="string">        feature-gates: TTLAfterFinished=true,ExpandCSIVolumes=true,CSIStorageCapacity=true,RotateKubeletServerCertificate=true</span></span><br><span class="line"><span class="string">        node-cidr-mask-size: &quot;24&quot;</span></span><br><span class="line"><span class="string">      extraVolumes:</span></span><br><span class="line"><span class="string">      - hostPath: /etc/localtime</span></span><br><span class="line"><span class="string">        mountPath: /etc/localtime</span></span><br><span class="line"><span class="string">        name: host-time</span></span><br><span class="line"><span class="string">        readOnly: true</span></span><br><span class="line"><span class="string">    dns:</span></span><br><span class="line"><span class="string">      imageRepository: coredns</span></span><br><span class="line"><span class="string">      imageTag: 1.8.6</span></span><br><span class="line"><span class="string">    etcd:</span></span><br><span class="line"><span class="string">      external:</span></span><br><span class="line"><span class="string">        caFile: /etc/ssl/etcd/ssl/ca.pem</span></span><br><span class="line"><span class="string">        certFile: /etc/ssl/etcd/ssl/node-master1.pem</span></span><br><span class="line"><span class="string">        endpoints:</span></span><br><span class="line"><span class="string">        - https://11.1.100.131:2379</span></span><br><span class="line"><span class="string">        - https://11.1.100.132:2379</span></span><br><span class="line"><span class="string">        - https://11.1.100.133:2379</span></span><br><span class="line"><span class="string">        keyFile: /etc/ssl/etcd/ssl/node-master1-key.pem</span></span><br><span class="line"><span class="string">    imageRepository: kubesphere</span></span><br><span class="line"><span class="string">    kind: ClusterConfiguration</span></span><br><span class="line"><span class="string">    kubernetesVersion: v1.23.10</span></span><br><span class="line"><span class="string">    networking:</span></span><br><span class="line"><span class="string">      dnsDomain: cluster.local</span></span><br><span class="line"><span class="string">      # pod网段</span></span><br><span class="line"><span class="string">      podSubnet: 10.244.0.0/16</span></span><br><span class="line"><span class="string">      #svc网段</span></span><br><span class="line"><span class="string">      serviceSubnet: 10.96.0.0/16</span></span><br><span class="line"><span class="string">    scheduler:</span></span><br><span class="line"><span class="string">      extraArgs:</span></span><br><span class="line"><span class="string">        bind-address: 0.0.0.0</span></span><br><span class="line"><span class="string">        feature-gates: TTLAfterFinished=true,ExpandCSIVolumes=true,CSIStorageCapacity=true,RotateKubeletServerCertificate=true</span></span><br><span class="line"><span class="string"></span><span class="attr">kind:</span> <span class="string">ConfigMap</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">creationTimestamp:</span> <span class="string">&quot;2022-12-01T15:04:55Z&quot;</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">kubeadm-config</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">kube-system</span></span><br><span class="line">  <span class="attr">resourceVersion:</span> <span class="string">&quot;211&quot;</span></span><br><span class="line">  <span class="attr">uid:</span> <span class="string">005ee25b-2121-4b53-8478-4e1eb28cfdef</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="kube-controller-manager"><a href="#kube-controller-manager" class="headerlink" title="kube-controller-manager"></a><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/">kube-controller-manager</a></h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#是否应在云提供商上分配和设置 Pod 的 CIDR。</span></span><br><span class="line"><span class="string">--allocate-node-cidrs</span></span><br><span class="line"><span class="comment">#集群中 Pod 的 CIDR 范围。 要求 --allocate-node-cidrs 为true</span></span><br><span class="line"><span class="string">--cluster-cidr</span> <span class="string">string</span></span><br><span class="line"><span class="comment">#集群中svc的 CIDR 范围。 要求 --allocate-node-cidrs 为true</span></span><br><span class="line"><span class="string">--service-cluster-ip-range</span> <span class="string">string</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="calico"><a href="#calico" class="headerlink" title="calico"></a>calico</h2><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="comment">#[root@master1 ~]# kubectl edit daemonset -n kube-system   calico-node</span></span><br><span class="line">    <span class="string">···</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">env:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">DATASTORE_TYPE</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">kubernetes</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">WAIT_FOR_DATASTORE</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">NODENAME</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">fieldRef:</span></span><br><span class="line">              <span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line">              <span class="attr">fieldPath:</span> <span class="string">spec.nodeName</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CALICO_NETWORKING_BACKEND</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">calico_backend</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">calico-config</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CLUSTER_TYPE</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">k8s,bgp</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">NODEIP</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">fieldRef:</span></span><br><span class="line">              <span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line">              <span class="attr">fieldPath:</span> <span class="string">status.hostIP</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">IP_AUTODETECTION_METHOD</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">can-reach=$(NODEIP)</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">IP</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">autodetect</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CALICO_IPV4POOL_IPIP</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">Always</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CALICO_IPV4POOL_VXLAN</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">Never</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CALICO_IPV6POOL_VXLAN</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">Never</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">FELIX_IPINIPMTU</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">veth_mtu</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">calico-config</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">FELIX_VXLANMTU</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">veth_mtu</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">calico-config</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">FELIX_WIREGUARDMTU</span></span><br><span class="line">          <span class="attr">valueFrom:</span></span><br><span class="line">            <span class="attr">configMapKeyRef:</span></span><br><span class="line">              <span class="attr">key:</span> <span class="string">veth_mtu</span></span><br><span class="line">              <span class="attr">name:</span> <span class="string">calico-config</span></span><br><span class="line">         <span class="comment">#calicoipv4range</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CALICO_IPV4POOL_CIDR</span></span><br><span class="line">          <span class="attr">value:</span> <span class="number">10.244</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CALICO_IPV4POOL_BLOCK_SIZE</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;24&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">CALICO_DISABLE_FILE_LOGGING</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">FELIX_DEFAULTENDPOINTTOHOSTACTION</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">ACCEPT</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">FELIX_IPV6SUPPORT</span></span><br><span class="line">          <span class="attr">value:</span> <span class="string">&quot;false&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>刚改完重启节点 使用<code>route -n</code>查看节点分配的<code>IP range</code></p>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
       </tags>
   </entry>
   <entry>
@@ -1792,6 +1698,120 @@ To learn more about the release, try:
       </tags>
   </entry>
   <entry>
+    <title>kubelet垃圾回收机制</title>
+    <url>/2022/12/29/kubelet%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111058394.jpeg" alt="图片"></p>
+<h3 id="一、Tips"><a href="#一、Tips" class="headerlink" title="一、Tips"></a><strong>一、Tips</strong></h3><ol>
+<li>Kubernetes的垃圾回收由kubelet进行管理，每分钟会查询清理一次容器，每五分钟查询清理一次镜像。在kubelet刚启动时并不会立即进行GC，即第一次进行容器回收为kubelet启动一分钟后，第一次进行镜像回收为kubelet启动五分钟后。</li>
+<li>不推荐使用其它管理工具或手工进行容器和镜像的清理，因为kubelet需要通过容器来判断pod的运行状态，如果使用其它方式清除容器有可能影响kubelet的正常工作。</li>
+<li>镜像的回收针对node结点上由docker管理的所有镜像，无论该镜像是否是在创建pod时pull的。而容器的回收策略只应用于通过kubelet管理的容器。</li>
+<li>Kubernetes通过kubelet集成的cadvisor进行镜像的回收，有两个参数可以设置：<code>--image-gc-high-threshold</code>和<code>--image-gc-low-threshold</code>。当用于存储镜像的磁盘使用率达到百分之–image-gc-high-threshold时将触发镜像回收，删除最近最久未使用（LRU，Least Recently Used）的镜像直到磁盘使用率降为百分之<code>--image-gc-low-threshold</code>或无镜像可删为止。默认<code>--image-gc-high-threshold</code>为90，&#96;&#96;–image-gc-low-threshold&#96;为80。</li>
+<li>容器的回收有三个参数可设置：<code>--minimum-container-ttl-duration</code>，<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>。从容器停止运行时起经过<code>--minimum-container-ttl-duration</code>时间后，该容器标记为已过期将来可以被回收（只是标记，不是回收），默认值为1m0s。一般情况下每个pod最多可以保留<code>--maximum-dead-containers-per-container</code>个已停止运行的容器集，默认值为2。整个node节点可以保留<code>--maximum-dead-containers</code>个已停止运行的容器，默认值为100。</li>
+<li>如果需要关闭容器的垃圾回收策略，可以将<code>--minimum-container-ttl-duration</code>设为0（表示无限制），<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>设为负数。</li>
+<li><code>--minimum-container-ttl-duration</code>的值可以使用单位后缀，如h表示小时，m表示分钟，s表示秒。</li>
+<li>当<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>冲突时，&#96;&#96;–maximum-dead-containers&#96;优先考虑。</li>
+<li>对于那些由kubelet创建的但由于某些原因导致无名字（）的容器，会在到达GC时间点时被删除。</li>
+<li>回收容器时，按创建时间排序，优先删除那些创建时间最早的容器。</li>
+<li>到达GC时间点时，具体的GC过程如下：1）遍历所有pod，使其满足<code>--maximum-dead-containers-per-container</code>；2）经过上一步后如果不满足<code>--maximum-dead-containers</code>，计算值<code>X=（--maximum-dead-containers）/（pod总数）</code>，再遍历所有pod，使其满足已停止运行的容器集个数不大于X且至少为1；3）经过以上两步后如果还不满足<code>--maximum-dead-containers</code>，则对所有已停止的容器排序，优先删除创建时间最早的容器直到满足<code>--maximum-dead-containers</code>为止。</li>
+<li>当某个镜像重新pull或启动某个pod用到该镜像时，该镜像的最近使用时间都会被更新。</li>
+<li>Kubernetes的垃圾回收在1.1.4版本开始才渐渐完善，之前的版本存在比较多bug甚至不能发挥作用。</li>
+<li>关于容器的回收需要特别注意pod的概念，比如，通过同一个yaml文件create一个pod，再delete这个pod，然后再create这个pod，此时之前的那个pod对应的容器并不会作为新创建pod的已停止容器集，因为这两个pod虽然同名，但已经不是同一个pod了。只有同一个pod中在运行过程中由于意外或其它情况停止的容器才算是这个pod的已停止容器集。</li>
+</ol>
+<h3 id="二、Experiments"><a href="#二、Experiments" class="headerlink" title="二、Experiments"></a><strong>二、Experiments</strong></h3><ol>
+<li>镜像回收（使用docker默认 <code>--graph</code> 参数：<code>/var/lib/docker</code>）</li>
+</ol>
+<p>结点上运行的docker设置的参数 <code>--graph</code> 使用默认的<code>/var/lib/docker</code>，指向&#x2F;var文件系统，通过df -lh查看目前 &#x2F;var 磁盘使用率为30%，启动kubelet设置镜像回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=40 --image-gc-low-threshold=35</span><br></pre></td></tr></table></figure>
+
+<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images（pause镜像是启动pod必需的）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<p>此时查看&#x2F;var磁盘使用率达到了41%，然后将使用<code>10.11.150.76:5000/centos:7</code>镜像的pod删除，等待GC的镜像回收时间点。然而五分钟过去了，什么事情也没有发生&#x3D;_&#x3D;!!。还记得 docker rmi 镜像时有个前提条件是什么吗？没错，要求使用该镜像的容器都已经被删除了才可以。前面删除pod只是停止了容器，并没有将容器删除。因此手工将对应的容器docker rm掉，再等待五分钟后，可以看到镜像已经被删除回收了：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：只有相关联的容器都被停止并删除回收后，才能将Kubernetes的镜像垃圾回收策略应用到该镜像上。</p>
+</blockquote>
+<ol>
+<li>镜像回收（使用自定义docker <code>--graph</code> 参数：<code>/opt/docker</code>）</li>
+</ol>
+<p>结点上运行的docker设置的参数<code>--graph</code>指向 &#x2F;opt 磁盘，通过 df -lh 查看目前 &#x2F;opt 磁盘使用率为 48% ，启动 kubelet 设置镜像回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--image-gc-high-threshold=50 --image-gc-low-threshold=40</span><br></pre></td></tr></table></figure>
+
+<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]# docker images</span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<p>此时查看&#x2F;opt磁盘使用率达到了51%，然后将使用10.11.150.76:5000&#x2F;centos:7镜像的pod删除，手工将对应的容器docker rm掉，等待GC的镜像回收时间点。然而五分钟过去了，十分钟过去了，docker images时centos镜像依旧顽固地坚守在阵地。</p>
+<blockquote>
+<p>结论：目前Kubernetes的镜像垃圾回收策略可以在docker  <code>--graph</code> 参数默认为 <code>/var/lib/docker</code> 时正常工作，当 <code>--graph</code> 设置为其它磁盘路径时还存在bug。</p>
+</blockquote>
+<p>问题反馈在 Github 的相关 issue 里：<a href="https://github.com/kubernetes/kubernetes/issues/17994">https://github.com/kubernetes/kubernetes/issues/17994</a>，可以继续跟进。</p>
+<p>Append: 根据Github上的反馈，这个bug将在后续版本中解决，目前版本需要让设置了–graph的镜像垃圾回收生效，在启动kubelet时还需要加上参数 <code>--docker-root=&lt;docker --graph参数值&gt;</code>。</p>
+<ol>
+<li>容器回收之 <code>--maximum-dead-containers-per-container</code> 参数</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
+
+<p>创建一个只包含一个容器且该容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">2fe969499164        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 2 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_68cc6f03</span><br><span class="line">555b5e7a8550        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         24 seconds ago      Exited (0) 22 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_ad4a5e39</span><br><span class="line">94b30a0b32c2        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         34 seconds ago      Exited (0) 32 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_4027e3e1</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            34 seconds ago      Up 33 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器只剩下一个（pause容器不计算），且先创建的容器被优先删除：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">5aae6157aeff        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         46 seconds ago      Exited (0) 45 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_f126d2a8</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            2 minutes ago       Up 2 minutes                                    k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的<code>--maximum-dead-containers-per-container</code>参数设置可正常工作。</p>
+</blockquote>
+<ol>
+<li><code>--maximum-dead-containers-per-container</code> 针对容器还是容器集</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=1 --minimum-container-ttl-duration=30s --maximum-dead-containers=100</span><br></pre></td></tr></table></figure>
+
+<p>创建一个包含三个容器且这些容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">dec04bd28a03        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_830a9375</span><br><span class="line">7c94d4a963a7        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_975d44d3</span><br><span class="line">4f3e7e8ddfd5        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         8 seconds ago       Exited (0) 7 seconds ago                        k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_d024eb06</span><br><span class="line">cb48cf2ba133        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         12 seconds ago      Exited (0) 11 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b5ff7373</span><br><span class="line">ec2941f046f0        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_69b1a996</span><br><span class="line">f831e8ed5687        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_fbc02e2e</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            14 seconds ago      Up 13 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器剩下三个（pause容器不计算），且这三个容器正好是一组：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED              STATUS                      PORTS               NAMES</span><br><span class="line">e4351e6855ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         51 seconds ago       Exited (0) 50 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_263dd820</span><br><span class="line">990baa6e6a7a        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         52 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b16b5eaa</span><br><span class="line">c6916fb06d65        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         53 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_1d8ea284</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            About a minute ago   Up About a minute                               k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：<code>--maximum-dead-containers-per-container</code> 的计数针对一个pod内的容器集而不是容器的个数。</p>
+</blockquote>
+<ol>
+<li>容器回收之 <code>--maximum-dead-containers</code> 参数</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">--maximum-dead-containers-per-container=2 --minimum-container-ttl-duration=30s --maximum-dead-containers=3</span><br></pre></td></tr></table></figure>
+
+<p>创建一个包含三个容器的pod，再删除该pod，再创建该pod，再删除该pod，这样就产生了8个已退出容器（包括两个pause容器）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                              PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         1 seconds ago       Exited (0) Less than a second ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         2 seconds ago       Exited (0) 1 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         3 seconds ago       Exited (0) 2 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br><span class="line">12588fce1433        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            3 seconds ago       Exited (2) Less than a second ago                       k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_c9d4cbaa</span><br><span class="line">621ed207d452        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         4 seconds ago       Exited (0) 3 seconds ago                                k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_a91278cd</span><br><span class="line">023c10fad4fd        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_6cc03f37</span><br><span class="line">756eb7bb4b53        10.11.150.76:5000/centos:7               &quot;/bin/bash&quot;         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_83312ec2</span><br><span class="line">d54bdc22773e        pub.domeos.org/kubernetes/pause:latest   &quot;/pause&quot;            6 seconds ago       Exited (2) 3 seconds ago                                k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_ccb57220</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到已退出容器只剩下了三个，pause容器也被回收了：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS                     PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7   &quot;/bin/bash&quot;         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的 <code>--maximum-dead-containers</code> 参数设置可正常工作；pause容器也作为可回收容器被管理着；Tips第11条第3）点。</p>
+</blockquote>
+<ol>
+<li><code>--maximum-dead-containers</code> 对于非kubelet管理的容器是否计数</li>
+</ol>
+<p>在第5个实验的基础上，手工创建一个container，等待GC的容器回收时间点到达，一分钟过去了，两分钟过去了，docker ps -a 显示的依然是4个容器：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]# docker run -it 10.11.150.76:5000/openxxs/iperf:1.2 /bin/sh</span><br><span class="line">sh-4.2# exit</span><br><span class="line">exit</span><br><span class="line">[@tc-151-100 /home/domeos]# docker ps -a</span><br><span class="line">CONTAINER ID        IMAGE                                 COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">939b932dc7db        10.11.150.76:5000/openxxs/iperf:1.2   &quot;/bin/sh&quot;           2 minutes ago       Exited (0) 2 minutes ago                        backstabbing_aryabhata</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7            &quot;/bin/bash&quot;         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的策略不适用于非kubelet管理的容器。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>Kubelet</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
+        <tag>Kubelet</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>容器运行时概览</title>
     <url>/2022/12/29/%E5%AE%B9%E5%99%A8%E8%BF%90%E8%A1%8C%E6%97%B6%E6%A6%82%E8%A7%88/</url>
     <content><![CDATA[<h1 id="容器运行时概览"><a href="#容器运行时概览" class="headerlink" title="容器运行时概览"></a>容器运行时概览</h1><h2 id="01-容器运行时分类"><a href="#01-容器运行时分类" class="headerlink" title="01 容器运行时分类"></a>01 容器运行时分类</h2><p>Docker属于容器技术早期的发展项目，也是目前最广泛的容器引擎技术。当然，随着容器生态圈的日益繁荣，业界慢慢也出现了其他各种运行时工具，如containerd、rkt、Kata Container、CRI-O等。这些工具提供的功能不尽相同，有些只有容器运行的功能，有些除运行容器外还提供了容器镜像的管理功能。根据容器运行时提供功能，可以讲容器运行时分为<strong>低层运行时</strong>和<strong>高层运行时</strong>。</p>
@@ -1910,36 +1930,6 @@ To learn more about the release, try:
         <tag>kubernetes</tag>
         <tag>Docker</tag>
         <tag>containerd</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（Docker）Alpine apk设置国内源</title>
-    <url>/2022/12/29/%EF%BC%88Docker%EF%BC%89Alpine%20apk%E8%AE%BE%E7%BD%AE%E5%9B%BD%E5%86%85%E6%BA%90/</url>
-    <content><![CDATA[<h2 id="运行容器xxx，示例"><a href="#运行容器xxx，示例" class="headerlink" title="运行容器xxx，示例:"></a>运行容器xxx，示例:</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d  \</span><br><span class="line">--name jk -u root \</span><br><span class="line">-p 9090:8080  \</span><br><span class="line">-v /var/jenkins_home:/var/jenkins_home  \</span><br><span class="line">jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
-
-<h2 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it jk bash <span class="comment">#这里的“jk”是指你创建的镜像容器</span></span><br></pre></td></tr></table></figure>
-
-<p>修改源</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
-
-<p>更新设置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apk update</span><br></pre></td></tr></table></figure>
-
-<p>然后你就可以愉快的使用apk了：apk add maven</p>
-<p>附录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#apk命令</span></span><br><span class="line"></span><br><span class="line">apk update <span class="comment">#更新最新本地镜像源</span></span><br><span class="line">apk upgrade <span class="comment">#升级软件</span></span><br><span class="line">apk add --upgrade busybox <span class="comment">#指定升级部分软件包</span></span><br><span class="line">apk search <span class="comment">#查找所以可用软件包</span></span><br><span class="line">apk search -v <span class="comment">#查找所有可用软件包及其描述内容</span></span><br><span class="line">apk search -v <span class="string">&#x27;acf*&#x27;</span> <span class="comment">#通过软件包名称查找软件包</span></span><br><span class="line">apk search -v -d <span class="string">&#x27;docker&#x27;</span> <span class="comment">#通过描述文件查找特定的软件包</span></span><br><span class="line">apk info <span class="comment">#列出所有已安装的软件包</span></span><br><span class="line">apk info -a zlib <span class="comment">#显示完整的软件包信息</span></span><br><span class="line">apk info --who-owns /sbin/lbu <span class="comment">#显示指定文件属于的包</span></span><br><span class="line">apk add --allow-untrusted /path/to/file.apk  <span class="comment">#本地安装</span></span><br></pre></td></tr></table></figure>
-
-<p>添加镜像地址</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">a. 编辑/etc/apk/repositories，在文件内添加对应的镜像源</span><br><span class="line">b. 使用sed命令，如：sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
-
-<p>常用apk镜像站<br>清华TUNA镜像源：<code>https://mirror.tuna.tsinghua.edu.cn/alpine/</code><br>中科大镜像源：<code>http://mirrors.ustc.edu.cn/alpine/</code><br>阿里云镜像源：<code>http://mirrors.aliyun.com/alpine/</code></p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">http://dl-cdn.alpinelinux.org/alpine/</span><br><span class="line">http://nl.alpinelinux.org/alpine/</span><br><span class="line">http://uk.alpinelinux.org/alpine/</span><br><span class="line">http://dl-2.alpinelinux.org/alpine/</span><br><span class="line">http://dl-3.alpinelinux.org/alpine/</span><br><span class="line">http://dl-4.alpinelinux.org/alpine/</span><br><span class="line">http://dl-5.alpinelinux.org/alpine/</span><br><span class="line">http://dl-8.alpinelinux.org/alpine/</span><br><span class="line">http://mirror.yandex.ru/mirrors/alpine/</span><br><span class="line">http://mirrors.gigenet.com/alpinelinux/</span><br><span class="line">http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/</span><br><span class="line">http://mirror.leaseweb.com/alpine/</span><br><span class="line">http://repository.fit.cvut.cz/mirrors/alpine/</span><br><span class="line">http://alpine.mirror.far.fi/</span><br><span class="line">http://alpine.mirror.wearetriple.com/</span><br><span class="line">http://mirror.clarkson.edu/alpine/</span><br><span class="line">http://linorg.usp.br/AlpineLinux/</span><br><span class="line">http://ftp.yzu.edu.tw/Linux/alpine/</span><br><span class="line">http://mirror.aarnet.edu.au/pub/alpine</span><br><span class="line">http://mirror.csclub.uwaterloo.ca/alpine</span><br><span class="line">http://ftp.acc.umu.se/mirror/alpinelinux.org</span><br><span class="line">http://ftp.halifax.rwth-aachen.de/alpine</span><br><span class="line">http://speglar.siminn.is/alpine</span><br><span class="line">http://mirrors.dotsrc.org/alpine</span><br><span class="line">http://ftp.tsukuba.wide.ad.jp/Linux/alpine</span><br><span class="line">http://mirror.rise.ph/alpine</span><br><span class="line">http://mirror.neostrada.nl/alpine/</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
       </tags>
   </entry>
   <entry>
@@ -2135,6 +2125,36 @@ To learn more about the release, try:
 <p>如果将这个 Dockerfile 进行构建镜像运行后，会发现找不到 &#x2F;app&#x2F;world.txt 文件，或者其内容不是 hello。原因其实很简单，在 Shell 中，连续两行是同一个进程执行环境，因此前一个命令修改的内存状态，会直接影响后一个命令；而在 Dockerfile 中，这两行 RUN 命令的执行环境根本不同，是两个完全不同的容器。这就是对 Dockerfile 构建分层存储的概念不了解所导致的错误。</p>
 <p>之前说过每一个 <code>RUN</code> 都是启动一个容器、执行命令、然后提交存储层文件变更。第一层 <code>RUN cd /app</code> 的执行仅仅是当前进程的工作目录变更，一个内存上的变化而已，其结果不会造成任何文件变更。而到第二层的时候，启动的是一个全新的容器，跟第一层的容器更完全没关系，自然不可能继承前一层构建过程中的内存变化。</p>
 <p>因此如果需要改变以后各层的工作目录的位置，那么应该使用 WORKDIR指令。</p>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>（Docker）Alpine apk设置国内源</title>
+    <url>/2022/12/29/%EF%BC%88Docker%EF%BC%89Alpine%20apk%E8%AE%BE%E7%BD%AE%E5%9B%BD%E5%86%85%E6%BA%90/</url>
+    <content><![CDATA[<h2 id="运行容器xxx，示例"><a href="#运行容器xxx，示例" class="headerlink" title="运行容器xxx，示例:"></a>运行容器xxx，示例:</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d  \</span><br><span class="line">--name jk -u root \</span><br><span class="line">-p 9090:8080  \</span><br><span class="line">-v /var/jenkins_home:/var/jenkins_home  \</span><br><span class="line">jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
+
+<h2 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it jk bash <span class="comment">#这里的“jk”是指你创建的镜像容器</span></span><br></pre></td></tr></table></figure>
+
+<p>修改源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
+
+<p>更新设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apk update</span><br></pre></td></tr></table></figure>
+
+<p>然后你就可以愉快的使用apk了：apk add maven</p>
+<p>附录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#apk命令</span></span><br><span class="line"></span><br><span class="line">apk update <span class="comment">#更新最新本地镜像源</span></span><br><span class="line">apk upgrade <span class="comment">#升级软件</span></span><br><span class="line">apk add --upgrade busybox <span class="comment">#指定升级部分软件包</span></span><br><span class="line">apk search <span class="comment">#查找所以可用软件包</span></span><br><span class="line">apk search -v <span class="comment">#查找所有可用软件包及其描述内容</span></span><br><span class="line">apk search -v <span class="string">&#x27;acf*&#x27;</span> <span class="comment">#通过软件包名称查找软件包</span></span><br><span class="line">apk search -v -d <span class="string">&#x27;docker&#x27;</span> <span class="comment">#通过描述文件查找特定的软件包</span></span><br><span class="line">apk info <span class="comment">#列出所有已安装的软件包</span></span><br><span class="line">apk info -a zlib <span class="comment">#显示完整的软件包信息</span></span><br><span class="line">apk info --who-owns /sbin/lbu <span class="comment">#显示指定文件属于的包</span></span><br><span class="line">apk add --allow-untrusted /path/to/file.apk  <span class="comment">#本地安装</span></span><br></pre></td></tr></table></figure>
+
+<p>添加镜像地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">a. 编辑/etc/apk/repositories，在文件内添加对应的镜像源</span><br><span class="line">b. 使用sed命令，如：sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
+
+<p>常用apk镜像站<br>清华TUNA镜像源：<code>https://mirror.tuna.tsinghua.edu.cn/alpine/</code><br>中科大镜像源：<code>http://mirrors.ustc.edu.cn/alpine/</code><br>阿里云镜像源：<code>http://mirrors.aliyun.com/alpine/</code></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">http://dl-cdn.alpinelinux.org/alpine/</span><br><span class="line">http://nl.alpinelinux.org/alpine/</span><br><span class="line">http://uk.alpinelinux.org/alpine/</span><br><span class="line">http://dl-2.alpinelinux.org/alpine/</span><br><span class="line">http://dl-3.alpinelinux.org/alpine/</span><br><span class="line">http://dl-4.alpinelinux.org/alpine/</span><br><span class="line">http://dl-5.alpinelinux.org/alpine/</span><br><span class="line">http://dl-8.alpinelinux.org/alpine/</span><br><span class="line">http://mirror.yandex.ru/mirrors/alpine/</span><br><span class="line">http://mirrors.gigenet.com/alpinelinux/</span><br><span class="line">http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/</span><br><span class="line">http://mirror.leaseweb.com/alpine/</span><br><span class="line">http://repository.fit.cvut.cz/mirrors/alpine/</span><br><span class="line">http://alpine.mirror.far.fi/</span><br><span class="line">http://alpine.mirror.wearetriple.com/</span><br><span class="line">http://mirror.clarkson.edu/alpine/</span><br><span class="line">http://linorg.usp.br/AlpineLinux/</span><br><span class="line">http://ftp.yzu.edu.tw/Linux/alpine/</span><br><span class="line">http://mirror.aarnet.edu.au/pub/alpine</span><br><span class="line">http://mirror.csclub.uwaterloo.ca/alpine</span><br><span class="line">http://ftp.acc.umu.se/mirror/alpinelinux.org</span><br><span class="line">http://ftp.halifax.rwth-aachen.de/alpine</span><br><span class="line">http://speglar.siminn.is/alpine</span><br><span class="line">http://mirrors.dotsrc.org/alpine</span><br><span class="line">http://ftp.tsukuba.wide.ad.jp/Linux/alpine</span><br><span class="line">http://mirror.rise.ph/alpine</span><br><span class="line">http://mirror.neostrada.nl/alpine/</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Docker</category>
