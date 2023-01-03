@@ -27,6 +27,104 @@
       </tags>
   </entry>
   <entry>
+    <title>Kubernetes 的 hostNetwork 和 NetworkPolicy (网络策略)</title>
+    <url>/2022/12/29/Kubernetes%20%E7%9A%84%20hostNetwork%20%E5%92%8C%20NetworkPolicy%20(%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5)/</url>
+    <content><![CDATA[<h2 id="1-hostNetwork-介绍"><a href="#1-hostNetwork-介绍" class="headerlink" title="1. hostNetwork 介绍"></a>1. hostNetwork 介绍</h2><blockquote>
+<p>在 k8s 中，若 <strong>pod 使用主机网络</strong>，也就是<code>hostNetwork=true</code>。则该pod会使用主机的dns以及所有网络配置，<strong>默认情况下是无法使用 k8s 自带的 dns 解析服务</strong>，但是可以修改 DNS 策略或者修改主机上的域名解析（<code>/etc/resolv.conf</code>），使主机可以用 k8s 自身的 dns 服务。一般通过 DNS 策略（<code>ClusterFirstWithHostNet</code>）来使用 k8s DNS 内部域名解析，k8s DNS 策略如下：</p>
+</blockquote>
+<ul>
+<li><code>Default</code>：继承 Pod 所在宿主机的 DNS 设置，hostNetwork 的默认策略。</li>
+<li><code>ClusterFirst（默认DNS策略）</code>：优先使用 kubernetes 环境的 dns 服务，将无法解析的域名转发到从宿主机继承的 dns 服务器。</li>
+<li><code>ClusterFirstWithHostNet</code>：和 ClusterFirst 类似，对于以 <code>hostNetwork</code> 模式运行的 Pod 应明确知道使用该策略。也是可以同时解析内部和外部的域名。</li>
+<li><code>None</code>：忽略 kubernetes 环境的 dns 配置，通过 spec.dnsConfig 自定义 DNS 配置。</li>
+</ul>
+<p>一般使用主机网络就增加如下几行即可：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">dnsPolicy:</span> <span class="string">&quot;ClusterFirstWithHostNet&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>『示例』：<code>hostNetwork.yaml</code></strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="comment"># 使用主机网络</span></span><br><span class="line">      <span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line">      <span class="comment"># 该设置是使POD使用k8s的dns，dns配置在/etc/resolv.conf文件中</span></span><br><span class="line">      <span class="comment"># 如果不加，pod默认使用所在宿主主机使用的DNS，这样会导致容器</span></span><br><span class="line">      <span class="comment"># 内不能通过service name访问k8s集群中其他POD</span></span><br><span class="line">      <span class="attr">dnsPolicy:</span> <span class="string">ClusterFirstWithHostNet</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">metrics</span></span><br><span class="line">          <span class="comment"># 如果hostNetwork: true，hostPort必须跟containerPort一样，所以hostPort一般不写，端口也是占用宿主机上的端口。</span></span><br><span class="line">          <span class="attr">hostPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">31280</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>hostPort 和 NodePort的区别：</strong></p>
+<blockquote>
+<p><code>hostPort</code> 只会在运行机器上开启端口， <code>NodePort</code> 是所有 Node 上都会开启端口。</p>
+</blockquote>
+<ul>
+<li>hostPort 是由 portmap 这个 cni 提供 portMapping 能力，同时如果想使用这个能力，在配置文件中一定需要开启 portmap。</li>
+<li>使用 hostPort 后，会在 iptables 的 nat 链中插入相应的规则，而且这些规则是在 KUBE-SERVICES 规则之前插入的，也就是说会优先匹配 hostPort 的规则，我们常用的 NodePort 规则其实是在 KUBE-SERVICES 之中，也排在其后。</li>
+<li>hostport 可以通过 iptables 命令查看到， 但是无法在 ipvsadm 中查看到。</li>
+<li>使用 lsof&#x2F;netstat 也查看不到这个端口,这是因为 hostport 是通过 iptables 对请求中的目的端口进行转发的，并不是在主机上通过端口监听。</li>
+<li><strong>在生产环境中不建议使用 hostPort</strong>。</li>
+</ul>
+<h2 id="2-K8s-网络策略-NetworkPolicy"><a href="#2-K8s-网络策略-NetworkPolicy" class="headerlink" title="2. K8s 网络策略 NetworkPolicy"></a>2. K8s 网络策略 NetworkPolicy</h2><p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290837401.png" alt="p"></p>
+<blockquote>
+<p>如果你希望在 IP 地址或端口层面（OSI 第 3 层或第 4 层）控制网络流量， 则你可以考虑为集群中特定应用使用 Kubernetes 网络策略（<code>NetworkPolicy</code>）。**<code>NetworkPolicy</code> 是一种以应用为中心的结构，允许你设置如何允许 Pod 与网络上的各类网络“实体”** 通信。官方文档</p>
+</blockquote>
+<p>网络策略是通过<strong>网络插件</strong>来实现，常用的网络插件<code>Flannel</code>和<code>Calico</code>：</p>
+<ul>
+<li><code>Flannel</code>：只能提供网络通讯，<strong>不提供网络策略</strong>，如果需要使用网络策略，建议使用下面的 Calico，关于 Flannel 更详细的介绍和安装可以参考我这篇文章：Kubernetes（k8s）CNI（flannel）网络模型原理。</li>
+<li><code>Calico</code>：<strong>支持丰富的网络策略</strong>，Calico以其性能、灵活性而闻名。后面也会出相关文章详细介绍 Calico。</li>
+</ul>
+<p>更多了解更多的网络策略，可以参考<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">官方文档</a></p>
+<p>Pod 可以通信的 Pod 是通过如下三个标识符的组合来辩识的：</p>
+<ul>
+<li>其他被允许的 Pods（例外：Pod 无法阻塞对自身的访问）</li>
+<li>被允许的名字空间</li>
+<li>IP 组块（例外：与 Pod 运行所在的节点的通信总是被允许的， 无论 Pod 或节点的 IP 地址）</li>
+</ul>
+<h2 id="3-Pod-隔离的两种类型"><a href="#3-Pod-隔离的两种类型" class="headerlink" title="3. Pod 隔离的两种类型"></a>3. Pod 隔离的两种类型</h2><p>Pod 有两种隔离: <strong>出口的隔离</strong>和<strong>入口的隔离</strong>。默认情况下，出口和入口都是非隔离的。</p>
+<ul>
+<li><strong>网络策略是相加的</strong>，所以不会产生冲突。如果策略适用于 Pod 某一特定方向的流量， Pod 在对应方向所允许的连接是适用的网络策略所允许的集合。因此，评估的顺序不影响策略的结果。</li>
+<li>要允许从源 Pod 到目的 Pod 的连接，源 Pod 的出口策略和目的 Pod 的入口策略都需要允许连接。如果任何一方不允许连接，建立连接将会失败。</li>
+</ul>
+<h2 id="4-NetworkPolicy-资源"><a href="#4-NetworkPolicy-资源" class="headerlink" title="4. NetworkPolicy 资源"></a>4. NetworkPolicy 资源</h2><h3 id="4-1-NetworkPolicy-示例演示"><a href="#4-1-NetworkPolicy-示例演示" class="headerlink" title="4.1 NetworkPolicy 示例演示"></a>4.1 NetworkPolicy 示例演示</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">role:</span> <span class="string">db</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Egress</span></span><br><span class="line">  <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">172.17</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">        <span class="attr">except:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">172.17</span><span class="number">.1</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">project:</span> <span class="string">myproject</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">role:</span> <span class="string">frontend</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">to:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">5978</span></span><br></pre></td></tr></table></figure>
+
+<p>必需字段：与所有其他的 Kubernetes 配置一样，NetworkPolicy 需要 apiVersion、 kind 和 metadata 字段。关于配置文件操作的一般信息， 请参考配置 Pod 以使用 ConfigMap 和对象管理。</p>
+<ul>
+<li><code>spec</code>：NetworkPolicy 规约 中包含了在一个名字空间中定义特定网络策略所需的所有信息。</li>
+<li><code>podSelector</code>：每个 NetworkPolicy 都包括一个 podSelector， 它对该策略所适用的一组 Pod 进行选择。示例中的策略选择带有 “role&#x3D;db” 标签的 Pod。空的 podSelector 选择名字空间下的所有 Pod。</li>
+<li><code>policyTypes</code>：每个 NetworkPolicy 都包含一个 policyTypes 列表，其中包含 Ingress 或 Egress 或两者兼具。policyTypes 字段表示给定的策略是应用于进入所选 Pod 的入站流量还是来自所选 Pod 的出站流量，或两者兼有。如果 NetworkPolicy 未指定 policyTypes 则默认情况下始终设置 Ingress；如果 NetworkPolicy 有任何出口规则的话则设置 Egress。</li>
+<li><code>ingress</code>：每个 NetworkPolicy 可包含一个 ingress 规则的白名单列表。每个规则都允许同时匹配 from 和 ports 部分的流量。示例策略中包含一条简单的规则：它匹配某个特定端口，来自三个来源中的一个，第一个通过 ipBlock 指定，第二个通过 namespaceSelector 指定，第三个通过 podSelector 指定。</li>
+<li><code>egress</code>：每个 NetworkPolicy 可包含一个 egress 规则的白名单列表。每个规则都允许匹配 to 和 port 部分的流量。该示例策略包含一条规则， 该规则将指定端口上的流量匹配到 10.0.0.0&#x2F;24 中的任何目的地。</li>
+</ul>
+<p>所以，该网络策略示例:</p>
+<ul>
+<li><p>隔离 “default” 名字空间下 “role&#x3D;db” 的 Pod （如果它们不是已经被隔离的话）。</p>
+</li>
+<li><p>（Ingress 规则）允许以下 Pod 连接到 “default” 名字空间下的带有 “role&#x3D;db” 标签的所有 Pod 的 6379 TCP 端口：</p>
+<ul>
+<li>“default” 名字空间下带有 “role&#x3D;frontend” 标签的所有 Pod</li>
+<li>带有 “project&#x3D;myproject” 标签的所有名字空间中的 Pod</li>
+<li>IP 地址范围为 172.17.0.0–172.17.0.255 和 172.17.2.0–172.17.255.255 （即，除了 172.17.1.0&#x2F;24 之外的所有 172.17.0.0&#x2F;16）</li>
+</ul>
+</li>
+<li><p>（Egress 规则）允许 “default” 命名空间中任何带有标签 “role&#x3D;db” 的 Pod 到 CIDR 10.0.0.0&#x2F;24 下 5978 TCP 端口的连接。</p>
+</li>
+</ul>
+<h3 id="4-2-选择器-to-和-from-的行为"><a href="#4-2-选择器-to-和-from-的行为" class="headerlink" title="4.2 选择器 to 和 from 的行为"></a>4.2 选择器 to 和 from 的行为</h3><p>可以在 ingress 的 from 部分或 egress 的 to 部分中指定四种选择器：</p>
+<ul>
+<li><code>podSelector</code>：此选择器将在与 NetworkPolicy 相同的名字空间中选择特定的 Pod，应将其允许作为入站流量来源或出站流量目的地。</li>
+<li><code>namespaceSelector</code>：此选择器将选择特定的名字空间，应将所有 Pod 用作其入站流量来源或出站流量目的地。</li>
+<li><code>namespaceSelector</code> 和 <code>podSelector</code>：一个指定 namespaceSelector 和 podSelector 的 to&#x2F;from 条目选择特定名字空间中的特定 Pod。注意使用正确的 YAML 语法；下面的策略：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ingress:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">    <span class="attr">podSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
+
+<p>在 from 数组中仅包含一个元素，只允许来自标有 role&#x3D;client 的 Pod 且该 Pod 所在的名字空间中标有 user&#x3D;alice 的连接。但是 这项 策略：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"> <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"> <span class="string">...</span></span><br></pre></td></tr></table></figure>
+
+<p>这里只是把官网的摘了一部分，官网介绍的比较清楚，这里就不粘贴复制了，小伙伴可以参考<a href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/">官方文档</a></p>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><ul>
+<li>在 k8s 上网络策略是<strong>白名单机制</strong>，所谓白名单机制是指，只有明确定义的策略才会被允许放行，默认没有指定的规则就是拒绝的，即条件不匹配的都会被拒绝。</li>
+<li>其次对于 ingress 或 egress 来说，对应的 <code>from</code> 或 <code>to</code> 都是用来指定访问端或被访问端的信息。</li>
+<li>如果我们在对应的字段中<strong>没有定义 namespaceSelector 字段</strong>，<strong>默认 ingress 或 egrss 会匹配当前 netpol 所在名称空间</strong>，即在没有明确指定 namespaceSelector 字段时，对应的其他条件都是针对当前 netpol 所在名称空间。</li>
+<li><strong>多个条件组合</strong>使用，如果多个条件都在一个列表中，则表示多个条件间是与关系，即指定的条件需要同时满足对应策略才会放行。</li>
+<li>如果<strong>多个条件不再同一个列表中</strong>，则多个条件之间是或关系，即满足其中一个条件都会被对应策略放行。</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>K8s 三种探针</title>
     <url>/2022/12/30/K8s%20%E4%B8%89%E7%A7%8D%E6%8E%A2%E9%92%88/</url>
     <content><![CDATA[<h2 id="▍POD-状态"><a href="#▍POD-状态" class="headerlink" title="▍POD 状态"></a><strong>▍POD 状态</strong></h2><h3 id="Pod-常见的状态"><a href="#Pod-常见的状态" class="headerlink" title="Pod 常见的状态"></a><strong>Pod 常见的状态</strong></h3><ul>
@@ -166,104 +264,6 @@
       <categories>
         <category>kubernetes</category>
       </categories>
-      <tags>
-        <tag>kubernetes</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Kubernetes 的 hostNetwork 和 NetworkPolicy (网络策略)</title>
-    <url>/2022/12/29/Kubernetes%20%E7%9A%84%20hostNetwork%20%E5%92%8C%20NetworkPolicy%20(%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5)/</url>
-    <content><![CDATA[<h2 id="1-hostNetwork-介绍"><a href="#1-hostNetwork-介绍" class="headerlink" title="1. hostNetwork 介绍"></a>1. hostNetwork 介绍</h2><blockquote>
-<p>在 k8s 中，若 <strong>pod 使用主机网络</strong>，也就是<code>hostNetwork=true</code>。则该pod会使用主机的dns以及所有网络配置，<strong>默认情况下是无法使用 k8s 自带的 dns 解析服务</strong>，但是可以修改 DNS 策略或者修改主机上的域名解析（<code>/etc/resolv.conf</code>），使主机可以用 k8s 自身的 dns 服务。一般通过 DNS 策略（<code>ClusterFirstWithHostNet</code>）来使用 k8s DNS 内部域名解析，k8s DNS 策略如下：</p>
-</blockquote>
-<ul>
-<li><code>Default</code>：继承 Pod 所在宿主机的 DNS 设置，hostNetwork 的默认策略。</li>
-<li><code>ClusterFirst（默认DNS策略）</code>：优先使用 kubernetes 环境的 dns 服务，将无法解析的域名转发到从宿主机继承的 dns 服务器。</li>
-<li><code>ClusterFirstWithHostNet</code>：和 ClusterFirst 类似，对于以 <code>hostNetwork</code> 模式运行的 Pod 应明确知道使用该策略。也是可以同时解析内部和外部的域名。</li>
-<li><code>None</code>：忽略 kubernetes 环境的 dns 配置，通过 spec.dnsConfig 自定义 DNS 配置。</li>
-</ul>
-<p>一般使用主机网络就增加如下几行即可：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">dnsPolicy:</span> <span class="string">&quot;ClusterFirstWithHostNet&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>『示例』：<code>hostNetwork.yaml</code></strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="comment"># 使用主机网络</span></span><br><span class="line">      <span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line">      <span class="comment"># 该设置是使POD使用k8s的dns，dns配置在/etc/resolv.conf文件中</span></span><br><span class="line">      <span class="comment"># 如果不加，pod默认使用所在宿主主机使用的DNS，这样会导致容器</span></span><br><span class="line">      <span class="comment"># 内不能通过service name访问k8s集群中其他POD</span></span><br><span class="line">      <span class="attr">dnsPolicy:</span> <span class="string">ClusterFirstWithHostNet</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">metrics</span></span><br><span class="line">          <span class="comment"># 如果hostNetwork: true，hostPort必须跟containerPort一样，所以hostPort一般不写，端口也是占用宿主机上的端口。</span></span><br><span class="line">          <span class="attr">hostPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">31280</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>hostPort 和 NodePort的区别：</strong></p>
-<blockquote>
-<p><code>hostPort</code> 只会在运行机器上开启端口， <code>NodePort</code> 是所有 Node 上都会开启端口。</p>
-</blockquote>
-<ul>
-<li>hostPort 是由 portmap 这个 cni 提供 portMapping 能力，同时如果想使用这个能力，在配置文件中一定需要开启 portmap。</li>
-<li>使用 hostPort 后，会在 iptables 的 nat 链中插入相应的规则，而且这些规则是在 KUBE-SERVICES 规则之前插入的，也就是说会优先匹配 hostPort 的规则，我们常用的 NodePort 规则其实是在 KUBE-SERVICES 之中，也排在其后。</li>
-<li>hostport 可以通过 iptables 命令查看到， 但是无法在 ipvsadm 中查看到。</li>
-<li>使用 lsof&#x2F;netstat 也查看不到这个端口,这是因为 hostport 是通过 iptables 对请求中的目的端口进行转发的，并不是在主机上通过端口监听。</li>
-<li><strong>在生产环境中不建议使用 hostPort</strong>。</li>
-</ul>
-<h2 id="2-K8s-网络策略-NetworkPolicy"><a href="#2-K8s-网络策略-NetworkPolicy" class="headerlink" title="2. K8s 网络策略 NetworkPolicy"></a>2. K8s 网络策略 NetworkPolicy</h2><p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290837401.png" alt="p"></p>
-<blockquote>
-<p>如果你希望在 IP 地址或端口层面（OSI 第 3 层或第 4 层）控制网络流量， 则你可以考虑为集群中特定应用使用 Kubernetes 网络策略（<code>NetworkPolicy</code>）。**<code>NetworkPolicy</code> 是一种以应用为中心的结构，允许你设置如何允许 Pod 与网络上的各类网络“实体”** 通信。官方文档</p>
-</blockquote>
-<p>网络策略是通过<strong>网络插件</strong>来实现，常用的网络插件<code>Flannel</code>和<code>Calico</code>：</p>
-<ul>
-<li><code>Flannel</code>：只能提供网络通讯，<strong>不提供网络策略</strong>，如果需要使用网络策略，建议使用下面的 Calico，关于 Flannel 更详细的介绍和安装可以参考我这篇文章：Kubernetes（k8s）CNI（flannel）网络模型原理。</li>
-<li><code>Calico</code>：<strong>支持丰富的网络策略</strong>，Calico以其性能、灵活性而闻名。后面也会出相关文章详细介绍 Calico。</li>
-</ul>
-<p>更多了解更多的网络策略，可以参考<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">官方文档</a></p>
-<p>Pod 可以通信的 Pod 是通过如下三个标识符的组合来辩识的：</p>
-<ul>
-<li>其他被允许的 Pods（例外：Pod 无法阻塞对自身的访问）</li>
-<li>被允许的名字空间</li>
-<li>IP 组块（例外：与 Pod 运行所在的节点的通信总是被允许的， 无论 Pod 或节点的 IP 地址）</li>
-</ul>
-<h2 id="3-Pod-隔离的两种类型"><a href="#3-Pod-隔离的两种类型" class="headerlink" title="3. Pod 隔离的两种类型"></a>3. Pod 隔离的两种类型</h2><p>Pod 有两种隔离: <strong>出口的隔离</strong>和<strong>入口的隔离</strong>。默认情况下，出口和入口都是非隔离的。</p>
-<ul>
-<li><strong>网络策略是相加的</strong>，所以不会产生冲突。如果策略适用于 Pod 某一特定方向的流量， Pod 在对应方向所允许的连接是适用的网络策略所允许的集合。因此，评估的顺序不影响策略的结果。</li>
-<li>要允许从源 Pod 到目的 Pod 的连接，源 Pod 的出口策略和目的 Pod 的入口策略都需要允许连接。如果任何一方不允许连接，建立连接将会失败。</li>
-</ul>
-<h2 id="4-NetworkPolicy-资源"><a href="#4-NetworkPolicy-资源" class="headerlink" title="4. NetworkPolicy 资源"></a>4. NetworkPolicy 资源</h2><h3 id="4-1-NetworkPolicy-示例演示"><a href="#4-1-NetworkPolicy-示例演示" class="headerlink" title="4.1 NetworkPolicy 示例演示"></a>4.1 NetworkPolicy 示例演示</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">role:</span> <span class="string">db</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Egress</span></span><br><span class="line">  <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">172.17</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">        <span class="attr">except:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">172.17</span><span class="number">.1</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">project:</span> <span class="string">myproject</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">role:</span> <span class="string">frontend</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">to:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">5978</span></span><br></pre></td></tr></table></figure>
-
-<p>必需字段：与所有其他的 Kubernetes 配置一样，NetworkPolicy 需要 apiVersion、 kind 和 metadata 字段。关于配置文件操作的一般信息， 请参考配置 Pod 以使用 ConfigMap 和对象管理。</p>
-<ul>
-<li><code>spec</code>：NetworkPolicy 规约 中包含了在一个名字空间中定义特定网络策略所需的所有信息。</li>
-<li><code>podSelector</code>：每个 NetworkPolicy 都包括一个 podSelector， 它对该策略所适用的一组 Pod 进行选择。示例中的策略选择带有 “role&#x3D;db” 标签的 Pod。空的 podSelector 选择名字空间下的所有 Pod。</li>
-<li><code>policyTypes</code>：每个 NetworkPolicy 都包含一个 policyTypes 列表，其中包含 Ingress 或 Egress 或两者兼具。policyTypes 字段表示给定的策略是应用于进入所选 Pod 的入站流量还是来自所选 Pod 的出站流量，或两者兼有。如果 NetworkPolicy 未指定 policyTypes 则默认情况下始终设置 Ingress；如果 NetworkPolicy 有任何出口规则的话则设置 Egress。</li>
-<li><code>ingress</code>：每个 NetworkPolicy 可包含一个 ingress 规则的白名单列表。每个规则都允许同时匹配 from 和 ports 部分的流量。示例策略中包含一条简单的规则：它匹配某个特定端口，来自三个来源中的一个，第一个通过 ipBlock 指定，第二个通过 namespaceSelector 指定，第三个通过 podSelector 指定。</li>
-<li><code>egress</code>：每个 NetworkPolicy 可包含一个 egress 规则的白名单列表。每个规则都允许匹配 to 和 port 部分的流量。该示例策略包含一条规则， 该规则将指定端口上的流量匹配到 10.0.0.0&#x2F;24 中的任何目的地。</li>
-</ul>
-<p>所以，该网络策略示例:</p>
-<ul>
-<li><p>隔离 “default” 名字空间下 “role&#x3D;db” 的 Pod （如果它们不是已经被隔离的话）。</p>
-</li>
-<li><p>（Ingress 规则）允许以下 Pod 连接到 “default” 名字空间下的带有 “role&#x3D;db” 标签的所有 Pod 的 6379 TCP 端口：</p>
-<ul>
-<li>“default” 名字空间下带有 “role&#x3D;frontend” 标签的所有 Pod</li>
-<li>带有 “project&#x3D;myproject” 标签的所有名字空间中的 Pod</li>
-<li>IP 地址范围为 172.17.0.0–172.17.0.255 和 172.17.2.0–172.17.255.255 （即，除了 172.17.1.0&#x2F;24 之外的所有 172.17.0.0&#x2F;16）</li>
-</ul>
-</li>
-<li><p>（Egress 规则）允许 “default” 命名空间中任何带有标签 “role&#x3D;db” 的 Pod 到 CIDR 10.0.0.0&#x2F;24 下 5978 TCP 端口的连接。</p>
-</li>
-</ul>
-<h3 id="4-2-选择器-to-和-from-的行为"><a href="#4-2-选择器-to-和-from-的行为" class="headerlink" title="4.2 选择器 to 和 from 的行为"></a>4.2 选择器 to 和 from 的行为</h3><p>可以在 ingress 的 from 部分或 egress 的 to 部分中指定四种选择器：</p>
-<ul>
-<li><code>podSelector</code>：此选择器将在与 NetworkPolicy 相同的名字空间中选择特定的 Pod，应将其允许作为入站流量来源或出站流量目的地。</li>
-<li><code>namespaceSelector</code>：此选择器将选择特定的名字空间，应将所有 Pod 用作其入站流量来源或出站流量目的地。</li>
-<li><code>namespaceSelector</code> 和 <code>podSelector</code>：一个指定 namespaceSelector 和 podSelector 的 to&#x2F;from 条目选择特定名字空间中的特定 Pod。注意使用正确的 YAML 语法；下面的策略：</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ingress:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">    <span class="attr">podSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
-
-<p>在 from 数组中仅包含一个元素，只允许来自标有 role&#x3D;client 的 Pod 且该 Pod 所在的名字空间中标有 user&#x3D;alice 的连接。但是 这项 策略：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"> <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"> <span class="string">...</span></span><br></pre></td></tr></table></figure>
-
-<p>这里只是把官网的摘了一部分，官网介绍的比较清楚，这里就不粘贴复制了，小伙伴可以参考<a href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/">官方文档</a></p>
-<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><ul>
-<li>在 k8s 上网络策略是<strong>白名单机制</strong>，所谓白名单机制是指，只有明确定义的策略才会被允许放行，默认没有指定的规则就是拒绝的，即条件不匹配的都会被拒绝。</li>
-<li>其次对于 ingress 或 egress 来说，对应的 <code>from</code> 或 <code>to</code> 都是用来指定访问端或被访问端的信息。</li>
-<li>如果我们在对应的字段中<strong>没有定义 namespaceSelector 字段</strong>，<strong>默认 ingress 或 egrss 会匹配当前 netpol 所在名称空间</strong>，即在没有明确指定 namespaceSelector 字段时，对应的其他条件都是针对当前 netpol 所在名称空间。</li>
-<li><strong>多个条件组合</strong>使用，如果多个条件都在一个列表中，则表示多个条件间是与关系，即指定的条件需要同时满足对应策略才会放行。</li>
-<li>如果<strong>多个条件不再同一个列表中</strong>，则多个条件之间是或关系，即满足其中一个条件都会被对应策略放行。</li>
-</ul>
-]]></content>
       <tags>
         <tag>kubernetes</tag>
       </tags>
@@ -1092,6 +1092,86 @@
       </tags>
   </entry>
   <entry>
+    <title>k8s常见的问题处理</title>
+    <url>/2022/12/28/k8s%E5%B8%B8%E8%A7%81%E7%9A%84%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/</url>
+    <content><![CDATA[<h2 id="Coredns容器或local-dns容器重启"><a href="#Coredns容器或local-dns容器重启" class="headerlink" title="Coredns容器或local-dns容器重启"></a>Coredns容器或local-dns容器重启</h2><p>集群中的coredns组件发生重启(重新创建)，一般是由于coredns组件压力较大导致oom，请检查业务是否异常，是否存在应用容器无法解析域名的异常。</p>
+<p>如果是local-dns重启，说明local-dns的性能也不够了，需要优化</p>
+<h2 id="Pod-was-OOM-killed"><a href="#Pod-was-OOM-killed" class="headerlink" title="Pod was OOM killed"></a>Pod was OOM killed</h2><p>云应用容器实例发生OOM，请检查云应用是否正常。一般地，如果云应用配置了健康检查，当进程OOM了，健康检查如果失败，集群会自动重启容器。</p>
+<p>OOM问题排查步骤：</p>
+<p>检查应用进程内存配置，如Java的jvm参数，对比应用监控-基础监控中的内存指标，判断是否是参数设置低导致进程内存不够用，适当进行参数优化</p>
+<h2 id="Out-of-memory-Kill-process"><a href="#Out-of-memory-Kill-process" class="headerlink" title="Out of memory: Kill process"></a>Out of memory: Kill process</h2><h3 id="原因描述"><a href="#原因描述" class="headerlink" title="原因描述"></a>原因描述</h3><p>一般是操作系统把容器内进程Kill而导致的系统内核事件。比如一个java应用，当实际占用内存超过堆内存配置大小时，就会出现OOM错误。发生进程被Kill之后，容器依旧是存活状态，容器的健康检查还会继续进行。所以后面通常会伴随出现健康检查失败的错误。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>要具体分析进程被Kill的原因，适当的调整进程内存的限制值。可以结合应用监控来参考进程内存的变化趋势。</p>
+<h2 id="Memory-cgroup-out-of-memory-Kill-process"><a href="#Memory-cgroup-out-of-memory-Kill-process" class="headerlink" title="Memory cgroup out of memory: Kill process"></a>Memory cgroup out of memory: Kill process</h2><h3 id="原因描述-1"><a href="#原因描述-1" class="headerlink" title="原因描述"></a>原因描述</h3><p>一般是由于容器的内存实际使用量超过了容器内存限制值而导致的事件。比如容器的内存限制值配置了1Gi，而容器的内存随着容器内进程内存使用量的增加超过了1Gi，就会导致容器被操作系统Cgroup Kill。发生容器被Kill之后，容器已经被停止，所以后续会出现应用实例被重启的情况。</p>
+<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><p>检查容器内进程是否有内存泄漏问题，同时适当调整容器内存的限制值大小。可以结合应用监控来看变化趋势。需要注意的是，容器内存限制值大小不应该过大，否则可能导致极端资源争抢情况下，容器被迫驱逐的问题。</p>
+<h2 id="System-OOM-encountered"><a href="#System-OOM-encountered" class="headerlink" title="System OOM encountered"></a>System OOM encountered</h2><h3 id="原因描述-2"><a href="#原因描述-2" class="headerlink" title="原因描述"></a>原因描述</h3><p>上述两种OOM（进程OOM，容器OOM）发生后，都可能会伴随一个系统OOM事件，该事件的原因是由上述OOM事件伴随导致。</p>
+<h3 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h3><p>需要解决上面进程OOM或者容器CgroupOOM的问题。</p>
+<h2 id="failed-to-garbage-collect-required-amount-of-images"><a href="#failed-to-garbage-collect-required-amount-of-images" class="headerlink" title="failed to garbage collect required amount of images"></a>failed to garbage collect required amount of images</h2><h3 id="原因描述-3"><a href="#原因描述-3" class="headerlink" title="原因描述"></a>原因描述</h3><p>当容器集群中的节点（宿主机）磁盘使用率达到85%之后，会触发自动的容器镜像回收策略，以便于释放足够的宿主机磁盘。该事件发生于当触发镜像回收策略之后，磁盘空间仍然不足以达到健康阈值（默认为80%）。通常该错误是由于宿主机磁盘被占用太多导致。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
+<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
+<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
+<h2 id="Attempting-to-xxxx"><a href="#Attempting-to-xxxx" class="headerlink" title="Attempting to xxxx"></a>Attempting to xxxx</h2><p>节点资源不足(EvictionThresholdMet)，一般是节点资源将要达到阈值，可能会触发Pod驱逐。如 Attempting to reclaim ephemeral-storage</p>
+<h3 id="原因描述-4"><a href="#原因描述-4" class="headerlink" title="原因描述"></a>原因描述</h3><p>ephemeral storage是临时存储空间，当磁盘空间使用率达到阈值，会触发临时存储空间的回收任务。回收任务会尝试回收系统日志，以及没有正在使用的镜像缓存等数据。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
+<h3 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h3><p>请注意磁盘空间的使用：</p>
+<p>避免使用“空目录”类型的挂载方式；使用NAS或者其他类似方式替代。<br>尽量避免使用“宿主机目录”类型的挂载方式，以便于保证容器是无状态的，可以迁移的。<br>要注意避免在容器内大量写文件，而导致容器运行时可写数据层过大（imagefs）。</p>
+<h2 id="NTP-service-is-not-running"><a href="#NTP-service-is-not-running" class="headerlink" title="NTP service is not running"></a>NTP service is not running</h2><h3 id="原因描述-5"><a href="#原因描述-5" class="headerlink" title="原因描述"></a>原因描述</h3><p>NTP service是系统时间校准服务，由操作系统systemd管理的服务。可以通过 systemctl status chronyd 查看对应服务的状态。</p>
+<h3 id="解决方案-4"><a href="#解决方案-4" class="headerlink" title="解决方案"></a>解决方案</h3><p>使用命令systemctl start chronyd尝试重新启动。也可以通过命令 journalctl -u chronyd 查看服务的日志。</p>
+<h2 id="节点PLEG异常"><a href="#节点PLEG异常" class="headerlink" title="节点PLEG异常"></a>节点PLEG异常</h2><h3 id="原因描述-6"><a href="#原因描述-6" class="headerlink" title="原因描述"></a>原因描述</h3><p>PLEG是pod生命周期事件生成器，会记录Pod生命周期中的各种事件，如容器的启动、终止等。一般是由于节点上的daemon进程异常或者节点systemd版本bug导致。出现该问题会导致集群节点不可用</p>
+<h3 id="解决方案-5"><a href="#解决方案-5" class="headerlink" title="解决方案"></a>解决方案</h3><p>可以尝试重启kubelet；再尝试重启Docker进程。重启这两个进程过程中，不会对已运行容器造成影响</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启kubelet</span><br><span class="line">systemctl restart kubelet</span><br><span class="line"></span><br><span class="line">//重启docker</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br><span class="line">如果是由于systemd版本问题导致，重启节点可短暂修复，彻底解决的话需要升级节点的systemd</span><br><span class="line"></span><br><span class="line">systemd: (rpm -qa | grep systemd, 版本&lt;219-67.el7需要升级)</span><br><span class="line">升级systemd指令: </span><br><span class="line">yum update -y systemd &amp;&amp; systemctl daemon-reexec &amp;&amp; killall runc</span><br></pre></td></tr></table></figure>
+
+<h2 id="节点PID不足"><a href="#节点PID不足" class="headerlink" title="节点PID不足"></a>节点PID不足</h2><h3 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h3><p>通常是节点上的容器占用PID过多导致节点的PID不足</p>
+<h3 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h3><p>当节点的可用PID低于pid.available配置项时，则节点状态中NodePIDPressure为True，同时该节点上的容器被驱逐。关于节点驱逐，请参见节点压力驱逐。<br>若集群配置了集群节点异常报警，则节点PID不足时可收到相关报警。关于配置报警，请参见容器服务报警管理。</p>
+<h3 id="解决方案-6"><a href="#解决方案-6" class="headerlink" title="解决方案"></a>解决方案</h3><p>执行如下命令，查看节点的最大PID数和节点当前的最大PID。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sysctl kernel.pid_max  <span class="comment">#查看最大PID数。</span></span><br><span class="line">  ps -eLf|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> | <span class="built_in">sort</span> -rn| <span class="built_in">head</span> -n 1   <span class="comment">#查看当前的最大PID。</span></span><br><span class="line">执行如下命令，查看占用PID最多的前5个进程。</span><br><span class="line">ps -elT | awk <span class="string">&#x27;&#123;print $4&#125;&#x27;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> -c | <span class="built_in">sort</span> -k1 -g | <span class="built_in">tail</span> -5</span><br><span class="line">预期输出：</span><br><span class="line"></span><br><span class="line"><span class="comment">#第一列为进程占用的PID数，第二列为当前进程号。</span></span><br><span class="line">73 9743</span><br><span class="line">75 9316</span><br><span class="line">76 2812</span><br><span class="line">77 5726</span><br><span class="line">93 5691</span><br></pre></td></tr></table></figure>
+
+<p>根据进程号找到对应进程和所属的Pod，分析占用PID过多的原因并优化对应代码。<br>降低节点的负载。具体操作，请参见节点调度资源不足。<br>如需重启节点，可尝试重启异常节点。具体操作，请参见重启实例。</p>
+<h2 id="节点FD不足"><a href="#节点FD不足" class="headerlink" title="节点FD不足"></a>节点FD不足</h2><h3 id="原因描述："><a href="#原因描述：" class="headerlink" title="原因描述："></a>原因描述：</h3><p>节点文件句柄使用数量超过80%，具体原因与节点上进程使用情况相关打开文件未释放打开管道未释放建立网络连接未释放（pipe,eventpoll多出现在 NIO 网络编程未释放资源 —— selector.close()）创建进程调用命令未释放（Runtime.exe(…) 得到的 Process, InputStream, OutputStream 未关闭，这也会导致 pipe,eventpoll 未释放）</p>
+<h2 id="解决方案：-1"><a href="#解决方案：-1" class="headerlink" title="解决方案："></a>解决方案：</h2><p>删除不需要的文件，调整应用代码，文件流等操作结束后记得关闭。或者尝试先排空再重启主机</p>
+<h2 id="节点Docker-Hung"><a href="#节点Docker-Hung" class="headerlink" title="节点Docker Hung"></a>节点Docker Hung</h2><h3 id="原因描述：-1"><a href="#原因描述：-1" class="headerlink" title="原因描述："></a>原因描述：</h3><p>节点docker daemon异常，导致集群无法与之通信，伴随有docker ps、docker exec等命令hung住或异常失败</p>
+<h3 id="解决方案：-2"><a href="#解决方案：-2" class="headerlink" title="解决方案："></a>解决方案：</h3><p>尝试重启docker服务，重启过程不会影响已存在容器的运行</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启节点上的docker daemon，对运行中容器没有影响</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br></pre></td></tr></table></figure>
+
+<p>如果docker服务重启后依然无法解决，可以尝试重启主机。主机重启过程会对容器有影响，谨慎操作。</p>
+<h2 id="节点磁盘资源不足"><a href="#节点磁盘资源不足" class="headerlink" title="节点磁盘资源不足"></a>节点磁盘资源不足</h2><p>InvalidDiskCapacity</p>
+<h3 id="原因描述-7"><a href="#原因描述-7" class="headerlink" title="原因描述"></a>原因描述</h3><p>节点磁盘不足，无法分配空间给容器镜像</p>
+<h3 id="解决方案-7"><a href="#解决方案-7" class="headerlink" title="解决方案"></a>解决方案</h3><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
+<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
+<h2 id="应用相关"><a href="#应用相关" class="headerlink" title="应用相关"></a>应用相关</h2><h3 id="Container-Restart"><a href="#Container-Restart" class="headerlink" title="Container Restart"></a>Container Restart</h3><h4 id="原因描述：-2"><a href="#原因描述：-2" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示应用实例(重启)重启，一般是由于配置了健康检查且健康检查失败导致，会伴随有Readiness probe failed和Liveness probe failed等事件。健康检查失败的原因有很多，通常情况下，比如进程OOM被Kill、比如高负载情况下应用无法正常响应(例如RDS瓶颈导致应用线程全部hang住)，都可能会导致健康检查失败</p>
+<h4 id="解决方案：-3"><a href="#解决方案：-3" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合临近的相关事件定位具体的Pod重启原因。如伴随有集群相关的Out of memory事件，参考此文档上面Out of memory事件的解决方案；其他情况下，结合应用监控或者云产品自身监控来定位问题</p>
+<h3 id="The-node-had-condition-XXX"><a href="#The-node-had-condition-XXX" class="headerlink" title="The node had condition: [XXX]"></a>The node had condition: [XXX]</h3><h4 id="原因描述：-3"><a href="#原因描述：-3" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示Pod由于节点上的异常情况被驱逐，比如<em>The node had condition: [DiskPressure]，</em>表示节点磁盘使用率比较高，通常会伴随有 failed to garbage collect required amount of images 和 Attempting to reclaim ephemeral-storage 等集群维度(节点)的异常事件</p>
+<h4 id="解决方案：-4"><a href="#解决方案：-4" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合临近的相关事件定位具体的驱逐原因。对于已经被驱逐的Pod实例，可以通过kubectl get po 进行查看和手动清理</p>
+<h3 id="K8S-Pod-Pending"><a href="#K8S-Pod-Pending" class="headerlink" title="K8S Pod Pending"></a>K8S Pod Pending</h3><h4 id="原因描述：-4"><a href="#原因描述：-4" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示集群调度Pod被挂起，一般是由于节点资源不足以调度容器或者Volume挂载失败（比如持久化存储卷找不到）或者其他原因导致。</p>
+<h4 id="解决方案：-5"><a href="#解决方案：-5" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合临近的相关事件定位具体的Pod挂起原因</p>
+<h3 id="Readiness-probe-failed"><a href="#Readiness-probe-failed" class="headerlink" title="Readiness probe failed"></a>Readiness probe failed</h3><h4 id="原因描述-8"><a href="#原因描述-8" class="headerlink" title="原因描述"></a>原因描述</h4><p>由于应用就绪探针失败而引发的异常事件。应用就绪探针失败会导致相应容器的流量被摘除，例如被动从SLB摘掉该容器的流量入口。</p>
+<h4 id="解决方案-8"><a href="#解决方案-8" class="headerlink" title="解决方案"></a>解决方案</h4><p>需要结合应用就绪探针的配置，定位应用就绪探针失败的原因。</p>
+<h3 id="Liveness-probe-failed"><a href="#Liveness-probe-failed" class="headerlink" title="Liveness probe failed"></a>Liveness probe failed</h3><h4 id="原因描述：-5"><a href="#原因描述：-5" class="headerlink" title="原因描述："></a>原因描述：</h4><p>由于应用存活探针失败而引发的异常事件。该事件可能会导致后续达到一定阈值之后，容器被动重启。具体要看应用就绪探针的配置。</p>
+<h4 id="解决方案：-6"><a href="#解决方案：-6" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合应用存活探针的配置，定位探针检查失败的原因。</p>
+<h3 id="Container-runtime-did-not-kill-the-pod-within-specified-grace-period"><a href="#Container-runtime-did-not-kill-the-pod-within-specified-grace-period" class="headerlink" title="Container runtime did not kill the pod within specified grace period."></a>Container runtime did not kill the pod within specified grace period.</h3><h4 id="原因描述：-6"><a href="#原因描述：-6" class="headerlink" title="原因描述："></a>原因描述：</h4><p>此事件表示容器没有在优雅下线的时间段内正常退出。比如如果配置了优雅下线脚本，脚本执行时长需要60s，而优雅下线时间（默认为30s）配置为30s。就会在容器下线期间触发这个事件。</p>
+<h4 id="解决方案：-7"><a href="#解决方案：-7" class="headerlink" title="解决方案："></a>解决方案：</h4><p>调整优雅下线探针的配置，或者优雅下线时间的配置。</p>
+<h3 id="Back-off-restarting-failed-container"><a href="#Back-off-restarting-failed-container" class="headerlink" title="Back-off restarting failed container"></a>Back-off restarting failed container</h3><h4 id="原因描述：-7"><a href="#原因描述：-7" class="headerlink" title="原因描述："></a>原因描述：</h4><p>此事件表示容器启动失败，而被再次拉起尝试启动。通常常见与应用发布过程中的容器启动失败。具体的原因常见为镜像拉取失败，或者容器启动失败（容器没有打到running状态）。</p>
+<h4 id="解决方案：-8"><a href="#解决方案：-8" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要在发布页查看容器启动日志或者调度日志，进一步定位容器启动失败的原因。</p>
+<h3 id="The-node-was-low-on-resource-xxxx"><a href="#The-node-was-low-on-resource-xxxx" class="headerlink" title="The node was low on resource: xxxx"></a>The node was low on resource: xxxx</h3><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2020-07-21 10:24:43.000 [Event] Type: Warning, Reason: Evicted, Message: The node was low on resource: ephemeral-storage. </span><br></pre></td></tr></table></figure>
+
+<h4 id="原因描述：-8"><a href="#原因描述：-8" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示Pod由于节点上的异常情况(资源不足)被驱逐</p>
+<h4 id="解决方案-9"><a href="#解决方案-9" class="headerlink" title="解决方案"></a>解决方案</h4><p>需要看具体哪类资源不足，例如示例中的ephemeral-storage，表示集群节点临时存储空间不足，一般是由于磁盘使用量较大导致。请参考文档上方解决方案</p>
+<p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
+<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。<br>可以对系统盘进行扩容，扩大磁盘空间。</p>
+<h3 id="集群DNS性能瓶颈"><a href="#集群DNS性能瓶颈" class="headerlink" title="集群DNS性能瓶颈"></a>集群DNS性能瓶颈</h3><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>集群中的容器实例，DNS解析均依赖集群内的DNS组件，应用中业务请求的地址都需要经过集群DNS组件。例如，代码中访问RDS、REDIS、TOP api等。如果集群dns性能不足，会出现业务请求失败的问题。</p>
+<p>集群DNS组件：</p>
+<p>默认已安装的集群组件为coredns，副本数为2<br>可选的高性能组件为localdns</p>
+<h4 id="是否有性能瓶颈"><a href="#是否有性能瓶颈" class="headerlink" title="是否有性能瓶颈"></a>是否有性能瓶颈</h4><p>应用有大量DNS请求的场景(比如连接rds，凡是涉及到域名地址解析的)<br>PHP等语言自身没有连接池特性的，或者应用自身没有DNS缓存的<br>偶尔出现域名地址无法解析错误的</p>
+<h4 id="解决方案-10"><a href="#解决方案-10" class="headerlink" title="解决方案"></a>解决方案</h4><p>一、集群默认已安装的coredns组件，进行扩容。扩容比例为1&#x2F;5的节点数(如15台ecs，那么coredns数量为3)</p>
+<p>二、为集群安装更高性能的localdns组件(该组件为daemonset，会在每个ECS节点起一个本地缓存)</p>
+<p>一般来说，如果业务量小，扩容下coredns就足够了；如果业务量大(域名地址解析QPS高，比如访问RDS)，特别是php等不带连接池的开发语言，建议直接上localdns。如果是java等配置了连接池的应用，可以先扩容coredns观察，如果仍然有解析问题，再上localdns。</p>
+<h3 id="localdns缓存原理"><a href="#localdns缓存原理" class="headerlink" title="localdns缓存原理"></a>localdns缓存原理</h3><p>NodeLocalDNS 是一个 DaemonSet，会在Kubernetes集群的每个节点上运行一个专门处理 DNS 查询请求的 Pod，该 Pod 会将集群内部域名查询请求发往 CoreDNS；将集群外部请求直接发往外部域名解析服务器。同时能够Cache所有请求。可以被看作是节点级别的高效DNS 缓存，能够大幅提高集群整体 DNS 查询的 QPS。NodeLocalDNS 会在集群的每个节点上创建一个专用的虚拟接口（接口绑定的 IP 需要通过 local_dns_ip 这个值来指定），节点上所有发往该 IP 的 DNS 查询请求都会被拦截到 NodeLocalDNS Pod 内进行处理；通过集群原有的 kube-dns 服务（该服务的 clusterIP 值需要通过kube_dns_ip来指定）来与CoreDNS进行通信。<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/image.png" alt="image"></p>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>k8s集群修改cidr</title>
     <url>/2022/12/30/k8s%E9%9B%86%E7%BE%A4%E4%BF%AE%E6%94%B9cidr/</url>
     <content><![CDATA[<p>当集群的pod地址和本地网络冲突时，会导致集群无法访问本地资源，这种情况可以使用防火墙的DNAT做映射来规避，但不是一劳永逸的方法，要想一劳永逸，则需更改其中一个环境的<code>cidr</code>，对于一个公司来说，更改集群的cidr比较实际，下面以集群的<code>10.244.0.0/16</code>更改为<code>10.245.0.0/16</code>为例</p>
@@ -1113,6 +1193,394 @@
       </categories>
       <tags>
         <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>kubelet源码执行流程分析</title>
+    <url>/2022/12/29/kubelet%E6%BA%90%E7%A0%81%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/</url>
+    <content><![CDATA[<h2 id="k8s学习：kubelet源码执行流程分析"><a href="#k8s学习：kubelet源码执行流程分析" class="headerlink" title="k8s学习：kubelet源码执行流程分析"></a>k8s学习：kubelet源码执行流程分析</h2><p>容器技术应用范围越来越广，通过理解整个框架的执行流程，学习源码执行思路，对以后的编程很有帮助， kubernetes有很多组件，我们今天通过kubelet这个组件来进行深入的分析，来看看里面的执行流程，kubelet里面涉及的方法非常多且层层嵌套，通过我这一篇文章肯定是讲不全的，大家可以根据自己的情况不断深入来学习。我们这篇文章主要分析其执行流程，不深入底层的执行细节。抓主干。学习源码版本：1.19</p>
+<h3 id="kubelet-主要功能"><a href="#kubelet-主要功能" class="headerlink" title="kubelet 主要功能"></a>kubelet 主要功能</h3><p>在kubernetes集群中，每个Node节点都会启动kubelet进程，用来处理Master节点下发到本节点的任务，管理Pod和其中的容器，并负责健康检查和监控信息提供。</p>
+<h4 id="pod-管理"><a href="#pod-管理" class="headerlink" title="pod 管理"></a>pod 管理</h4><p>每个pod都有其对应的yaml文件，来描述其运行过程中的一些参数和配置信息，kubelet 采用一组通过各种机制来保证运行在此物理机上的容器，符合 PodSpecs 中描述的 Pod 状态，正常健康运行。</p>
+<p>官方提供了4中方式来获取容器信息：</p>
+<ol>
+<li>apiserver：通过 API Server 监听 etcd 目录获取数据；</li>
+<li>File：启动参数 –config 指定的配置目录下的文件；</li>
+<li>通过 url 从网络上某个地址来获取信息</li>
+</ol>
+<p>拿apiserver来说，如果Kubelet 监听到etcd中有新的绑定到本节点的 Pod，则按照 Pod 清单的要求创建该 Pod；如果发现本地的 Pod 被修改，则 Kubelet 会做出相应的修改。</p>
+<h4 id="容器健康检查"><a href="#容器健康检查" class="headerlink" title="容器健康检查"></a>容器健康检查</h4><p>容器健康检查，主要是通过LivenessProbe 与ReadinessProbe来判断容器是否健康。</p>
+<ol>
+<li>LivenessProbe ：用于判断容器是否健康，告诉 Kubelet 一个容器什么时候处于不健康的状态。如果 LivenessProbe 探针探测到容器不健康，则 Kubelet 将删除该容器，并根据容器的重启策略做相应的处理。如果一个容器不包含 LivenessProbe 探针，那么 Kubelet 认为该容器的 LivenessProbe 探针返回的值永远是 “Success”；</li>
+<li>ReadinessProbe：用于判断容器是否启动完成且准备接收请求。如果 ReadinessProbe 探针探测到失败，则 Pod 的状态将被修改。Endpoint Controller 将从 Service 的 Endpoint 中删除包含该容器所在 Pod 的 IP 地址的 Endpoint 条目。</li>
+</ol>
+<h4 id="容器监控"><a href="#容器监控" class="headerlink" title="容器监控"></a>容器监控</h4><p>Kubelet 通过 cAdvisor 获取其所在节点及容器的数据。cAdvisor 是一个开源的分析容器资源使用率和性能特性的代理工具，集成到 Kubelet中，当Kubelet启动时会同时启动cAdvisor，且一个cAdvisor只监控一个Node节点的信息。cAdvisor 自动查找所有在其所在节点上的容器，自动采集 CPU、内存、文件系统和网络使用的统计信息。cAdvisor 通过它所在节点机的 Root 容器，采集并分析该节点机的全面使用情况。</p>
+<h3 id="kubelet-工作原理"><a href="#kubelet-工作原理" class="headerlink" title="kubelet 工作原理"></a>kubelet 工作原理</h3><p>这里借用网上的一张图来说明情况：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111512447.png" alt="20210131-9142139592.png"></p>
+<p>由图我们可以看到kubelet 的工作核心，就是一个控制循环，即：SyncLoop。驱动整个控制循环的事件有：pod更新事件、pod生命周期变化、kubelet本身设置的执行周期、定时清理事件等。</p>
+<p>在SyncLoop循环上还有很多xxManager，例如probeManager 会定时去监控 pod 中容器的健康状况，当前支持两种类型的探针：livenessProbe 和readinessProbe；statusManager 负责维护状态信息，并把 pod 状态更新到 apiserver；containerRefManager 容器引用的管理，相对简单的Manager，用来报告容器的创建，失败等事件等等。</p>
+<p>kubelet 调用下层容器运行时的执行过程，并不会直接调用 Docker 的 API，而是通过一组叫作 CRI（Container Runtime Interface，容器运行时接口）的 gRPC 接口来间接执行的。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111521889.png" alt="20210131-3878407432.png"></p>
+<p>CRI是k8s对容器的操作抽离出的一系列的接口，kubelet 就只需要跟这个接口打交道，而不需要关注底层的容器时docker还是rkt，底层的容器只需要自己提供一个该接口的实现，然后对 kubelet 暴露出 gRPC 服务即可。有关CRI的可以内容可以看看这篇：Introducing Container Runtime Interface。</p>
+<p>一般来说CRI接口可以分为两组：</p>
+<ol>
+<li>一组是ImageService，主要是容器镜像相关的操作，比如拉取镜像、删除镜像等。</li>
+<li>一组是RuntimeService，主要是跟容器相关的操作，比如创建、启动、删除Container、Exec等。</li>
+</ol>
+<h3 id="kubelet执行源码分析"><a href="#kubelet执行源码分析" class="headerlink" title="kubelet执行源码分析"></a>kubelet执行源码分析</h3><p>Run</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111512279.png" alt="kubelet.png"></p>
+<p>文件地址：kubernetes\pkg\kubelet\kubelet.go</p>
+<pre><code>func (kl *Kubelet) Run(updates &lt;-chan kubetypes.PodUpdate) &#123;
+    //注册 logServer
+    if kl.logServer == nil &#123;
+        kl.logServer = http.StripPrefix(&quot;/logs/&quot;, http.FileServer(http.Dir(&quot;/var/log/&quot;)))
+    &#125;
+    if kl.kubeClient == nil &#123;
+        klog.Warning(&quot;No api server defined - no node status update will be sent.&quot;)
+    &#125;
+
+    //Cloud Provider 扩展相关：https://kubernetes.feisky.xyz/extension/cloud-provider
+    if kl.cloudResourceSyncManager != nil &#123;
+        go kl.cloudResourceSyncManager.Run(wait.NeverStop)
+    &#125;
+    //调用 kl.initializeModules 首先启动不依赖 container runtime 的一些模块
+    if err := kl.initializeModules(); err != nil &#123;
+        kl.recorder.Eventf(kl.nodeRef, v1.EventTypeWarning, events.KubeletSetupFailed, err.Error())
+        klog.Fatal(err)
+    &#125;
+
+    //启动 volume manager
+    go kl.volumeManager.Run(kl.sourcesReady, wait.NeverStop)
+
+    if kl.kubeClient != nil &#123; 
+        //执行 kl.syncNodeStatus 定时同步 Node 状态
+        go wait.Until(kl.syncNodeStatus, kl.nodeStatusUpdateFrequency, wait.NeverStop)
+        //调用 kl.fastStatusUpdateOnce 更新容器运行时启动时间以及执行首次状态同步
+        go kl.fastStatusUpdateOnce()
+
+        // start syncing lease
+        //NodeLease 机制
+        go kl.nodeLeaseController.Run(wait.NeverStop)
+    &#125;
+    //执行 kl.updateRuntimeUp 定时更新 Runtime 状态
+    go wait.Until(kl.updateRuntimeUp, 5*time.Second, wait.NeverStop)
+
+    // Set up iptables util rules
+    //执行 kl.syncNetworkUtil 定时同步 iptables 规则
+    if kl.makeIPTablesUtilChains &#123;
+        kl.initNetworkUtil()
+    &#125;
+
+    //获取 pk.podKillingCh异常pod， 并定时清理异常 pod
+    go wait.Until(kl.podKiller.PerformPodKillingWork, 1*time.Second, wait.NeverStop)
+
+    // Start component sync loops.
+    //启动 statusManager、probeManager、runtimeClassManager
+    kl.statusManager.Start()
+    kl.probeManager.Start()
+
+    // Start syncing RuntimeClasses if enabled.
+    if kl.runtimeClassManager != nil &#123;
+        kl.runtimeClassManager.Start(wait.NeverStop)
+    &#125;
+
+    // Start the pod lifecycle event generator.
+    //启动 pleg 该模块主要用于周期性地向 container runtime 刷新当前所有容器的状态
+    //https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/pod-lifecycle-event-generator.md
+    kl.pleg.Start()
+    kl.syncLoop(updates, kl)&#125;
+</code></pre>
+<p>这个方法会做以下事情：</p>
+<ol>
+<li>注册logServer；</li>
+<li>如果设置了Cloud Provider，那么会启动云资源管理器，具体的可以查看文章：cloud-provider；</li>
+<li>调用kl.initializeModules启动不依赖 container runtime 的一些模块，这个方法我们下面再分析；</li>
+<li>启动 volume manager；</li>
+<li>执行 kl.syncNodeStatus 定时同步 Node 状态；</li>
+<li>调用kl.fastStatusUpdateOnce启动一个循环更新pod CIDR、runtime状态以及node状态；</li>
+<li>调用kl.nodeLeaseController.Run启动NodeLease机制，NodeLease机制是一种上报心跳的方式，可以通过更加轻量化节约资源的方式，并提升性能上报node的心跳信息，具体看： Lease object；</li>
+<li>执行 kl.updateRuntimeUp 定时更新 Runtime 状态；</li>
+<li>执行 kl.syncNetworkUtil 定时同步 iptables 规则；</li>
+<li>获取 pk.podKillingCh异常pod， 并定时清理异常 pod；</li>
+<li>然后启动 statusManager、probeManager、runtimeClassManager；</li>
+<li>启动 pleg模块，该模块主要用于周期性地向 container runtime 上报当前所有容器的状态，具体可以看：Pod Lifecycle Event Generator (PLEG)；</li>
+<li>调用kl.syncLoop启动kublet事件循环；</li>
+</ol>
+<h3 id="initializeModules"><a href="#initializeModules" class="headerlink" title="initializeModules"></a>initializeModules</h3><p>下面我们看看initializeModules方法做了些什么。</p>
+<pre><code>func (kl *Kubelet) initializeModules() error &#123;
+    ...
+    //创建文件目录
+    if err := kl.setupDataDirs(); err != nil &#123;
+        return err    &#125;
+
+    //创建 ContainerLogsDir
+    if _, err := os.Stat(ContainerLogsDir); err != nil &#123;
+        if err := kl.os.MkdirAll(ContainerLogsDir, 0755); err != nil &#123;
+            return fmt.Errorf(&quot;failed to create directory %q: %v&quot;, ContainerLogsDir, err)
+        &#125;
+    &#125;
+
+    //启动 imageManager
+    kl.imageManager.Start()
+
+    //启动 certificate manager ，证书相关
+    if kl.serverCertificateManager != nil &#123;
+        kl.serverCertificateManager.Start()
+    &#125;
+
+    //启动 oomWatcher.
+    if err := kl.oomWatcher.Start(kl.nodeRef); err != nil &#123;
+        return fmt.Errorf(&quot;failed to start OOM watcher %v&quot;, err)
+    &#125;
+
+    //启动 resource analyzer,刷新volume stats到缓存中
+    kl.resourceAnalyzer.Start()
+
+    return nil&#125;
+</code></pre>
+<p>initializeModules方法主要做了以下几件事：</p>
+<ol>
+<li>创建创建文件目录、Container的log目录；</li>
+<li>启动 imageManager，这个管理器实际上是realImageGCManager，我们待会看；</li>
+<li>启动 certificate manager ，证书相关；</li>
+<li>启动 oomWatcher监视器；</li>
+<li>启动 resource analyzer,定时刷新volume stats到缓存中；</li>
+</ol>
+<h3 id="realImageGCManager-Start"><a href="#realImageGCManager-Start" class="headerlink" title="realImageGCManager#Start"></a>realImageGCManager#Start</h3><p>文件路径：pkg&#x2F;kubelet&#x2F;images&#x2F;image_gc_manager.go</p>
+<pre><code>func (im *realImageGCManager) Start() &#123;
+    go wait.Until(func() &#123; 
+        var ts time.Time        if im.initialized &#123;
+            ts = time.Now()
+        &#125;
+        //找出所有的image，并删除不再使用的image
+        _, err := im.detectImages(ts)
+        if err != nil &#123;
+            klog.Warningf(&quot;[imageGCManager] Failed to monitor images: %v&quot;, err)
+        &#125; else &#123;
+            im.initialized = true
+        &#125;
+    &#125;, 5*time.Minute, wait.NeverStop)
+
+    //更新image的缓存
+    go wait.Until(func() &#123;
+        //调用容器接口，获取最新的image
+        images, err := im.runtime.ListImages()
+        if err != nil &#123;
+            klog.Warningf(&quot;[imageGCManager] Failed to update image list: %v&quot;, err)
+        &#125; else &#123;
+            im.imageCache.set(images)
+        &#125;
+    &#125;, 30*time.Second, wait.NeverStop)&#125;
+</code></pre>
+<p>realImageGCManager的start方法会启动两个协程，然后分别定时调用detectImages方法与imageCache的set方法。detectImages方法里面主要就是调用ImageService和RuntimeService的方法找出所有正在使用的image，然后删除不再使用的image。</p>
+<p>这里ListImages和detectImages里面用到的GetPods方法都是调用了CRI的方法，</p>
+<h3 id="fastStatusUpdateOnce"><a href="#fastStatusUpdateOnce" class="headerlink" title="fastStatusUpdateOnce"></a>fastStatusUpdateOnce</h3><pre><code>func (kl *Kubelet) fastStatusUpdateOnce() &#123;
+    for &#123;
+        time.Sleep(100 * time.Millisecond)
+        node, err := kl.GetNode()
+        if err != nil &#123;
+            klog.Errorf(err.Error())
+            continue
+        &#125;
+        if len(node.Spec.PodCIDRs) != 0 &#123;
+            podCIDRs := strings.Join(node.Spec.PodCIDRs, &quot;,&quot;)
+            if _, err := kl.updatePodCIDR(podCIDRs); err != nil &#123;
+                klog.Errorf(&quot;Pod CIDR update to %v failed %v&quot;, podCIDRs, err)
+                continue
+            &#125;
+            //更新 Runtime 状态
+            kl.updateRuntimeUp()
+            //更新 节点 状态
+            kl.syncNodeStatus()
+            return
+        &#125;
+    &#125;&#125;
+</code></pre>
+<p>FastStatusUpdateOnce 函数启动一个循环，尝试立即更新POD CIDR。更新pod CIDR后，它会触发运行时更新和节点状态更新。函数在一次成功的节点状态更新后直接返回。该功能仅在 kubelet 启动期间执行，通过尽快更新 pod cidr、运行时状态和节点状态来提高准备就绪节点的延迟。</p>
+<h3 id="updateRuntimeUp"><a href="#updateRuntimeUp" class="headerlink" title="updateRuntimeUp"></a>updateRuntimeUp</h3><p>&#x2F;&#x2F;首次执行的时候会初始化runtime依赖模块，然后更新runtimeState</p>
+<pre><code>//首次执行的时候会初始化runtime依赖模块，然后更新runtimeStatefunc (kl *Kubelet) updateRuntimeUp() &#123;
+    kl.updateRuntimeMux.Lock()
+    defer kl.updateRuntimeMux.Unlock()
+    //获取 containerRuntime Status
+    s, err := kl.containerRuntime.Status()
+    if err != nil &#123;
+        klog.Errorf(&quot;Container runtime sanity check failed: %v&quot;, err)
+        return
+    &#125;
+    if s == nil &#123;
+        klog.Errorf(&quot;Container runtime status is nil&quot;)
+        return
+    &#125; 
+    klog.V(4).Infof(&quot;Container runtime status: %v&quot;, s)
+    //检查 network 和 runtime 是否处于 ready 状态
+    networkReady := s.GetRuntimeCondition(kubecontainer.NetworkReady)
+    if networkReady == nil || !networkReady.Status &#123;
+        klog.Errorf(&quot;Container runtime network not ready: %v&quot;, networkReady)
+        kl.runtimeState.setNetworkState(fmt.Errorf(&quot;runtime network not ready: %v&quot;, networkReady))
+    &#125; else &#123;
+        // Set nil if the container runtime network is ready.
+        kl.runtimeState.setNetworkState(nil)
+    &#125;
+    // information in RuntimeReady condition will be propagated to NodeReady condition.
+    //获取运行时状态
+    runtimeReady := s.GetRuntimeCondition(kubecontainer.RuntimeReady)
+    // If RuntimeReady is not set or is false, report an error.
+    if runtimeReady == nil || !runtimeReady.Status &#123;
+        err := fmt.Errorf(&quot;Container runtime not ready: %v&quot;, runtimeReady)
+        klog.Error(err)
+        kl.runtimeState.setRuntimeState(err)
+        return
+    &#125;
+    kl.runtimeState.setRuntimeState(nil)
+    //调用 kl.initializeRuntimeDependentModules 启动依赖模块
+    kl.oneTimeInitializer.Do(kl.initializeRuntimeDependentModules)
+    kl.runtimeState.setRuntimeSync(kl.clock.Now())&#125;
+</code></pre>
+<p>updateRuntimeUp会获取container运行状态信息，然后根据返回RuntimeStatus检查网络、runtime是不是已经处于ready状态；接着调用kl.initializeRuntimeDependentModules初始化依赖模块，这里会启动cadvisor、containerManager、evictionManager、containerLogManager、pluginManager；最后设置Runtime同步时间。</p>
+<h3 id="最后看看syncLoop方法"><a href="#最后看看syncLoop方法" class="headerlink" title="最后看看syncLoop方法"></a>最后看看syncLoop方法</h3><pre><code>func (kl *Kubelet) syncLoop(updates &lt;-chan kubetypes.PodUpdate, handler SyncHandler) &#123;
+    ...
+    syncTicker := time.NewTicker(time.Second)
+    defer syncTicker.Stop()
+    housekeepingTicker := time.NewTicker(housekeepingPeriod)
+    defer housekeepingTicker.Stop()
+    plegCh := kl.pleg.Watch()
+    for &#123;
+        ...
+        kl.syncLoopMonitor.Store(kl.clock.Now())
+        if !kl.syncLoopIteration(updates, handler, syncTicker.C, housekeepingTicker.C, plegCh) &#123;
+            break
+        &#125;
+        kl.syncLoopMonitor.Store(kl.clock.Now())
+    &#125;&#125;
+</code></pre>
+<p>syncLoop方法在一个循环中不断的调用syncLoopIteration方法执行主要逻辑。</p>
+<h3 id="syncLoopIteration方法比较长，拆开来看"><a href="#syncLoopIteration方法比较长，拆开来看" class="headerlink" title="syncLoopIteration方法比较长，拆开来看"></a>syncLoopIteration方法比较长，拆开来看</h3><pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
+    //方法会监听多个 channel，当发现任何一个 channel 有数据就交给 handler 去处理，在 handler 中通过调用 dispatchWork 分发任务
+    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
+    select &#123;
+        //该模块将同时 watch 3 个不同来源的 pod 信息的变化（file，http，apiserver），
+        //一旦某个来源的 pod 信息发生了更新（创建/更新/删除），这个 channel 中就会出现被更新的 pod 信息和更新的具体操作；
+    case u, open := &lt;-configCh: 
+        if !open &#123;
+            klog.Errorf(&quot;Update channel is closed. Exiting the sync loop.&quot;)
+            return false
+        &#125;
+
+        switch u.Op &#123;
+        case kubetypes.ADD:
+            klog.V(2).Infof(&quot;SyncLoop (ADD, %q): %q&quot;, u.Source, format.Pods(u.Pods)) 
+            handler.HandlePodAdditions(u.Pods)
+        case kubetypes.UPDATE:
+            klog.V(2).Infof(&quot;SyncLoop (UPDATE, %q): %q&quot;, u.Source, format.PodsWithDeletionTimestamps(u.Pods))
+            handler.HandlePodUpdates(u.Pods)
+        case kubetypes.REMOVE:
+            klog.V(2).Infof(&quot;SyncLoop (REMOVE, %q): %q&quot;, u.Source, format.Pods(u.Pods))
+            handler.HandlePodRemoves(u.Pods)
+        case kubetypes.RECONCILE:
+            klog.V(4).Infof(&quot;SyncLoop (RECONCILE, %q): %q&quot;, u.Source, format.Pods(u.Pods))
+            handler.HandlePodReconcile(u.Pods)
+        case kubetypes.DELETE:
+            klog.V(2).Infof(&quot;SyncLoop (DELETE, %q): %q&quot;, u.Source, format.Pods(u.Pods)) 
+            handler.HandlePodUpdates(u.Pods)
+        case kubetypes.SET: 
+            klog.Errorf(&quot;Kubelet does not support snapshot update&quot;)
+        default:
+            klog.Errorf(&quot;Invalid event type received: %d.&quot;, u.Op)
+        &#125;
+
+        kl.sourcesReady.AddSource(u.Source)
+
+     ...&#125;
+</code></pre>
+<p>configCh读取配置事件的管道，该模块将同时 watch 3 个不同来源的 pod 信息的变化（file，http，apiserver），一旦某个来源的 pod 信息发生了更新（创建&#x2F;更新&#x2F;删除），这个 channel 中就会出现被更新的 pod 信息和更新的具体操作。这里对于pod的操作我们下一篇再讲。</p>
+<p>plegCh</p>
+<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
+    //方法会监听多个 channel，当发现任何一个 channel 有数据就交给 handler 去处理，在 handler 中通过调用 dispatchWork 分发任务
+    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
+    ...
+    case e := &lt;-plegCh:
+        if e.Type == pleg.ContainerStarted &#123;
+            kl.lastContainerStartedTime.Add(e.ID, time.Now())
+        &#125;
+        if isSyncPodWorthy(e) &#123; 
+            if pod, ok := kl.podManager.GetPodByUID(e.ID); ok &#123;
+                klog.V(2).Infof(&quot;SyncLoop (PLEG): %q, event: %#v&quot;, format.Pod(pod), e)
+                handler.HandlePodSyncs([]*v1.Pod&#123;pod&#125;)
+            &#125; else &#123; 
+                klog.V(4).Infof(&quot;SyncLoop (PLEG): ignore irrelevant event: %#v&quot;, e)
+            &#125;
+        &#125; 
+        if e.Type == pleg.ContainerDied &#123;
+            if containerID, ok := e.Data.(string); ok &#123;
+                kl.cleanUpContainersInPod(e.ID, containerID)
+            &#125;
+        &#125;
+    ...&#125;
+</code></pre>
+<p>PLEG.Start的时候会每秒钟启动调用一次relist，根据最新的PodStatus生成PodLiftCycleEvent，然后存入到PLE Channel中。</p>
+<p>syncLoop会调用pleg.Watch方法获取PLE Channel管道，然后传给syncLoopIteration方法，在syncLoopIteration方法中也就是plegCh这个管道，syncLoopIteration会消费plegCh中的数据，在 handler 中通过调用 dispatchWork 分发任务。</p>
+<p>syncCh</p>
+<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
+    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
+    ...
+    //  每秒钟会执行到一次
+    case &lt;-syncCh:
+        // Sync pods waiting for sync
+        podsToSync := kl.getPodsToSync()
+        if len(podsToSync) == 0 &#123;
+            break
+        &#125;
+        klog.V(4).Infof(&quot;SyncLoop (SYNC): %d pods; %s&quot;, len(podsToSync), format.Pods(podsToSync))
+        //同步最新保存的 pod 状态
+        handler.HandlePodSyncs(podsToSync)
+    ...&#125;
+</code></pre>
+<p>syncCh是由syncLoop方法里面创建的一个定时任务，每秒钟会向syncCh添加一个数据，然后就会执行到这里。这个方法会同步所有等待同步的pod。</p>
+<p>livenessManager.Updates</p>
+<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
+    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
+    ...
+    case update := &lt;-kl.livenessManager.Updates():
+        //如果探针检测失败，需要更新pod的状态
+        if update.Result == proberesults.Failure &#123; 
+            pod, ok := kl.podManager.GetPodByUID(update.PodUID)
+            if !ok &#123; 
+                klog.V(4).Infof(&quot;SyncLoop (container unhealthy): ignore irrelevant update: %#v&quot;, update)
+                break
+            &#125;
+            klog.V(1).Infof(&quot;SyncLoop (container unhealthy): %q&quot;, format.Pod(pod))
+            handler.HandlePodSyncs([]*v1.Pod&#123;pod&#125;)
+        &#125;
+    ...&#125;
+</code></pre>
+<p>对失败的pod或者liveness检查失败的pod进行sync操作。</p>
+<p>housekeepingCh</p>
+<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
+    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
+    ...
+    //  每两秒钟执行一次
+    case &lt;-housekeepingCh:
+        if !kl.sourcesReady.AllReady() &#123; 
+            klog.V(4).Infof(&quot;SyncLoop (housekeeping, skipped): sources aren&#39;t ready yet.&quot;)
+        &#125; else &#123;
+            klog.V(4).Infof(&quot;SyncLoop (housekeeping)&quot;)
+            //执行一些清理工作，包括终止pod workers、删除不想要的pod，移除volumes、pod目录
+            if err := handler.HandlePodCleanups(); err != nil &#123;
+                klog.Errorf(&quot;Failed cleaning pods: %v&quot;, err)
+            &#125;
+        &#125;
+    ...&#125;
+</code></pre>
+<p>housekeepingCh这个管道也是由syncLoop创建，每两秒钟会触发清理。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>kubelet.Run部分主要执行kubelet包含的各种manager的运行，大部分会以一部线程的方式定时运行。了解了CRI是怎么一回事，通过CRI接口可以做什么。</p>
+<p>接下来看了syncLoop主函数，这个函数主要对pod的生命周期进行管理，包括对pod进行add 、update、remove、delete等操作，这些具体的代码执行过程大家有兴趣的可以自己了解。</p>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>Kubelet</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
+        <tag>Kubelet</tag>
       </tags>
   </entry>
   <entry>
@@ -3276,86 +3744,6 @@ NFS是一个网络文件存储系统，可以搭建一台NFS服务器，然后�
       </tags>
   </entry>
   <entry>
-    <title>k8s常见的问题处理</title>
-    <url>/2022/12/28/k8s%E5%B8%B8%E8%A7%81%E7%9A%84%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/</url>
-    <content><![CDATA[<h2 id="Coredns容器或local-dns容器重启"><a href="#Coredns容器或local-dns容器重启" class="headerlink" title="Coredns容器或local-dns容器重启"></a>Coredns容器或local-dns容器重启</h2><p>集群中的coredns组件发生重启(重新创建)，一般是由于coredns组件压力较大导致oom，请检查业务是否异常，是否存在应用容器无法解析域名的异常。</p>
-<p>如果是local-dns重启，说明local-dns的性能也不够了，需要优化</p>
-<h2 id="Pod-was-OOM-killed"><a href="#Pod-was-OOM-killed" class="headerlink" title="Pod was OOM killed"></a>Pod was OOM killed</h2><p>云应用容器实例发生OOM，请检查云应用是否正常。一般地，如果云应用配置了健康检查，当进程OOM了，健康检查如果失败，集群会自动重启容器。</p>
-<p>OOM问题排查步骤：</p>
-<p>检查应用进程内存配置，如Java的jvm参数，对比应用监控-基础监控中的内存指标，判断是否是参数设置低导致进程内存不够用，适当进行参数优化</p>
-<h2 id="Out-of-memory-Kill-process"><a href="#Out-of-memory-Kill-process" class="headerlink" title="Out of memory: Kill process"></a>Out of memory: Kill process</h2><h3 id="原因描述"><a href="#原因描述" class="headerlink" title="原因描述"></a>原因描述</h3><p>一般是操作系统把容器内进程Kill而导致的系统内核事件。比如一个java应用，当实际占用内存超过堆内存配置大小时，就会出现OOM错误。发生进程被Kill之后，容器依旧是存活状态，容器的健康检查还会继续进行。所以后面通常会伴随出现健康检查失败的错误。</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>要具体分析进程被Kill的原因，适当的调整进程内存的限制值。可以结合应用监控来参考进程内存的变化趋势。</p>
-<h2 id="Memory-cgroup-out-of-memory-Kill-process"><a href="#Memory-cgroup-out-of-memory-Kill-process" class="headerlink" title="Memory cgroup out of memory: Kill process"></a>Memory cgroup out of memory: Kill process</h2><h3 id="原因描述-1"><a href="#原因描述-1" class="headerlink" title="原因描述"></a>原因描述</h3><p>一般是由于容器的内存实际使用量超过了容器内存限制值而导致的事件。比如容器的内存限制值配置了1Gi，而容器的内存随着容器内进程内存使用量的增加超过了1Gi，就会导致容器被操作系统Cgroup Kill。发生容器被Kill之后，容器已经被停止，所以后续会出现应用实例被重启的情况。</p>
-<h3 id="解决方案-1"><a href="#解决方案-1" class="headerlink" title="解决方案"></a>解决方案</h3><p>检查容器内进程是否有内存泄漏问题，同时适当调整容器内存的限制值大小。可以结合应用监控来看变化趋势。需要注意的是，容器内存限制值大小不应该过大，否则可能导致极端资源争抢情况下，容器被迫驱逐的问题。</p>
-<h2 id="System-OOM-encountered"><a href="#System-OOM-encountered" class="headerlink" title="System OOM encountered"></a>System OOM encountered</h2><h3 id="原因描述-2"><a href="#原因描述-2" class="headerlink" title="原因描述"></a>原因描述</h3><p>上述两种OOM（进程OOM，容器OOM）发生后，都可能会伴随一个系统OOM事件，该事件的原因是由上述OOM事件伴随导致。</p>
-<h3 id="解决方案-2"><a href="#解决方案-2" class="headerlink" title="解决方案"></a>解决方案</h3><p>需要解决上面进程OOM或者容器CgroupOOM的问题。</p>
-<h2 id="failed-to-garbage-collect-required-amount-of-images"><a href="#failed-to-garbage-collect-required-amount-of-images" class="headerlink" title="failed to garbage collect required amount of images"></a>failed to garbage collect required amount of images</h2><h3 id="原因描述-3"><a href="#原因描述-3" class="headerlink" title="原因描述"></a>原因描述</h3><p>当容器集群中的节点（宿主机）磁盘使用率达到85%之后，会触发自动的容器镜像回收策略，以便于释放足够的宿主机磁盘。该事件发生于当触发镜像回收策略之后，磁盘空间仍然不足以达到健康阈值（默认为80%）。通常该错误是由于宿主机磁盘被占用太多导致。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
-<h3 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h3><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
-<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
-<h2 id="Attempting-to-xxxx"><a href="#Attempting-to-xxxx" class="headerlink" title="Attempting to xxxx"></a>Attempting to xxxx</h2><p>节点资源不足(EvictionThresholdMet)，一般是节点资源将要达到阈值，可能会触发Pod驱逐。如 Attempting to reclaim ephemeral-storage</p>
-<h3 id="原因描述-4"><a href="#原因描述-4" class="headerlink" title="原因描述"></a>原因描述</h3><p>ephemeral storage是临时存储空间，当磁盘空间使用率达到阈值，会触发临时存储空间的回收任务。回收任务会尝试回收系统日志，以及没有正在使用的镜像缓存等数据。当磁盘空间占用率持续增长（超过90%），会导致该节点上的所有容器被驱逐，也就是当前节点由于磁盘压力不再对外提供服务，直到磁盘空间释放。</p>
-<h3 id="解决方案-3"><a href="#解决方案-3" class="headerlink" title="解决方案"></a>解决方案</h3><p>请注意磁盘空间的使用：</p>
-<p>避免使用“空目录”类型的挂载方式；使用NAS或者其他类似方式替代。<br>尽量避免使用“宿主机目录”类型的挂载方式，以便于保证容器是无状态的，可以迁移的。<br>要注意避免在容器内大量写文件，而导致容器运行时可写数据层过大（imagefs）。</p>
-<h2 id="NTP-service-is-not-running"><a href="#NTP-service-is-not-running" class="headerlink" title="NTP service is not running"></a>NTP service is not running</h2><h3 id="原因描述-5"><a href="#原因描述-5" class="headerlink" title="原因描述"></a>原因描述</h3><p>NTP service是系统时间校准服务，由操作系统systemd管理的服务。可以通过 systemctl status chronyd 查看对应服务的状态。</p>
-<h3 id="解决方案-4"><a href="#解决方案-4" class="headerlink" title="解决方案"></a>解决方案</h3><p>使用命令systemctl start chronyd尝试重新启动。也可以通过命令 journalctl -u chronyd 查看服务的日志。</p>
-<h2 id="节点PLEG异常"><a href="#节点PLEG异常" class="headerlink" title="节点PLEG异常"></a>节点PLEG异常</h2><h3 id="原因描述-6"><a href="#原因描述-6" class="headerlink" title="原因描述"></a>原因描述</h3><p>PLEG是pod生命周期事件生成器，会记录Pod生命周期中的各种事件，如容器的启动、终止等。一般是由于节点上的daemon进程异常或者节点systemd版本bug导致。出现该问题会导致集群节点不可用</p>
-<h3 id="解决方案-5"><a href="#解决方案-5" class="headerlink" title="解决方案"></a>解决方案</h3><p>可以尝试重启kubelet；再尝试重启Docker进程。重启这两个进程过程中，不会对已运行容器造成影响</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启kubelet</span><br><span class="line">systemctl restart kubelet</span><br><span class="line"></span><br><span class="line">//重启docker</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br><span class="line">如果是由于systemd版本问题导致，重启节点可短暂修复，彻底解决的话需要升级节点的systemd</span><br><span class="line"></span><br><span class="line">systemd: (rpm -qa | grep systemd, 版本&lt;219-67.el7需要升级)</span><br><span class="line">升级systemd指令: </span><br><span class="line">yum update -y systemd &amp;&amp; systemctl daemon-reexec &amp;&amp; killall runc</span><br></pre></td></tr></table></figure>
-
-<h2 id="节点PID不足"><a href="#节点PID不足" class="headerlink" title="节点PID不足"></a>节点PID不足</h2><h3 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h3><p>通常是节点上的容器占用PID过多导致节点的PID不足</p>
-<h3 id="问题现象"><a href="#问题现象" class="headerlink" title="问题现象"></a>问题现象</h3><p>当节点的可用PID低于pid.available配置项时，则节点状态中NodePIDPressure为True，同时该节点上的容器被驱逐。关于节点驱逐，请参见节点压力驱逐。<br>若集群配置了集群节点异常报警，则节点PID不足时可收到相关报警。关于配置报警，请参见容器服务报警管理。</p>
-<h3 id="解决方案-6"><a href="#解决方案-6" class="headerlink" title="解决方案"></a>解决方案</h3><p>执行如下命令，查看节点的最大PID数和节点当前的最大PID。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sysctl kernel.pid_max  <span class="comment">#查看最大PID数。</span></span><br><span class="line">  ps -eLf|awk <span class="string">&#x27;&#123;print $2&#125;&#x27;</span> | <span class="built_in">sort</span> -rn| <span class="built_in">head</span> -n 1   <span class="comment">#查看当前的最大PID。</span></span><br><span class="line">执行如下命令，查看占用PID最多的前5个进程。</span><br><span class="line">ps -elT | awk <span class="string">&#x27;&#123;print $4&#125;&#x27;</span> | <span class="built_in">sort</span> | <span class="built_in">uniq</span> -c | <span class="built_in">sort</span> -k1 -g | <span class="built_in">tail</span> -5</span><br><span class="line">预期输出：</span><br><span class="line"></span><br><span class="line"><span class="comment">#第一列为进程占用的PID数，第二列为当前进程号。</span></span><br><span class="line">73 9743</span><br><span class="line">75 9316</span><br><span class="line">76 2812</span><br><span class="line">77 5726</span><br><span class="line">93 5691</span><br></pre></td></tr></table></figure>
-
-<p>根据进程号找到对应进程和所属的Pod，分析占用PID过多的原因并优化对应代码。<br>降低节点的负载。具体操作，请参见节点调度资源不足。<br>如需重启节点，可尝试重启异常节点。具体操作，请参见重启实例。</p>
-<h2 id="节点FD不足"><a href="#节点FD不足" class="headerlink" title="节点FD不足"></a>节点FD不足</h2><h3 id="原因描述："><a href="#原因描述：" class="headerlink" title="原因描述："></a>原因描述：</h3><p>节点文件句柄使用数量超过80%，具体原因与节点上进程使用情况相关打开文件未释放打开管道未释放建立网络连接未释放（pipe,eventpoll多出现在 NIO 网络编程未释放资源 —— selector.close()）创建进程调用命令未释放（Runtime.exe(…) 得到的 Process, InputStream, OutputStream 未关闭，这也会导致 pipe,eventpoll 未释放）</p>
-<h2 id="解决方案：-1"><a href="#解决方案：-1" class="headerlink" title="解决方案："></a>解决方案：</h2><p>删除不需要的文件，调整应用代码，文件流等操作结束后记得关闭。或者尝试先排空再重启主机</p>
-<h2 id="节点Docker-Hung"><a href="#节点Docker-Hung" class="headerlink" title="节点Docker Hung"></a>节点Docker Hung</h2><h3 id="原因描述：-1"><a href="#原因描述：-1" class="headerlink" title="原因描述："></a>原因描述：</h3><p>节点docker daemon异常，导致集群无法与之通信，伴随有docker ps、docker exec等命令hung住或异常失败</p>
-<h3 id="解决方案：-2"><a href="#解决方案：-2" class="headerlink" title="解决方案："></a>解决方案：</h3><p>尝试重启docker服务，重启过程不会影响已存在容器的运行</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">//重启节点上的docker daemon，对运行中容器没有影响</span><br><span class="line">systemctl restart docker</span><br><span class="line"></span><br><span class="line">//查看docker日志</span><br><span class="line">journalctl -xeu docker &gt; docker.log</span><br></pre></td></tr></table></figure>
-
-<p>如果docker服务重启后依然无法解决，可以尝试重启主机。主机重启过程会对容器有影响，谨慎操作。</p>
-<h2 id="节点磁盘资源不足"><a href="#节点磁盘资源不足" class="headerlink" title="节点磁盘资源不足"></a>节点磁盘资源不足</h2><p>InvalidDiskCapacity</p>
-<h3 id="原因描述-7"><a href="#原因描述-7" class="headerlink" title="原因描述"></a>原因描述</h3><p>节点磁盘不足，无法分配空间给容器镜像</p>
-<h3 id="解决方案-7"><a href="#解决方案-7" class="headerlink" title="解决方案"></a>解决方案</h3><p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
-<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。</p>
-<h2 id="应用相关"><a href="#应用相关" class="headerlink" title="应用相关"></a>应用相关</h2><h3 id="Container-Restart"><a href="#Container-Restart" class="headerlink" title="Container Restart"></a>Container Restart</h3><h4 id="原因描述：-2"><a href="#原因描述：-2" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示应用实例(重启)重启，一般是由于配置了健康检查且健康检查失败导致，会伴随有Readiness probe failed和Liveness probe failed等事件。健康检查失败的原因有很多，通常情况下，比如进程OOM被Kill、比如高负载情况下应用无法正常响应(例如RDS瓶颈导致应用线程全部hang住)，都可能会导致健康检查失败</p>
-<h4 id="解决方案：-3"><a href="#解决方案：-3" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合临近的相关事件定位具体的Pod重启原因。如伴随有集群相关的Out of memory事件，参考此文档上面Out of memory事件的解决方案；其他情况下，结合应用监控或者云产品自身监控来定位问题</p>
-<h3 id="The-node-had-condition-XXX"><a href="#The-node-had-condition-XXX" class="headerlink" title="The node had condition: [XXX]"></a>The node had condition: [XXX]</h3><h4 id="原因描述：-3"><a href="#原因描述：-3" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示Pod由于节点上的异常情况被驱逐，比如<em>The node had condition: [DiskPressure]，</em>表示节点磁盘使用率比较高，通常会伴随有 failed to garbage collect required amount of images 和 Attempting to reclaim ephemeral-storage 等集群维度(节点)的异常事件</p>
-<h4 id="解决方案：-4"><a href="#解决方案：-4" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合临近的相关事件定位具体的驱逐原因。对于已经被驱逐的Pod实例，可以通过kubectl get po 进行查看和手动清理</p>
-<h3 id="K8S-Pod-Pending"><a href="#K8S-Pod-Pending" class="headerlink" title="K8S Pod Pending"></a>K8S Pod Pending</h3><h4 id="原因描述：-4"><a href="#原因描述：-4" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示集群调度Pod被挂起，一般是由于节点资源不足以调度容器或者Volume挂载失败（比如持久化存储卷找不到）或者其他原因导致。</p>
-<h4 id="解决方案：-5"><a href="#解决方案：-5" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合临近的相关事件定位具体的Pod挂起原因</p>
-<h3 id="Readiness-probe-failed"><a href="#Readiness-probe-failed" class="headerlink" title="Readiness probe failed"></a>Readiness probe failed</h3><h4 id="原因描述-8"><a href="#原因描述-8" class="headerlink" title="原因描述"></a>原因描述</h4><p>由于应用就绪探针失败而引发的异常事件。应用就绪探针失败会导致相应容器的流量被摘除，例如被动从SLB摘掉该容器的流量入口。</p>
-<h4 id="解决方案-8"><a href="#解决方案-8" class="headerlink" title="解决方案"></a>解决方案</h4><p>需要结合应用就绪探针的配置，定位应用就绪探针失败的原因。</p>
-<h3 id="Liveness-probe-failed"><a href="#Liveness-probe-failed" class="headerlink" title="Liveness probe failed"></a>Liveness probe failed</h3><h4 id="原因描述：-5"><a href="#原因描述：-5" class="headerlink" title="原因描述："></a>原因描述：</h4><p>由于应用存活探针失败而引发的异常事件。该事件可能会导致后续达到一定阈值之后，容器被动重启。具体要看应用就绪探针的配置。</p>
-<h4 id="解决方案：-6"><a href="#解决方案：-6" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要结合应用存活探针的配置，定位探针检查失败的原因。</p>
-<h3 id="Container-runtime-did-not-kill-the-pod-within-specified-grace-period"><a href="#Container-runtime-did-not-kill-the-pod-within-specified-grace-period" class="headerlink" title="Container runtime did not kill the pod within specified grace period."></a>Container runtime did not kill the pod within specified grace period.</h3><h4 id="原因描述：-6"><a href="#原因描述：-6" class="headerlink" title="原因描述："></a>原因描述：</h4><p>此事件表示容器没有在优雅下线的时间段内正常退出。比如如果配置了优雅下线脚本，脚本执行时长需要60s，而优雅下线时间（默认为30s）配置为30s。就会在容器下线期间触发这个事件。</p>
-<h4 id="解决方案：-7"><a href="#解决方案：-7" class="headerlink" title="解决方案："></a>解决方案：</h4><p>调整优雅下线探针的配置，或者优雅下线时间的配置。</p>
-<h3 id="Back-off-restarting-failed-container"><a href="#Back-off-restarting-failed-container" class="headerlink" title="Back-off restarting failed container"></a>Back-off restarting failed container</h3><h4 id="原因描述：-7"><a href="#原因描述：-7" class="headerlink" title="原因描述："></a>原因描述：</h4><p>此事件表示容器启动失败，而被再次拉起尝试启动。通常常见与应用发布过程中的容器启动失败。具体的原因常见为镜像拉取失败，或者容器启动失败（容器没有打到running状态）。</p>
-<h4 id="解决方案：-8"><a href="#解决方案：-8" class="headerlink" title="解决方案："></a>解决方案：</h4><p>需要在发布页查看容器启动日志或者调度日志，进一步定位容器启动失败的原因。</p>
-<h3 id="The-node-was-low-on-resource-xxxx"><a href="#The-node-was-low-on-resource-xxxx" class="headerlink" title="The node was low on resource: xxxx"></a>The node was low on resource: xxxx</h3><h4 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">2020-07-21 10:24:43.000 [Event] Type: Warning, Reason: Evicted, Message: The node was low on resource: ephemeral-storage. </span><br></pre></td></tr></table></figure>
-
-<h4 id="原因描述：-8"><a href="#原因描述：-8" class="headerlink" title="原因描述："></a>原因描述：</h4><p>该事件表示Pod由于节点上的异常情况(资源不足)被驱逐</p>
-<h4 id="解决方案-9"><a href="#解决方案-9" class="headerlink" title="解决方案"></a>解决方案</h4><p>需要看具体哪类资源不足，例如示例中的ephemeral-storage，表示集群节点临时存储空间不足，一般是由于磁盘使用量较大导致。请参考文档上方解决方案</p>
-<p>检查节点的磁盘分配情况，通常有以下一些常见情况导致磁盘占用率过高：</p>
-<p>有大量日志在磁盘上没有清理；请清理日志。<br>有进程在宿主机不停的写文件；请控制文件大小，将文件存储至OSS或者NAS。<br>下载的或者是其他的静态资源文件占用空间过大；静态资源请存储至OSS或CDN。<br>可以对系统盘进行扩容，扩大磁盘空间。</p>
-<h3 id="集群DNS性能瓶颈"><a href="#集群DNS性能瓶颈" class="headerlink" title="集群DNS性能瓶颈"></a>集群DNS性能瓶颈</h3><h4 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h4><p>集群中的容器实例，DNS解析均依赖集群内的DNS组件，应用中业务请求的地址都需要经过集群DNS组件。例如，代码中访问RDS、REDIS、TOP api等。如果集群dns性能不足，会出现业务请求失败的问题。</p>
-<p>集群DNS组件：</p>
-<p>默认已安装的集群组件为coredns，副本数为2<br>可选的高性能组件为localdns</p>
-<h4 id="是否有性能瓶颈"><a href="#是否有性能瓶颈" class="headerlink" title="是否有性能瓶颈"></a>是否有性能瓶颈</h4><p>应用有大量DNS请求的场景(比如连接rds，凡是涉及到域名地址解析的)<br>PHP等语言自身没有连接池特性的，或者应用自身没有DNS缓存的<br>偶尔出现域名地址无法解析错误的</p>
-<h4 id="解决方案-10"><a href="#解决方案-10" class="headerlink" title="解决方案"></a>解决方案</h4><p>一、集群默认已安装的coredns组件，进行扩容。扩容比例为1&#x2F;5的节点数(如15台ecs，那么coredns数量为3)</p>
-<p>二、为集群安装更高性能的localdns组件(该组件为daemonset，会在每个ECS节点起一个本地缓存)</p>
-<p>一般来说，如果业务量小，扩容下coredns就足够了；如果业务量大(域名地址解析QPS高，比如访问RDS)，特别是php等不带连接池的开发语言，建议直接上localdns。如果是java等配置了连接池的应用，可以先扩容coredns观察，如果仍然有解析问题，再上localdns。</p>
-<h3 id="localdns缓存原理"><a href="#localdns缓存原理" class="headerlink" title="localdns缓存原理"></a>localdns缓存原理</h3><p>NodeLocalDNS 是一个 DaemonSet，会在Kubernetes集群的每个节点上运行一个专门处理 DNS 查询请求的 Pod，该 Pod 会将集群内部域名查询请求发往 CoreDNS；将集群外部请求直接发往外部域名解析服务器。同时能够Cache所有请求。可以被看作是节点级别的高效DNS 缓存，能够大幅提高集群整体 DNS 查询的 QPS。NodeLocalDNS 会在集群的每个节点上创建一个专用的虚拟接口（接口绑定的 IP 需要通过 local_dns_ip 这个值来指定），节点上所有发往该 IP 的 DNS 查询请求都会被拦截到 NodeLocalDNS Pod 内进行处理；通过集群原有的 kube-dns 服务（该服务的 clusterIP 值需要通过kube_dns_ip来指定）来与CoreDNS进行通信。<br><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/image.png" alt="image"></p>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-      </categories>
-      <tags>
-        <tag>kubernetes</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>二进制部署一套完整的企业级K8s集群</title>
     <url>/2022/12/29/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E4%B8%80%E5%A5%97%E5%AE%8C%E6%95%B4%E7%9A%84%E4%BC%81%E4%B8%9A%E7%BA%A7K8s%E9%9B%86%E7%BE%A4/</url>
     <content><![CDATA[<p><strong>v1.22</strong>**，二进制方式**</p>
@@ -4155,394 +4543,6 @@ NFS是一个网络文件存储系统，可以搭建一台NFS服务器，然后�
       </categories>
       <tags>
         <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>kubelet源码执行流程分析</title>
-    <url>/2022/12/29/kubelet%E6%BA%90%E7%A0%81%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/</url>
-    <content><![CDATA[<h2 id="k8s学习：kubelet源码执行流程分析"><a href="#k8s学习：kubelet源码执行流程分析" class="headerlink" title="k8s学习：kubelet源码执行流程分析"></a>k8s学习：kubelet源码执行流程分析</h2><p>容器技术应用范围越来越广，通过理解整个框架的执行流程，学习源码执行思路，对以后的编程很有帮助， kubernetes有很多组件，我们今天通过kubelet这个组件来进行深入的分析，来看看里面的执行流程，kubelet里面涉及的方法非常多且层层嵌套，通过我这一篇文章肯定是讲不全的，大家可以根据自己的情况不断深入来学习。我们这篇文章主要分析其执行流程，不深入底层的执行细节。抓主干。学习源码版本：1.19</p>
-<h3 id="kubelet-主要功能"><a href="#kubelet-主要功能" class="headerlink" title="kubelet 主要功能"></a>kubelet 主要功能</h3><p>在kubernetes集群中，每个Node节点都会启动kubelet进程，用来处理Master节点下发到本节点的任务，管理Pod和其中的容器，并负责健康检查和监控信息提供。</p>
-<h4 id="pod-管理"><a href="#pod-管理" class="headerlink" title="pod 管理"></a>pod 管理</h4><p>每个pod都有其对应的yaml文件，来描述其运行过程中的一些参数和配置信息，kubelet 采用一组通过各种机制来保证运行在此物理机上的容器，符合 PodSpecs 中描述的 Pod 状态，正常健康运行。</p>
-<p>官方提供了4中方式来获取容器信息：</p>
-<ol>
-<li>apiserver：通过 API Server 监听 etcd 目录获取数据；</li>
-<li>File：启动参数 –config 指定的配置目录下的文件；</li>
-<li>通过 url 从网络上某个地址来获取信息</li>
-</ol>
-<p>拿apiserver来说，如果Kubelet 监听到etcd中有新的绑定到本节点的 Pod，则按照 Pod 清单的要求创建该 Pod；如果发现本地的 Pod 被修改，则 Kubelet 会做出相应的修改。</p>
-<h4 id="容器健康检查"><a href="#容器健康检查" class="headerlink" title="容器健康检查"></a>容器健康检查</h4><p>容器健康检查，主要是通过LivenessProbe 与ReadinessProbe来判断容器是否健康。</p>
-<ol>
-<li>LivenessProbe ：用于判断容器是否健康，告诉 Kubelet 一个容器什么时候处于不健康的状态。如果 LivenessProbe 探针探测到容器不健康，则 Kubelet 将删除该容器，并根据容器的重启策略做相应的处理。如果一个容器不包含 LivenessProbe 探针，那么 Kubelet 认为该容器的 LivenessProbe 探针返回的值永远是 “Success”；</li>
-<li>ReadinessProbe：用于判断容器是否启动完成且准备接收请求。如果 ReadinessProbe 探针探测到失败，则 Pod 的状态将被修改。Endpoint Controller 将从 Service 的 Endpoint 中删除包含该容器所在 Pod 的 IP 地址的 Endpoint 条目。</li>
-</ol>
-<h4 id="容器监控"><a href="#容器监控" class="headerlink" title="容器监控"></a>容器监控</h4><p>Kubelet 通过 cAdvisor 获取其所在节点及容器的数据。cAdvisor 是一个开源的分析容器资源使用率和性能特性的代理工具，集成到 Kubelet中，当Kubelet启动时会同时启动cAdvisor，且一个cAdvisor只监控一个Node节点的信息。cAdvisor 自动查找所有在其所在节点上的容器，自动采集 CPU、内存、文件系统和网络使用的统计信息。cAdvisor 通过它所在节点机的 Root 容器，采集并分析该节点机的全面使用情况。</p>
-<h3 id="kubelet-工作原理"><a href="#kubelet-工作原理" class="headerlink" title="kubelet 工作原理"></a>kubelet 工作原理</h3><p>这里借用网上的一张图来说明情况：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111512447.png" alt="20210131-9142139592.png"></p>
-<p>由图我们可以看到kubelet 的工作核心，就是一个控制循环，即：SyncLoop。驱动整个控制循环的事件有：pod更新事件、pod生命周期变化、kubelet本身设置的执行周期、定时清理事件等。</p>
-<p>在SyncLoop循环上还有很多xxManager，例如probeManager 会定时去监控 pod 中容器的健康状况，当前支持两种类型的探针：livenessProbe 和readinessProbe；statusManager 负责维护状态信息，并把 pod 状态更新到 apiserver；containerRefManager 容器引用的管理，相对简单的Manager，用来报告容器的创建，失败等事件等等。</p>
-<p>kubelet 调用下层容器运行时的执行过程，并不会直接调用 Docker 的 API，而是通过一组叫作 CRI（Container Runtime Interface，容器运行时接口）的 gRPC 接口来间接执行的。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111521889.png" alt="20210131-3878407432.png"></p>
-<p>CRI是k8s对容器的操作抽离出的一系列的接口，kubelet 就只需要跟这个接口打交道，而不需要关注底层的容器时docker还是rkt，底层的容器只需要自己提供一个该接口的实现，然后对 kubelet 暴露出 gRPC 服务即可。有关CRI的可以内容可以看看这篇：Introducing Container Runtime Interface。</p>
-<p>一般来说CRI接口可以分为两组：</p>
-<ol>
-<li>一组是ImageService，主要是容器镜像相关的操作，比如拉取镜像、删除镜像等。</li>
-<li>一组是RuntimeService，主要是跟容器相关的操作，比如创建、启动、删除Container、Exec等。</li>
-</ol>
-<h3 id="kubelet执行源码分析"><a href="#kubelet执行源码分析" class="headerlink" title="kubelet执行源码分析"></a>kubelet执行源码分析</h3><p>Run</p>
-<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202210111512279.png" alt="kubelet.png"></p>
-<p>文件地址：kubernetes\pkg\kubelet\kubelet.go</p>
-<pre><code>func (kl *Kubelet) Run(updates &lt;-chan kubetypes.PodUpdate) &#123;
-    //注册 logServer
-    if kl.logServer == nil &#123;
-        kl.logServer = http.StripPrefix(&quot;/logs/&quot;, http.FileServer(http.Dir(&quot;/var/log/&quot;)))
-    &#125;
-    if kl.kubeClient == nil &#123;
-        klog.Warning(&quot;No api server defined - no node status update will be sent.&quot;)
-    &#125;
-
-    //Cloud Provider 扩展相关：https://kubernetes.feisky.xyz/extension/cloud-provider
-    if kl.cloudResourceSyncManager != nil &#123;
-        go kl.cloudResourceSyncManager.Run(wait.NeverStop)
-    &#125;
-    //调用 kl.initializeModules 首先启动不依赖 container runtime 的一些模块
-    if err := kl.initializeModules(); err != nil &#123;
-        kl.recorder.Eventf(kl.nodeRef, v1.EventTypeWarning, events.KubeletSetupFailed, err.Error())
-        klog.Fatal(err)
-    &#125;
-
-    //启动 volume manager
-    go kl.volumeManager.Run(kl.sourcesReady, wait.NeverStop)
-
-    if kl.kubeClient != nil &#123; 
-        //执行 kl.syncNodeStatus 定时同步 Node 状态
-        go wait.Until(kl.syncNodeStatus, kl.nodeStatusUpdateFrequency, wait.NeverStop)
-        //调用 kl.fastStatusUpdateOnce 更新容器运行时启动时间以及执行首次状态同步
-        go kl.fastStatusUpdateOnce()
-
-        // start syncing lease
-        //NodeLease 机制
-        go kl.nodeLeaseController.Run(wait.NeverStop)
-    &#125;
-    //执行 kl.updateRuntimeUp 定时更新 Runtime 状态
-    go wait.Until(kl.updateRuntimeUp, 5*time.Second, wait.NeverStop)
-
-    // Set up iptables util rules
-    //执行 kl.syncNetworkUtil 定时同步 iptables 规则
-    if kl.makeIPTablesUtilChains &#123;
-        kl.initNetworkUtil()
-    &#125;
-
-    //获取 pk.podKillingCh异常pod， 并定时清理异常 pod
-    go wait.Until(kl.podKiller.PerformPodKillingWork, 1*time.Second, wait.NeverStop)
-
-    // Start component sync loops.
-    //启动 statusManager、probeManager、runtimeClassManager
-    kl.statusManager.Start()
-    kl.probeManager.Start()
-
-    // Start syncing RuntimeClasses if enabled.
-    if kl.runtimeClassManager != nil &#123;
-        kl.runtimeClassManager.Start(wait.NeverStop)
-    &#125;
-
-    // Start the pod lifecycle event generator.
-    //启动 pleg 该模块主要用于周期性地向 container runtime 刷新当前所有容器的状态
-    //https://github.com/kubernetes/community/blob/master/contributors/design-proposals/node/pod-lifecycle-event-generator.md
-    kl.pleg.Start()
-    kl.syncLoop(updates, kl)&#125;
-</code></pre>
-<p>这个方法会做以下事情：</p>
-<ol>
-<li>注册logServer；</li>
-<li>如果设置了Cloud Provider，那么会启动云资源管理器，具体的可以查看文章：cloud-provider；</li>
-<li>调用kl.initializeModules启动不依赖 container runtime 的一些模块，这个方法我们下面再分析；</li>
-<li>启动 volume manager；</li>
-<li>执行 kl.syncNodeStatus 定时同步 Node 状态；</li>
-<li>调用kl.fastStatusUpdateOnce启动一个循环更新pod CIDR、runtime状态以及node状态；</li>
-<li>调用kl.nodeLeaseController.Run启动NodeLease机制，NodeLease机制是一种上报心跳的方式，可以通过更加轻量化节约资源的方式，并提升性能上报node的心跳信息，具体看： Lease object；</li>
-<li>执行 kl.updateRuntimeUp 定时更新 Runtime 状态；</li>
-<li>执行 kl.syncNetworkUtil 定时同步 iptables 规则；</li>
-<li>获取 pk.podKillingCh异常pod， 并定时清理异常 pod；</li>
-<li>然后启动 statusManager、probeManager、runtimeClassManager；</li>
-<li>启动 pleg模块，该模块主要用于周期性地向 container runtime 上报当前所有容器的状态，具体可以看：Pod Lifecycle Event Generator (PLEG)；</li>
-<li>调用kl.syncLoop启动kublet事件循环；</li>
-</ol>
-<h3 id="initializeModules"><a href="#initializeModules" class="headerlink" title="initializeModules"></a>initializeModules</h3><p>下面我们看看initializeModules方法做了些什么。</p>
-<pre><code>func (kl *Kubelet) initializeModules() error &#123;
-    ...
-    //创建文件目录
-    if err := kl.setupDataDirs(); err != nil &#123;
-        return err    &#125;
-
-    //创建 ContainerLogsDir
-    if _, err := os.Stat(ContainerLogsDir); err != nil &#123;
-        if err := kl.os.MkdirAll(ContainerLogsDir, 0755); err != nil &#123;
-            return fmt.Errorf(&quot;failed to create directory %q: %v&quot;, ContainerLogsDir, err)
-        &#125;
-    &#125;
-
-    //启动 imageManager
-    kl.imageManager.Start()
-
-    //启动 certificate manager ，证书相关
-    if kl.serverCertificateManager != nil &#123;
-        kl.serverCertificateManager.Start()
-    &#125;
-
-    //启动 oomWatcher.
-    if err := kl.oomWatcher.Start(kl.nodeRef); err != nil &#123;
-        return fmt.Errorf(&quot;failed to start OOM watcher %v&quot;, err)
-    &#125;
-
-    //启动 resource analyzer,刷新volume stats到缓存中
-    kl.resourceAnalyzer.Start()
-
-    return nil&#125;
-</code></pre>
-<p>initializeModules方法主要做了以下几件事：</p>
-<ol>
-<li>创建创建文件目录、Container的log目录；</li>
-<li>启动 imageManager，这个管理器实际上是realImageGCManager，我们待会看；</li>
-<li>启动 certificate manager ，证书相关；</li>
-<li>启动 oomWatcher监视器；</li>
-<li>启动 resource analyzer,定时刷新volume stats到缓存中；</li>
-</ol>
-<h3 id="realImageGCManager-Start"><a href="#realImageGCManager-Start" class="headerlink" title="realImageGCManager#Start"></a>realImageGCManager#Start</h3><p>文件路径：pkg&#x2F;kubelet&#x2F;images&#x2F;image_gc_manager.go</p>
-<pre><code>func (im *realImageGCManager) Start() &#123;
-    go wait.Until(func() &#123; 
-        var ts time.Time        if im.initialized &#123;
-            ts = time.Now()
-        &#125;
-        //找出所有的image，并删除不再使用的image
-        _, err := im.detectImages(ts)
-        if err != nil &#123;
-            klog.Warningf(&quot;[imageGCManager] Failed to monitor images: %v&quot;, err)
-        &#125; else &#123;
-            im.initialized = true
-        &#125;
-    &#125;, 5*time.Minute, wait.NeverStop)
-
-    //更新image的缓存
-    go wait.Until(func() &#123;
-        //调用容器接口，获取最新的image
-        images, err := im.runtime.ListImages()
-        if err != nil &#123;
-            klog.Warningf(&quot;[imageGCManager] Failed to update image list: %v&quot;, err)
-        &#125; else &#123;
-            im.imageCache.set(images)
-        &#125;
-    &#125;, 30*time.Second, wait.NeverStop)&#125;
-</code></pre>
-<p>realImageGCManager的start方法会启动两个协程，然后分别定时调用detectImages方法与imageCache的set方法。detectImages方法里面主要就是调用ImageService和RuntimeService的方法找出所有正在使用的image，然后删除不再使用的image。</p>
-<p>这里ListImages和detectImages里面用到的GetPods方法都是调用了CRI的方法，</p>
-<h3 id="fastStatusUpdateOnce"><a href="#fastStatusUpdateOnce" class="headerlink" title="fastStatusUpdateOnce"></a>fastStatusUpdateOnce</h3><pre><code>func (kl *Kubelet) fastStatusUpdateOnce() &#123;
-    for &#123;
-        time.Sleep(100 * time.Millisecond)
-        node, err := kl.GetNode()
-        if err != nil &#123;
-            klog.Errorf(err.Error())
-            continue
-        &#125;
-        if len(node.Spec.PodCIDRs) != 0 &#123;
-            podCIDRs := strings.Join(node.Spec.PodCIDRs, &quot;,&quot;)
-            if _, err := kl.updatePodCIDR(podCIDRs); err != nil &#123;
-                klog.Errorf(&quot;Pod CIDR update to %v failed %v&quot;, podCIDRs, err)
-                continue
-            &#125;
-            //更新 Runtime 状态
-            kl.updateRuntimeUp()
-            //更新 节点 状态
-            kl.syncNodeStatus()
-            return
-        &#125;
-    &#125;&#125;
-</code></pre>
-<p>FastStatusUpdateOnce 函数启动一个循环，尝试立即更新POD CIDR。更新pod CIDR后，它会触发运行时更新和节点状态更新。函数在一次成功的节点状态更新后直接返回。该功能仅在 kubelet 启动期间执行，通过尽快更新 pod cidr、运行时状态和节点状态来提高准备就绪节点的延迟。</p>
-<h3 id="updateRuntimeUp"><a href="#updateRuntimeUp" class="headerlink" title="updateRuntimeUp"></a>updateRuntimeUp</h3><p>&#x2F;&#x2F;首次执行的时候会初始化runtime依赖模块，然后更新runtimeState</p>
-<pre><code>//首次执行的时候会初始化runtime依赖模块，然后更新runtimeStatefunc (kl *Kubelet) updateRuntimeUp() &#123;
-    kl.updateRuntimeMux.Lock()
-    defer kl.updateRuntimeMux.Unlock()
-    //获取 containerRuntime Status
-    s, err := kl.containerRuntime.Status()
-    if err != nil &#123;
-        klog.Errorf(&quot;Container runtime sanity check failed: %v&quot;, err)
-        return
-    &#125;
-    if s == nil &#123;
-        klog.Errorf(&quot;Container runtime status is nil&quot;)
-        return
-    &#125; 
-    klog.V(4).Infof(&quot;Container runtime status: %v&quot;, s)
-    //检查 network 和 runtime 是否处于 ready 状态
-    networkReady := s.GetRuntimeCondition(kubecontainer.NetworkReady)
-    if networkReady == nil || !networkReady.Status &#123;
-        klog.Errorf(&quot;Container runtime network not ready: %v&quot;, networkReady)
-        kl.runtimeState.setNetworkState(fmt.Errorf(&quot;runtime network not ready: %v&quot;, networkReady))
-    &#125; else &#123;
-        // Set nil if the container runtime network is ready.
-        kl.runtimeState.setNetworkState(nil)
-    &#125;
-    // information in RuntimeReady condition will be propagated to NodeReady condition.
-    //获取运行时状态
-    runtimeReady := s.GetRuntimeCondition(kubecontainer.RuntimeReady)
-    // If RuntimeReady is not set or is false, report an error.
-    if runtimeReady == nil || !runtimeReady.Status &#123;
-        err := fmt.Errorf(&quot;Container runtime not ready: %v&quot;, runtimeReady)
-        klog.Error(err)
-        kl.runtimeState.setRuntimeState(err)
-        return
-    &#125;
-    kl.runtimeState.setRuntimeState(nil)
-    //调用 kl.initializeRuntimeDependentModules 启动依赖模块
-    kl.oneTimeInitializer.Do(kl.initializeRuntimeDependentModules)
-    kl.runtimeState.setRuntimeSync(kl.clock.Now())&#125;
-</code></pre>
-<p>updateRuntimeUp会获取container运行状态信息，然后根据返回RuntimeStatus检查网络、runtime是不是已经处于ready状态；接着调用kl.initializeRuntimeDependentModules初始化依赖模块，这里会启动cadvisor、containerManager、evictionManager、containerLogManager、pluginManager；最后设置Runtime同步时间。</p>
-<h3 id="最后看看syncLoop方法"><a href="#最后看看syncLoop方法" class="headerlink" title="最后看看syncLoop方法"></a>最后看看syncLoop方法</h3><pre><code>func (kl *Kubelet) syncLoop(updates &lt;-chan kubetypes.PodUpdate, handler SyncHandler) &#123;
-    ...
-    syncTicker := time.NewTicker(time.Second)
-    defer syncTicker.Stop()
-    housekeepingTicker := time.NewTicker(housekeepingPeriod)
-    defer housekeepingTicker.Stop()
-    plegCh := kl.pleg.Watch()
-    for &#123;
-        ...
-        kl.syncLoopMonitor.Store(kl.clock.Now())
-        if !kl.syncLoopIteration(updates, handler, syncTicker.C, housekeepingTicker.C, plegCh) &#123;
-            break
-        &#125;
-        kl.syncLoopMonitor.Store(kl.clock.Now())
-    &#125;&#125;
-</code></pre>
-<p>syncLoop方法在一个循环中不断的调用syncLoopIteration方法执行主要逻辑。</p>
-<h3 id="syncLoopIteration方法比较长，拆开来看"><a href="#syncLoopIteration方法比较长，拆开来看" class="headerlink" title="syncLoopIteration方法比较长，拆开来看"></a>syncLoopIteration方法比较长，拆开来看</h3><pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
-    //方法会监听多个 channel，当发现任何一个 channel 有数据就交给 handler 去处理，在 handler 中通过调用 dispatchWork 分发任务
-    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
-    select &#123;
-        //该模块将同时 watch 3 个不同来源的 pod 信息的变化（file，http，apiserver），
-        //一旦某个来源的 pod 信息发生了更新（创建/更新/删除），这个 channel 中就会出现被更新的 pod 信息和更新的具体操作；
-    case u, open := &lt;-configCh: 
-        if !open &#123;
-            klog.Errorf(&quot;Update channel is closed. Exiting the sync loop.&quot;)
-            return false
-        &#125;
-
-        switch u.Op &#123;
-        case kubetypes.ADD:
-            klog.V(2).Infof(&quot;SyncLoop (ADD, %q): %q&quot;, u.Source, format.Pods(u.Pods)) 
-            handler.HandlePodAdditions(u.Pods)
-        case kubetypes.UPDATE:
-            klog.V(2).Infof(&quot;SyncLoop (UPDATE, %q): %q&quot;, u.Source, format.PodsWithDeletionTimestamps(u.Pods))
-            handler.HandlePodUpdates(u.Pods)
-        case kubetypes.REMOVE:
-            klog.V(2).Infof(&quot;SyncLoop (REMOVE, %q): %q&quot;, u.Source, format.Pods(u.Pods))
-            handler.HandlePodRemoves(u.Pods)
-        case kubetypes.RECONCILE:
-            klog.V(4).Infof(&quot;SyncLoop (RECONCILE, %q): %q&quot;, u.Source, format.Pods(u.Pods))
-            handler.HandlePodReconcile(u.Pods)
-        case kubetypes.DELETE:
-            klog.V(2).Infof(&quot;SyncLoop (DELETE, %q): %q&quot;, u.Source, format.Pods(u.Pods)) 
-            handler.HandlePodUpdates(u.Pods)
-        case kubetypes.SET: 
-            klog.Errorf(&quot;Kubelet does not support snapshot update&quot;)
-        default:
-            klog.Errorf(&quot;Invalid event type received: %d.&quot;, u.Op)
-        &#125;
-
-        kl.sourcesReady.AddSource(u.Source)
-
-     ...&#125;
-</code></pre>
-<p>configCh读取配置事件的管道，该模块将同时 watch 3 个不同来源的 pod 信息的变化（file，http，apiserver），一旦某个来源的 pod 信息发生了更新（创建&#x2F;更新&#x2F;删除），这个 channel 中就会出现被更新的 pod 信息和更新的具体操作。这里对于pod的操作我们下一篇再讲。</p>
-<p>plegCh</p>
-<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
-    //方法会监听多个 channel，当发现任何一个 channel 有数据就交给 handler 去处理，在 handler 中通过调用 dispatchWork 分发任务
-    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
-    ...
-    case e := &lt;-plegCh:
-        if e.Type == pleg.ContainerStarted &#123;
-            kl.lastContainerStartedTime.Add(e.ID, time.Now())
-        &#125;
-        if isSyncPodWorthy(e) &#123; 
-            if pod, ok := kl.podManager.GetPodByUID(e.ID); ok &#123;
-                klog.V(2).Infof(&quot;SyncLoop (PLEG): %q, event: %#v&quot;, format.Pod(pod), e)
-                handler.HandlePodSyncs([]*v1.Pod&#123;pod&#125;)
-            &#125; else &#123; 
-                klog.V(4).Infof(&quot;SyncLoop (PLEG): ignore irrelevant event: %#v&quot;, e)
-            &#125;
-        &#125; 
-        if e.Type == pleg.ContainerDied &#123;
-            if containerID, ok := e.Data.(string); ok &#123;
-                kl.cleanUpContainersInPod(e.ID, containerID)
-            &#125;
-        &#125;
-    ...&#125;
-</code></pre>
-<p>PLEG.Start的时候会每秒钟启动调用一次relist，根据最新的PodStatus生成PodLiftCycleEvent，然后存入到PLE Channel中。</p>
-<p>syncLoop会调用pleg.Watch方法获取PLE Channel管道，然后传给syncLoopIteration方法，在syncLoopIteration方法中也就是plegCh这个管道，syncLoopIteration会消费plegCh中的数据，在 handler 中通过调用 dispatchWork 分发任务。</p>
-<p>syncCh</p>
-<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
-    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
-    ...
-    //  每秒钟会执行到一次
-    case &lt;-syncCh:
-        // Sync pods waiting for sync
-        podsToSync := kl.getPodsToSync()
-        if len(podsToSync) == 0 &#123;
-            break
-        &#125;
-        klog.V(4).Infof(&quot;SyncLoop (SYNC): %d pods; %s&quot;, len(podsToSync), format.Pods(podsToSync))
-        //同步最新保存的 pod 状态
-        handler.HandlePodSyncs(podsToSync)
-    ...&#125;
-</code></pre>
-<p>syncCh是由syncLoop方法里面创建的一个定时任务，每秒钟会向syncCh添加一个数据，然后就会执行到这里。这个方法会同步所有等待同步的pod。</p>
-<p>livenessManager.Updates</p>
-<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
-    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
-    ...
-    case update := &lt;-kl.livenessManager.Updates():
-        //如果探针检测失败，需要更新pod的状态
-        if update.Result == proberesults.Failure &#123; 
-            pod, ok := kl.podManager.GetPodByUID(update.PodUID)
-            if !ok &#123; 
-                klog.V(4).Infof(&quot;SyncLoop (container unhealthy): ignore irrelevant update: %#v&quot;, update)
-                break
-            &#125;
-            klog.V(1).Infof(&quot;SyncLoop (container unhealthy): %q&quot;, format.Pod(pod))
-            handler.HandlePodSyncs([]*v1.Pod&#123;pod&#125;)
-        &#125;
-    ...&#125;
-</code></pre>
-<p>对失败的pod或者liveness检查失败的pod进行sync操作。</p>
-<p>housekeepingCh</p>
-<pre><code>func (kl *Kubelet) syncLoopIteration(configCh &lt;-chan kubetypes.PodUpdate, handler SyncHandler,
-    syncCh &lt;-chan time.Time, housekeepingCh &lt;-chan time.Time, plegCh &lt;-chan *pleg.PodLifecycleEvent) bool &#123;
-    ...
-    //  每两秒钟执行一次
-    case &lt;-housekeepingCh:
-        if !kl.sourcesReady.AllReady() &#123; 
-            klog.V(4).Infof(&quot;SyncLoop (housekeeping, skipped): sources aren&#39;t ready yet.&quot;)
-        &#125; else &#123;
-            klog.V(4).Infof(&quot;SyncLoop (housekeeping)&quot;)
-            //执行一些清理工作，包括终止pod workers、删除不想要的pod，移除volumes、pod目录
-            if err := handler.HandlePodCleanups(); err != nil &#123;
-                klog.Errorf(&quot;Failed cleaning pods: %v&quot;, err)
-            &#125;
-        &#125;
-    ...&#125;
-</code></pre>
-<p>housekeepingCh这个管道也是由syncLoop创建，每两秒钟会触发清理。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>kubelet.Run部分主要执行kubelet包含的各种manager的运行，大部分会以一部线程的方式定时运行。了解了CRI是怎么一回事，通过CRI接口可以做什么。</p>
-<p>接下来看了syncLoop主函数，这个函数主要对pod的生命周期进行管理，包括对pod进行add 、update、remove、delete等操作，这些具体的代码执行过程大家有兴趣的可以自己了解。</p>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-        <category>Kubelet</category>
-      </categories>
-      <tags>
-        <tag>kubernetes</tag>
-        <tag>Kubelet</tag>
       </tags>
   </entry>
   <entry>
