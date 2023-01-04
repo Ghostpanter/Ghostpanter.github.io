@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>etcd 备份还原</title>
+    <url>/2022/12/29/etcd%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/</url>
+    <content><![CDATA[<h2 id="containerd"><a href="#containerd" class="headerlink" title="containerd"></a>containerd</h2><h3 id="etcd-备份还原"><a href="#etcd-备份还原" class="headerlink" title="etcd 备份还原"></a>etcd 备份还原</h3><h4 id="还原"><a href="#还原" class="headerlink" title="还原"></a>还原</h4><p>每台的master节点 IP 和主机名需要修改<br>停止集群<br>mv   &#x2F;etc&#x2F;kubernetes&#x2F;manifests.bak</p>
+<h2 id="备份原有etcd数据"><a href="#备份原有etcd数据" class="headerlink" title="备份原有etcd数据"></a>备份原有etcd数据</h2><p>mv &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd-<code>date &#39;+%Y%m%d-%H:%M:%S&#39;</code><br>​</p>
+<h3 id="还原第一台master"><a href="#还原第一台master" class="headerlink" title="还原第一台master"></a>还原第一台master</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/u01/local/kube-system:/u01/local/kube-system&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot restore \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-.db \</span></span><br><span class="line"><span class="string">--name node-9xct \</span></span><br><span class="line"><span class="string">--endpoints=10.165.124.13:2379 \</span></span><br><span class="line"><span class="string">--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">--cacert=/etc/kubernetes/pki/etcd/ca.crt \</span></span><br><span class="line"><span class="string">--initial-advertise-peer-urls=&lt;https://10.165.124.13:2380&gt; \</span></span><br><span class="line"><span class="string">--initial-cluster=node-9xct=&lt;https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--data-dir=/u01/local/kube-system/etcd \</span></span><br><span class="line"><span class="string">--skip-hash-check=true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/u01/local/kube-system:/u01/local/kube-system&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot restore \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-.db \</span></span><br><span class="line"><span class="string">--name node-dfkb \</span></span><br><span class="line"><span class="string">--endpoints=10.165.124.14:2379 \</span></span><br><span class="line"><span class="string">--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">--cacert=/etc/kubernetes/pki/etcd/ca.crt \</span></span><br><span class="line"><span class="string">--initial-advertise-peer-urls=&lt;https://10.165.124.14:2380&gt; \</span></span><br><span class="line"><span class="string">--initial-cluster=node-9xct=&lt;https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--data-dir=/u01/local/kube-system/etcd \</span></span><br><span class="line"><span class="string">--skip-hash-check=true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>​</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/u01/local/kube-system:/u01/local/kube-system&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot restore \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-.db \</span></span><br><span class="line"><span class="string">--name node-24ge \</span></span><br><span class="line"><span class="string">--endpoints=10.165.124.15:2379 \</span></span><br><span class="line"><span class="string">--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">--cacert=/etc/kubernetes/pki/etcd/ca.crt \</span></span><br><span class="line"><span class="string">--initial-advertise-peer-urls=&lt;https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--initial-cluster=node-9xct=&lt;https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--data-dir=/u01/local/kube-system/etcd \</span></span><br><span class="line"><span class="string">--skip-hash-check=true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="恢复集群"><a href="#恢复集群" class="headerlink" title="恢复集群"></a>恢复集群</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/kubernetes/manifests.bak /etc/kubernetes/manifests</span><br></pre></td></tr></table></figure>
+
+<h4 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">\-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">\-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">\--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot save \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-134.db \</span></span><br><span class="line"><span class="string">\--endpoints=10.165.24.181:2379 \</span></span><br><span class="line"><span class="string">\--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">\--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">\--cacert=/etc/kubernetes/pki/etcd/ca.crt&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>docker<br>备份</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -e ETCDCTL\_API=3 -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd -v /data/etcd\_backup\:/data/etcd\_backup registry.cn-hangzhou.aliyuncs.com/google\_containers/etcd:3.4.13-0 sh -c <span class="string">&quot;etcdctl --endpoints=&lt;https://11.1.100.194:2379&gt; --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /data/etcd\_backup/etcd-snapshot-\$(date +%Y-%m-%d\_%H:%M:%S\_%Z).db&quot;</span></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>etcd</category>
+      </categories>
+      <tags>
+        <tag>etcd</tag>
+        <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>ETCD使用中需要注意的问题</title>
     <url>/2022/12/29/ETCD%E4%BD%BF%E7%94%A8%E4%B8%AD%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E7%9A%84%E9%97%AE%E9%A2%98--%E8%87%AA%E5%8A%A8%E5%8E%8B%E7%BC%A9--%E6%9C%80%E5%A4%A7%E5%AD%97%E8%8A%82%E6%95%B0--%E5%AD%98%E5%82%A8%E6%95%B0%E6%8D%AE%E5%A4%A7%E5%B0%8F/</url>
     <content><![CDATA[<h2 id="ETCD使用中需要注意的问题"><a href="#ETCD使用中需要注意的问题" class="headerlink" title="ETCD使用中需要注意的问题"></a>ETCD使用中需要注意的问题</h2><p>我们在实际生产中使用ETCD存储元数据，　起初集群规模不大的时候元数据信息不多没有发现什么问题。　随着集群规模越来越大问题逐渐暴露了</p>
@@ -23,104 +51,6 @@
       </categories>
       <tags>
         <tag>etcd</tag>
-        <tag>kubernetes</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Kubernetes 的 hostNetwork 和 NetworkPolicy (网络策略)</title>
-    <url>/2022/12/29/Kubernetes%20%E7%9A%84%20hostNetwork%20%E5%92%8C%20NetworkPolicy%20(%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5)/</url>
-    <content><![CDATA[<h2 id="1-hostNetwork-介绍"><a href="#1-hostNetwork-介绍" class="headerlink" title="1. hostNetwork 介绍"></a>1. hostNetwork 介绍</h2><blockquote>
-<p>在 k8s 中，若 <strong>pod 使用主机网络</strong>，也就是<code>hostNetwork=true</code>。则该pod会使用主机的dns以及所有网络配置，<strong>默认情况下是无法使用 k8s 自带的 dns 解析服务</strong>，但是可以修改 DNS 策略或者修改主机上的域名解析（<code>/etc/resolv.conf</code>），使主机可以用 k8s 自身的 dns 服务。一般通过 DNS 策略（<code>ClusterFirstWithHostNet</code>）来使用 k8s DNS 内部域名解析，k8s DNS 策略如下：</p>
-</blockquote>
-<ul>
-<li><code>Default</code>：继承 Pod 所在宿主机的 DNS 设置，hostNetwork 的默认策略。</li>
-<li><code>ClusterFirst（默认DNS策略）</code>：优先使用 kubernetes 环境的 dns 服务，将无法解析的域名转发到从宿主机继承的 dns 服务器。</li>
-<li><code>ClusterFirstWithHostNet</code>：和 ClusterFirst 类似，对于以 <code>hostNetwork</code> 模式运行的 Pod 应明确知道使用该策略。也是可以同时解析内部和外部的域名。</li>
-<li><code>None</code>：忽略 kubernetes 环境的 dns 配置，通过 spec.dnsConfig 自定义 DNS 配置。</li>
-</ul>
-<p>一般使用主机网络就增加如下几行即可：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">dnsPolicy:</span> <span class="string">&quot;ClusterFirstWithHostNet&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>『示例』：<code>hostNetwork.yaml</code></strong></p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="comment"># 使用主机网络</span></span><br><span class="line">      <span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line">      <span class="comment"># 该设置是使POD使用k8s的dns，dns配置在/etc/resolv.conf文件中</span></span><br><span class="line">      <span class="comment"># 如果不加，pod默认使用所在宿主主机使用的DNS，这样会导致容器</span></span><br><span class="line">      <span class="comment"># 内不能通过service name访问k8s集群中其他POD</span></span><br><span class="line">      <span class="attr">dnsPolicy:</span> <span class="string">ClusterFirstWithHostNet</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">metrics</span></span><br><span class="line">          <span class="comment"># 如果hostNetwork: true，hostPort必须跟containerPort一样，所以hostPort一般不写，端口也是占用宿主机上的端口。</span></span><br><span class="line">          <span class="attr">hostPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">31280</span></span><br></pre></td></tr></table></figure>
-
-<p><strong>hostPort 和 NodePort的区别：</strong></p>
-<blockquote>
-<p><code>hostPort</code> 只会在运行机器上开启端口， <code>NodePort</code> 是所有 Node 上都会开启端口。</p>
-</blockquote>
-<ul>
-<li>hostPort 是由 portmap 这个 cni 提供 portMapping 能力，同时如果想使用这个能力，在配置文件中一定需要开启 portmap。</li>
-<li>使用 hostPort 后，会在 iptables 的 nat 链中插入相应的规则，而且这些规则是在 KUBE-SERVICES 规则之前插入的，也就是说会优先匹配 hostPort 的规则，我们常用的 NodePort 规则其实是在 KUBE-SERVICES 之中，也排在其后。</li>
-<li>hostport 可以通过 iptables 命令查看到， 但是无法在 ipvsadm 中查看到。</li>
-<li>使用 lsof&#x2F;netstat 也查看不到这个端口,这是因为 hostport 是通过 iptables 对请求中的目的端口进行转发的，并不是在主机上通过端口监听。</li>
-<li><strong>在生产环境中不建议使用 hostPort</strong>。</li>
-</ul>
-<h2 id="2-K8s-网络策略-NetworkPolicy"><a href="#2-K8s-网络策略-NetworkPolicy" class="headerlink" title="2. K8s 网络策略 NetworkPolicy"></a>2. K8s 网络策略 NetworkPolicy</h2><p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290837401.png" alt="p"></p>
-<blockquote>
-<p>如果你希望在 IP 地址或端口层面（OSI 第 3 层或第 4 层）控制网络流量， 则你可以考虑为集群中特定应用使用 Kubernetes 网络策略（<code>NetworkPolicy</code>）。**<code>NetworkPolicy</code> 是一种以应用为中心的结构，允许你设置如何允许 Pod 与网络上的各类网络“实体”** 通信。官方文档</p>
-</blockquote>
-<p>网络策略是通过<strong>网络插件</strong>来实现，常用的网络插件<code>Flannel</code>和<code>Calico</code>：</p>
-<ul>
-<li><code>Flannel</code>：只能提供网络通讯，<strong>不提供网络策略</strong>，如果需要使用网络策略，建议使用下面的 Calico，关于 Flannel 更详细的介绍和安装可以参考我这篇文章：Kubernetes（k8s）CNI（flannel）网络模型原理。</li>
-<li><code>Calico</code>：<strong>支持丰富的网络策略</strong>，Calico以其性能、灵活性而闻名。后面也会出相关文章详细介绍 Calico。</li>
-</ul>
-<p>更多了解更多的网络策略，可以参考<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">官方文档</a></p>
-<p>Pod 可以通信的 Pod 是通过如下三个标识符的组合来辩识的：</p>
-<ul>
-<li>其他被允许的 Pods（例外：Pod 无法阻塞对自身的访问）</li>
-<li>被允许的名字空间</li>
-<li>IP 组块（例外：与 Pod 运行所在的节点的通信总是被允许的， 无论 Pod 或节点的 IP 地址）</li>
-</ul>
-<h2 id="3-Pod-隔离的两种类型"><a href="#3-Pod-隔离的两种类型" class="headerlink" title="3. Pod 隔离的两种类型"></a>3. Pod 隔离的两种类型</h2><p>Pod 有两种隔离: <strong>出口的隔离</strong>和<strong>入口的隔离</strong>。默认情况下，出口和入口都是非隔离的。</p>
-<ul>
-<li><strong>网络策略是相加的</strong>，所以不会产生冲突。如果策略适用于 Pod 某一特定方向的流量， Pod 在对应方向所允许的连接是适用的网络策略所允许的集合。因此，评估的顺序不影响策略的结果。</li>
-<li>要允许从源 Pod 到目的 Pod 的连接，源 Pod 的出口策略和目的 Pod 的入口策略都需要允许连接。如果任何一方不允许连接，建立连接将会失败。</li>
-</ul>
-<h2 id="4-NetworkPolicy-资源"><a href="#4-NetworkPolicy-资源" class="headerlink" title="4. NetworkPolicy 资源"></a>4. NetworkPolicy 资源</h2><h3 id="4-1-NetworkPolicy-示例演示"><a href="#4-1-NetworkPolicy-示例演示" class="headerlink" title="4.1 NetworkPolicy 示例演示"></a>4.1 NetworkPolicy 示例演示</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">role:</span> <span class="string">db</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Egress</span></span><br><span class="line">  <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">172.17</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">        <span class="attr">except:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">172.17</span><span class="number">.1</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">project:</span> <span class="string">myproject</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">role:</span> <span class="string">frontend</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">to:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">5978</span></span><br></pre></td></tr></table></figure>
-
-<p>必需字段：与所有其他的 Kubernetes 配置一样，NetworkPolicy 需要 apiVersion、 kind 和 metadata 字段。关于配置文件操作的一般信息， 请参考配置 Pod 以使用 ConfigMap 和对象管理。</p>
-<ul>
-<li><code>spec</code>：NetworkPolicy 规约 中包含了在一个名字空间中定义特定网络策略所需的所有信息。</li>
-<li><code>podSelector</code>：每个 NetworkPolicy 都包括一个 podSelector， 它对该策略所适用的一组 Pod 进行选择。示例中的策略选择带有 “role&#x3D;db” 标签的 Pod。空的 podSelector 选择名字空间下的所有 Pod。</li>
-<li><code>policyTypes</code>：每个 NetworkPolicy 都包含一个 policyTypes 列表，其中包含 Ingress 或 Egress 或两者兼具。policyTypes 字段表示给定的策略是应用于进入所选 Pod 的入站流量还是来自所选 Pod 的出站流量，或两者兼有。如果 NetworkPolicy 未指定 policyTypes 则默认情况下始终设置 Ingress；如果 NetworkPolicy 有任何出口规则的话则设置 Egress。</li>
-<li><code>ingress</code>：每个 NetworkPolicy 可包含一个 ingress 规则的白名单列表。每个规则都允许同时匹配 from 和 ports 部分的流量。示例策略中包含一条简单的规则：它匹配某个特定端口，来自三个来源中的一个，第一个通过 ipBlock 指定，第二个通过 namespaceSelector 指定，第三个通过 podSelector 指定。</li>
-<li><code>egress</code>：每个 NetworkPolicy 可包含一个 egress 规则的白名单列表。每个规则都允许匹配 to 和 port 部分的流量。该示例策略包含一条规则， 该规则将指定端口上的流量匹配到 10.0.0.0&#x2F;24 中的任何目的地。</li>
-</ul>
-<p>所以，该网络策略示例:</p>
-<ul>
-<li><p>隔离 “default” 名字空间下 “role&#x3D;db” 的 Pod （如果它们不是已经被隔离的话）。</p>
-</li>
-<li><p>（Ingress 规则）允许以下 Pod 连接到 “default” 名字空间下的带有 “role&#x3D;db” 标签的所有 Pod 的 6379 TCP 端口：</p>
-<ul>
-<li>“default” 名字空间下带有 “role&#x3D;frontend” 标签的所有 Pod</li>
-<li>带有 “project&#x3D;myproject” 标签的所有名字空间中的 Pod</li>
-<li>IP 地址范围为 172.17.0.0–172.17.0.255 和 172.17.2.0–172.17.255.255 （即，除了 172.17.1.0&#x2F;24 之外的所有 172.17.0.0&#x2F;16）</li>
-</ul>
-</li>
-<li><p>（Egress 规则）允许 “default” 命名空间中任何带有标签 “role&#x3D;db” 的 Pod 到 CIDR 10.0.0.0&#x2F;24 下 5978 TCP 端口的连接。</p>
-</li>
-</ul>
-<h3 id="4-2-选择器-to-和-from-的行为"><a href="#4-2-选择器-to-和-from-的行为" class="headerlink" title="4.2 选择器 to 和 from 的行为"></a>4.2 选择器 to 和 from 的行为</h3><p>可以在 ingress 的 from 部分或 egress 的 to 部分中指定四种选择器：</p>
-<ul>
-<li><code>podSelector</code>：此选择器将在与 NetworkPolicy 相同的名字空间中选择特定的 Pod，应将其允许作为入站流量来源或出站流量目的地。</li>
-<li><code>namespaceSelector</code>：此选择器将选择特定的名字空间，应将所有 Pod 用作其入站流量来源或出站流量目的地。</li>
-<li><code>namespaceSelector</code> 和 <code>podSelector</code>：一个指定 namespaceSelector 和 podSelector 的 to&#x2F;from 条目选择特定名字空间中的特定 Pod。注意使用正确的 YAML 语法；下面的策略：</li>
-</ul>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ingress:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">    <span class="attr">podSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
-
-<p>在 from 数组中仅包含一个元素，只允许来自标有 role&#x3D;client 的 Pod 且该 Pod 所在的名字空间中标有 user&#x3D;alice 的连接。但是 这项 策略：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"> <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"> <span class="string">...</span></span><br></pre></td></tr></table></figure>
-
-<p>这里只是把官网的摘了一部分，官网介绍的比较清楚，这里就不粘贴复制了，小伙伴可以参考<a href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/">官方文档</a></p>
-<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><ul>
-<li>在 k8s 上网络策略是<strong>白名单机制</strong>，所谓白名单机制是指，只有明确定义的策略才会被允许放行，默认没有指定的规则就是拒绝的，即条件不匹配的都会被拒绝。</li>
-<li>其次对于 ingress 或 egress 来说，对应的 <code>from</code> 或 <code>to</code> 都是用来指定访问端或被访问端的信息。</li>
-<li>如果我们在对应的字段中<strong>没有定义 namespaceSelector 字段</strong>，<strong>默认 ingress 或 egrss 会匹配当前 netpol 所在名称空间</strong>，即在没有明确指定 namespaceSelector 字段时，对应的其他条件都是针对当前 netpol 所在名称空间。</li>
-<li><strong>多个条件组合</strong>使用，如果多个条件都在一个列表中，则表示多个条件间是与关系，即指定的条件需要同时满足对应策略才会放行。</li>
-<li>如果<strong>多个条件不再同一个列表中</strong>，则多个条件之间是或关系，即满足其中一个条件都会被对应策略放行。</li>
-</ul>
-]]></content>
-      <tags>
         <tag>kubernetes</tag>
       </tags>
   </entry>
@@ -265,34 +195,6 @@
         <category>kubernetes</category>
       </categories>
       <tags>
-        <tag>kubernetes</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>etcd 备份还原</title>
-    <url>/2022/12/29/etcd%E5%A4%87%E4%BB%BD%E8%BF%98%E5%8E%9F/</url>
-    <content><![CDATA[<h2 id="containerd"><a href="#containerd" class="headerlink" title="containerd"></a>containerd</h2><h3 id="etcd-备份还原"><a href="#etcd-备份还原" class="headerlink" title="etcd 备份还原"></a>etcd 备份还原</h3><h4 id="还原"><a href="#还原" class="headerlink" title="还原"></a>还原</h4><p>每台的master节点 IP 和主机名需要修改<br>停止集群<br>mv   &#x2F;etc&#x2F;kubernetes&#x2F;manifests.bak</p>
-<h2 id="备份原有etcd数据"><a href="#备份原有etcd数据" class="headerlink" title="备份原有etcd数据"></a>备份原有etcd数据</h2><p>mv &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd &#x2F;u01&#x2F;local&#x2F;kube-system&#x2F;etcd-<code>date &#39;+%Y%m%d-%H:%M:%S&#39;</code><br>​</p>
-<h3 id="还原第一台master"><a href="#还原第一台master" class="headerlink" title="还原第一台master"></a>还原第一台master</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/u01/local/kube-system:/u01/local/kube-system&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot restore \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-.db \</span></span><br><span class="line"><span class="string">--name node-9xct \</span></span><br><span class="line"><span class="string">--endpoints=10.165.124.13:2379 \</span></span><br><span class="line"><span class="string">--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">--cacert=/etc/kubernetes/pki/etcd/ca.crt \</span></span><br><span class="line"><span class="string">--initial-advertise-peer-urls=&lt;https://10.165.124.13:2380&gt; \</span></span><br><span class="line"><span class="string">--initial-cluster=node-9xct=&lt;https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--data-dir=/u01/local/kube-system/etcd \</span></span><br><span class="line"><span class="string">--skip-hash-check=true&quot;</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/u01/local/kube-system:/u01/local/kube-system&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot restore \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-.db \</span></span><br><span class="line"><span class="string">--name node-dfkb \</span></span><br><span class="line"><span class="string">--endpoints=10.165.124.14:2379 \</span></span><br><span class="line"><span class="string">--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">--cacert=/etc/kubernetes/pki/etcd/ca.crt \</span></span><br><span class="line"><span class="string">--initial-advertise-peer-urls=&lt;https://10.165.124.14:2380&gt; \</span></span><br><span class="line"><span class="string">--initial-cluster=node-9xct=&lt;https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--data-dir=/u01/local/kube-system/etcd \</span></span><br><span class="line"><span class="string">--skip-hash-check=true&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>​</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/u01/local/kube-system:/u01/local/kube-system&#x27;</span> \</span><br><span class="line">-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot restore \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-.db \</span></span><br><span class="line"><span class="string">--name node-24ge \</span></span><br><span class="line"><span class="string">--endpoints=10.165.124.15:2379 \</span></span><br><span class="line"><span class="string">--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">--cacert=/etc/kubernetes/pki/etcd/ca.crt \</span></span><br><span class="line"><span class="string">--initial-advertise-peer-urls=&lt;https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--initial-cluster=node-9xct=&lt;https://10.165.124.13:2380,node-dfkb=https://10.165.124.14:2380,node-24ge=https://10.165.124.15:2380&gt; \</span></span><br><span class="line"><span class="string">--data-dir=/u01/local/kube-system/etcd \</span></span><br><span class="line"><span class="string">--skip-hash-check=true&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="恢复集群"><a href="#恢复集群" class="headerlink" title="恢复集群"></a>恢复集群</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">mv</span> /etc/kubernetes/manifests.bak /etc/kubernetes/manifests</span><br></pre></td></tr></table></figure>
-
-<h4 id="备份"><a href="#备份" class="headerlink" title="备份"></a>备份</h4><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nerdctl  -n k8s.io run --<span class="built_in">rm</span> \</span><br><span class="line">\-v <span class="string">&#x27;/tmp\:/tmp&#x27;</span> \</span><br><span class="line">\-v <span class="string">&#x27;/etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd&#x27;</span> \</span><br><span class="line">\--<span class="built_in">env</span> ETCDCTL\_API=3 \</span><br><span class="line"><span class="string">&#x27;docker.kedacom.com:15000/etcd:3.5.0-0&#x27;</span> \</span><br><span class="line">/bin/sh -c <span class="string">&quot;etcdctl snapshot save \</span></span><br><span class="line"><span class="string">/tmp/etcd-snapshot-134.db \</span></span><br><span class="line"><span class="string">\--endpoints=10.165.24.181:2379 \</span></span><br><span class="line"><span class="string">\--cert=/etc/kubernetes/pki/etcd/server.crt \</span></span><br><span class="line"><span class="string">\--key=/etc/kubernetes/pki/etcd/server.key \</span></span><br><span class="line"><span class="string">\--cacert=/etc/kubernetes/pki/etcd/ca.crt&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>docker<br>备份</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run --<span class="built_in">rm</span> -e ETCDCTL\_API=3 -v /etc/kubernetes/pki/etcd:/etc/kubernetes/pki/etcd -v /data/etcd\_backup\:/data/etcd\_backup registry.cn-hangzhou.aliyuncs.com/google\_containers/etcd:3.4.13-0 sh -c <span class="string">&quot;etcdctl --endpoints=&lt;https://11.1.100.194:2379&gt; --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key snapshot save /data/etcd\_backup/etcd-snapshot-\$(date +%Y-%m-%d\_%H:%M:%S\_%Z).db&quot;</span></span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>kubernetes</category>
-        <category>etcd</category>
-      </categories>
-      <tags>
-        <tag>etcd</tag>
         <tag>kubernetes</tag>
       </tags>
   </entry>
@@ -958,6 +860,27 @@
       </tags>
   </entry>
   <entry>
+    <title>ingress 兼容旧版tls</title>
+    <url>/2023/01/04/ingress%20%E5%85%BC%E5%AE%B9%E6%97%A7%E7%89%88tls/</url>
+    <content><![CDATA[<h2 id="Ingress支持哪些SSL-x2F-TLS版本？"><a href="#Ingress支持哪些SSL-x2F-TLS版本？" class="headerlink" title="Ingress支持哪些SSL&#x2F;TLS版本？"></a>Ingress支持哪些SSL&#x2F;TLS版本？</h2><p>Ingress-Nginx默认支持TLS V1.2及V1.3版本，对于部分旧版本的浏览器，或者移动客户端TLS版本低于1.2时，会导致客户端在与Ingress-Nginx服务SSL版本协商时报错。</p>
+<p>修改kube-system&#x2F;nginx-configuration configmap添加以下配置，为Ingress-Nginx开启支持更多TLS版本的功能。具体操作，请参见<a href="https://kubernetes.github.io/ingress-nginx/user-guide/tls/?spm=a2c4g.11186623.0.0.3ecd1606Njfrf3#default-tls-version-and-ciphers">TLS&#x2F;HTTPS</a>。</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">ssl-ciphers:</span> <span class="string">&quot;ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384:DHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA:ECDHE-RSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES256-SHA256:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:DES-CBC3-SHA&quot;</span></span><br><span class="line"><span class="attr">ssl-protocols:</span> <span class="string">&quot;TLSv1 TLSv1.1 TLSv1.2 TLSv1.3&quot;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>如果使用crt证书还是提示不安全，就使用带认证机构的pem证书。<br>示例如下</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIGhzCCBW+gAwIBAgIQBiTxcj8UZJzYcNWoibxW2TANBgkqhkiG9w0BAQsFADBZ</span><br><span class="line">MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMTMwMQYDVQQDEypS</span><br><span class="line">YXBpZFNTTCBUTFMgRFYgUlNBIE1peGVkIFNIQTI1NiAyMDIwIENBLTEwHhcNMjIw</span><br><span class="line">MTIwMDAwMDAwWhcNMjMwMjE0MjM1OTU5WjAXMRUwEwYDVQQDDAwqLndpc2tpbmQu</span><br><span class="line">Y24wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCwU5KJdPpJpeSlfGxe</span><br><span class="line">L6UjMFMPwOWgAr6whUGoe9yP3Bh2LRPGfXa8eyP9YR5qfw4o1LomjTpfcJFueUH+</span><br><span class="line">/cIkGGYkqttHeTvFeXeyeeb8JDCeWGMZPlpnAzd41JJ3ZHf0JiGiKZq6nxulBNvy</span><br><span class="line">l38yQXJpcyqph2wtQMnCykYWDWrAp6mrnp94qj5mAvaaflmlzEd7MhPDyxiX/wT2</span><br><span class="line">zlHwLH5JIaU4V3nGWitff9iZi95bv2EGT277284N6MtrAnpRzgkQiFHOR294daNJ</span><br><span class="line">2fykSBKqaxDrqFpHwAmFuPyuUXmKO5g0h3F0zFbDPLq0mPNCeOX5/PP+qkyqYRa6</span><br><span class="line">ERXzAgMBAAGjggOLMIIDhzAfBgNVHSMEGDAWgBSkjeW+fHnkcCNtLik0rSNY3PUx</span><br><span class="line">fzAdBgNVHQ4EFgQUwn4fJ3IFTKQ6BhHL5dMKvT7DuEswIwYDVR0RBBwwGoIMKi53</span><br><span class="line">aXNraW5kLmNuggp3aXNraW5kLmNuMA4GA1UdDwEB/wQEAwIFoDAdBgNVHSUEFjAU</span><br><span class="line">BggrBgEFBQcDAQYIKwYBBQUHAwIwgZsGA1UdHwSBkzCBkDBGoESgQoZAaHR0cDov</span><br><span class="line">L2NybDMuZGlnaWNlcnQuY29tL1JhcGlkU1NMVExTRFZSU0FNaXhlZFNIQTI1NjIw</span><br><span class="line">MjBDQS0xLmNybDBGoESgQoZAaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL1JhcGlk</span><br><span class="line">U1NMVExTRFZSU0FNaXhlZFNIQTI1NjIwMjBDQS0xLmNybDA+BgNVHSAENzA1MDMG</span><br><span class="line">BmeBDAECATApMCcGCCsGAQUFBwIBFhtodHRwOi8vd3d3LmRpZ2ljZXJ0LmNvbS9D</span><br><span class="line">UFMwgYUGCCsGAQUFBwEBBHkwdzAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGln</span><br><span class="line">aWNlcnQuY29tME8GCCsGAQUFBzAChkNodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5j</span><br><span class="line">b20vUmFwaWRTU0xUTFNEVlJTQU1peGVkU0hBMjU2MjAyMENBLTEuY3J0MAkGA1Ud</span><br><span class="line">EwQCMAAwggF+BgorBgEEAdZ5AgQCBIIBbgSCAWoBaAB2AOg+0No+9QY1MudXKLyJ</span><br><span class="line">a8kD08vREWvs62nhd31tBr1uAAABfnVqk2kAAAQDAEcwRQIgeMqnT6Pi7zEqBpck</span><br><span class="line">IGJgoICqPtvCCyhhGCXYIkqvCSYCIQDa0ec3Ejr73pbCTeDgyx5cLNFbcm+p6Wv3</span><br><span class="line">91pcgqgcxgB2ADXPGRu/sWxXvw+tTG1Cy7u2JyAmUeo/4SrvqAPDO9ZMAAABfnVq</span><br><span class="line">k7YAAAQDAEcwRQIgB4+wEsq9aUTsRI2Fz8q3nkpmr7J1RMr7bexx5aTKYAMCIQCW</span><br><span class="line">bP3tKS827mFCUJF9+5X2Ar4jCHA0oMr8VcJ36HPPqgB2ALc++yTfnE26dfI5xbpY</span><br><span class="line">9Gxd/ELPep81xJ4dCYEl7bSZAAABfnVqk58AAAQDAEcwRQIhAJUi4RFD++GUySVR</span><br><span class="line">q6/i+8DCiIyUIU3Hk+Er11JZwyAuAiAyhINERPHMgLJKr9WGUU0Yi0eyPbJ1IdYz</span><br><span class="line">a23WFUVe/jANBgkqhkiG9w0BAQsFAAOCAQEAXj3GyBABMdGDD7DG1nfIhQpCz+N4</span><br><span class="line">kiLPLupYUBy9qzq417EplaimyleP4lmd7Yp118AI459l6QpKeJSnkOkVFMyxfADG</span><br><span class="line">f5OWbWJPVZMXsp+wUT5YcvI+SIdtBReN1CZGQULRgBoHqq7JY6n8joDo2ibGH9oy</span><br><span class="line">XQ3ZRDSxIR7YHjqB3J09AN/vPgBay2X4ujiwgQZwd2A04UBobutui4cmvZa7pbZX</span><br><span class="line">64rdHz6JDfLSKMyVgGnEvCGXrlIeltAcNBoxnbK3hxczsaU8psSIhEVe1hJRqKCD</span><br><span class="line">fJeAihi9nzrha6UWQio0xqaniBnj1SHcgrtz9gFOSIQT3hPDo6e3+iOjYQ==</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">MIIFUTCCBDmgAwIBAgIQB5g2A63jmQghnKAMJ7yKbDANBgkqhkiG9w0BAQsFADBh</span><br><span class="line">MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3</span><br><span class="line">d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD</span><br><span class="line">QTAeFw0yMDA3MTYxMjI1MjdaFw0yMzA1MzEyMzU5NTlaMFkxCzAJBgNVBAYTAlVT</span><br><span class="line">MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxMzAxBgNVBAMTKlJhcGlkU1NMIFRMUyBE</span><br><span class="line">ViBSU0EgTWl4ZWQgU0hBMjU2IDIwMjAgQ0EtMTCCASIwDQYJKoZIhvcNAQEBBQAD</span><br><span class="line">ggEPADCCAQoCggEBANpuQ1VVmXvZlaJmxGVYotAMFzoApohbJAeNpzN+49LbgkrM</span><br><span class="line">Lv2tblII8H43vN7UFumxV7lJdPwLP22qa0sV9cwCr6QZoGEobda+4pufG0aSfHQC</span><br><span class="line">QhulaqKpPcYYOPjTwgqJA84AFYj8l/IeQ8n01VyCurMIHA478ts2G6GGtEx0ucnE</span><br><span class="line">fV2QHUL64EC2yh7ybboo5v8nFWV4lx/xcfxoxkFTVnAIRgHrH2vUdOiV9slOix3z</span><br><span class="line">5KPs2rK2bbach8Sh5GSkgp2HRoS/my0tCq1vjyLJeP0aNwPd3rk5O8LiffLev9j+</span><br><span class="line">UKZo0tt0VvTLkdGmSN4h1mVY6DnGfOwp1C5SK0MCAwEAAaOCAgswggIHMB0GA1Ud</span><br><span class="line">DgQWBBSkjeW+fHnkcCNtLik0rSNY3PUxfzAfBgNVHSMEGDAWgBQD3lA1VtFMu2bw</span><br><span class="line">o+IbG8OXsj3RVTAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0lBBYwFAYIKwYBBQUHAwEG</span><br><span class="line">CCsGAQUFBwMCMBIGA1UdEwEB/wQIMAYBAf8CAQAwNAYIKwYBBQUHAQEEKDAmMCQG</span><br><span class="line">CCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wewYDVR0fBHQwcjA3</span><br><span class="line">oDWgM4YxaHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0R2xvYmFsUm9v</span><br><span class="line">dENBLmNybDA3oDWgM4YxaHR0cDovL2NybDQuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0</span><br><span class="line">R2xvYmFsUm9vdENBLmNybDCBzgYDVR0gBIHGMIHDMIHABgRVHSAAMIG3MCgGCCsG</span><br><span class="line">AQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5jb20vQ1BTMIGKBggrBgEFBQcC</span><br><span class="line">AjB+DHxBbnkgdXNlIG9mIHRoaXMgQ2VydGlmaWNhdGUgY29uc3RpdHV0ZXMgYWNj</span><br><span class="line">ZXB0YW5jZSBvZiB0aGUgUmVseWluZyBQYXJ0eSBBZ3JlZW1lbnQgbG9jYXRlZCBh</span><br><span class="line">dCBodHRwczovL3d3dy5kaWdpY2VydC5jb20vcnBhLXVhMA0GCSqGSIb3DQEBCwUA</span><br><span class="line">A4IBAQAi49xtSOuOygBycy50quCThG45xIdUAsQCaXFVRa9asPaB/jLINXJL3qV9</span><br><span class="line">J0Gh2bZM0k4yOMeAMZ57smP6JkcJihhOFlfQa18aljd+xNc6b+GX6oFcCHGr+gsE</span><br><span class="line">yPM8qvlKGxc5T5eHVzV6jpjpyzl6VEKpaxH6gdGVpQVgjkOR9yY9XAUlFnzlOCpq</span><br><span class="line">sm7r2ZUKpDfrhUnVzX2nSM15XSj48rVBBAnGJWkLPijlACd3sWFMVUiKRz1C5PZy</span><br><span class="line">el2l7J/W4d99KFLSYgoy5GDmARpwLc//fXfkr40nMY8ibCmxCsjXQTe0fJbtrrLL</span><br><span class="line">yWQlk9VDV296EI/kQOJNLVEkJ54P</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>ingress</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
+        <tag>ingress</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Helm进阶使用</title>
     <url>/2022/12/29/helm%E8%BF%9B%E9%98%B6%E4%BD%BF%E7%94%A8/</url>
     <content><![CDATA[<h2 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h2><p>Helm 针对 Kubernetes 的 Helm 包管理器。Helm 的一般操作：</p>
@@ -1169,6 +1092,119 @@
       </categories>
       <tags>
         <tag>kubernetes</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>kubelet垃圾回收机制</title>
+    <url>/2022/12/29/kubelet%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</url>
+    <content><![CDATA[<h3 id="一、Tips"><a href="#一、Tips" class="headerlink" title="一、Tips"></a><strong>一、Tips</strong></h3><ol>
+<li>Kubernetes的垃圾回收由kubelet进行管理，每分钟会查询清理一次容器，每五分钟查询清理一次镜像。在kubelet刚启动时并不会立即进行GC，即第一次进行容器回收为kubelet启动一分钟后，第一次进行镜像回收为kubelet启动五分钟后。</li>
+<li>不推荐使用其它管理工具或手工进行容器和镜像的清理，因为kubelet需要通过容器来判断pod的运行状态，如果使用其它方式清除容器有可能影响kubelet的正常工作。</li>
+<li>镜像的回收针对node结点上由docker管理的所有镜像，无论该镜像是否是在创建pod时pull的。而容器的回收策略只应用于通过kubelet管理的容器。</li>
+<li>Kubernetes通过kubelet集成的cadvisor进行镜像的回收，有两个参数可以设置：<code>--image-gc-high-threshold</code>和<code>--image-gc-low-threshold</code>。当用于存储镜像的磁盘使用率达到百分之–image-gc-high-threshold时将触发镜像回收，删除最近最久未使用（LRU，Least Recently Used）的镜像直到磁盘使用率降为百分之<code>--image-gc-low-threshold</code>或无镜像可删为止。默认<code>--image-gc-high-threshold</code>为90，&#96;&#96;–image-gc-low-threshold&#96;为80。</li>
+<li>容器的回收有三个参数可设置：<code>--minimum-container-ttl-duration</code>，<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>。从容器停止运行时起经过<code>--minimum-container-ttl-duration</code>时间后，该容器标记为已过期将来可以被回收（只是标记，不是回收），默认值为1m0s。一般情况下每个pod最多可以保留<code>--maximum-dead-containers-per-container</code>个已停止运行的容器集，默认值为2。整个node节点可以保留<code>--maximum-dead-containers</code>个已停止运行的容器，默认值为100。</li>
+<li>如果需要关闭容器的垃圾回收策略，可以将<code>--minimum-container-ttl-duration</code>设为0（表示无限制），<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>设为负数。</li>
+<li><code>--minimum-container-ttl-duration</code>的值可以使用单位后缀，如h表示小时，m表示分钟，s表示秒。</li>
+<li>当<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>冲突时，&#96;&#96;–maximum-dead-containers&#96;优先考虑。</li>
+<li>对于那些由kubelet创建的但由于某些原因导致无名字（）的容器，会在到达GC时间点时被删除。</li>
+<li>回收容器时，按创建时间排序，优先删除那些创建时间最早的容器。</li>
+<li>到达GC时间点时，具体的GC过程如下：1）遍历所有pod，使其满足<code>--maximum-dead-containers-per-container</code>；2）经过上一步后如果不满足<code>--maximum-dead-containers</code>，计算值<code>X=（--maximum-dead-containers）/（pod总数）</code>，再遍历所有pod，使其满足已停止运行的容器集个数不大于X且至少为1；3）经过以上两步后如果还不满足<code>--maximum-dead-containers</code>，则对所有已停止的容器排序，优先删除创建时间最早的容器直到满足<code>--maximum-dead-containers</code>为止。</li>
+<li>当某个镜像重新pull或启动某个pod用到该镜像时，该镜像的最近使用时间都会被更新。</li>
+<li>Kubernetes的垃圾回收在1.1.4版本开始才渐渐完善，之前的版本存在比较多bug甚至不能发挥作用。</li>
+<li>关于容器的回收需要特别注意pod的概念，比如，通过同一个yaml文件create一个pod，再delete这个pod，然后再create这个pod，此时之前的那个pod对应的容器并不会作为新创建pod的已停止容器集，因为这两个pod虽然同名，但已经不是同一个pod了。只有同一个pod中在运行过程中由于意外或其它情况停止的容器才算是这个pod的已停止容器集。</li>
+</ol>
+<h3 id="二、Experiments"><a href="#二、Experiments" class="headerlink" title="二、Experiments"></a><strong>二、Experiments</strong></h3><ol>
+<li>镜像回收（使用docker默认 <code>--graph</code> 参数：<code>/var/lib/docker</code>）</li>
+</ol>
+<p>结点上运行的docker设置的参数 <code>--graph</code> 使用默认的<code>/var/lib/docker</code>，指向&#x2F;var文件系统，通过df -lh查看目前 &#x2F;var 磁盘使用率为30%，启动kubelet设置镜像回收相关参数如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--image-gc-high-threshold=40</span> <span class="string">--image-gc-low-threshold=35</span></span><br></pre></td></tr></table></figure>
+
+<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images（pause镜像是启动pod必需的）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<p>此时查看&#x2F;var磁盘使用率达到了41%，然后将使用<code>10.11.150.76:5000/centos:7</code>镜像的pod删除，等待GC的镜像回收时间点。然而五分钟过去了，什么事情也没有发生&#x3D;_&#x3D;!!。还记得 docker rmi 镜像时有个前提条件是什么吗？没错，要求使用该镜像的容器都已经被删除了才可以。前面删除pod只是停止了容器，并没有将容器删除。因此手工将对应的容器docker rm掉，再等待五分钟后，可以看到镜像已经被删除回收了：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：只有相关联的容器都被停止并删除回收后，才能将Kubernetes的镜像垃圾回收策略应用到该镜像上。</p>
+</blockquote>
+<ol>
+<li>镜像回收（使用自定义docker <code>--graph</code> 参数：<code>/opt/docker</code>）</li>
+</ol>
+<p>结点上运行的docker设置的参数<code>--graph</code>指向 &#x2F;opt 磁盘，通过 df -lh 查看目前 &#x2F;opt 磁盘使用率为 48% ，启动 kubelet 设置镜像回收相关参数如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--image-gc-high-threshold=50</span> <span class="string">--image-gc-low-threshold=40</span></span><br></pre></td></tr></table></figure>
+
+<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+
+<p>此时查看&#x2F;opt磁盘使用率达到了51%，然后将使用10.11.150.76:5000&#x2F;centos:7镜像的pod删除，手工将对应的容器docker rm掉，等待GC的镜像回收时间点。然而五分钟过去了，十分钟过去了，docker images时centos镜像依旧顽固地坚守在阵地。</p>
+<blockquote>
+<p>结论：目前Kubernetes的镜像垃圾回收策略可以在docker  <code>--graph</code> 参数默认为 <code>/var/lib/docker</code> 时正常工作，当 <code>--graph</code> 设置为其它磁盘路径时还存在bug。</p>
+</blockquote>
+<p>问题反馈在 Github 的相关 issue 里：<a href="https://github.com/kubernetes/kubernetes/issues/17994">https://github.com/kubernetes/kubernetes/issues/17994</a>，可以继续跟进。</p>
+<p>Append: 根据Github上的反馈，这个bug将在后续版本中解决，目前版本需要让设置了–graph的镜像垃圾回收生效，在启动kubelet时还需要加上参数 <code>--docker-root=&lt;docker --graph参数值&gt;</code>。</p>
+<ol>
+<li>容器回收之 <code>--maximum-dead-containers-per-container</code> 参数</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--maximum-dead-containers-per-container=1</span> <span class="string">--minimum-container-ttl-duration=30s</span> <span class="string">--maximum-dead-containers=100</span></span><br></pre></td></tr></table></figure>
+
+<p>创建一个只包含一个容器且该容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">2fe969499164        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         4 seconds ago       Exited (0) 2 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_68cc6f03</span><br><span class="line">555b5e7a8550        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         24 seconds ago      Exited (0) 22 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_ad4a5e39</span><br><span class="line">94b30a0b32c2        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         34 seconds ago      Exited (0) 32 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_4027e3e1</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            34 seconds ago      Up 33 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器只剩下一个（pause容器不计算），且先创建的容器被优先删除：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">5aae6157aeff        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         46 seconds ago      Exited (0) 45 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_f126d2a8</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            2 minutes ago       Up 2 minutes                                    k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的<code>--maximum-dead-containers-per-container</code>参数设置可正常工作。</p>
+</blockquote>
+<ol>
+<li><code>--maximum-dead-containers-per-container</code> 针对容器还是容器集</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--maximum-dead-containers-per-container=1</span> <span class="string">--minimum-container-ttl-duration=30s</span> <span class="string">--maximum-dead-containers=100</span></span><br></pre></td></tr></table></figure>
+
+<p>创建一个包含三个容器且这些容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">dec04bd28a03        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_830a9375</span><br><span class="line">7c94d4a963a7        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_975d44d3</span><br><span class="line">4f3e7e8ddfd5        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         8 seconds ago       Exited (0) 7 seconds ago                        k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_d024eb06</span><br><span class="line">cb48cf2ba133        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         12 seconds ago      Exited (0) 11 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b5ff7373</span><br><span class="line">ec2941f046f0        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_69b1a996</span><br><span class="line">f831e8ed5687        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_fbc02e2e</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            14 seconds ago      Up 13 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器剩下三个（pause容器不计算），且这三个容器正好是一组：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED              STATUS                      PORTS               NAMES</span><br><span class="line">e4351e6855ae        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         51 seconds ago       Exited (0) 50 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_263dd820</span><br><span class="line">990baa6e6a7a        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         52 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b16b5eaa</span><br><span class="line">c6916fb06d65        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         53 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_1d8ea284</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            About a minute ago   Up About a minute                               k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：<code>--maximum-dead-containers-per-container</code> 的计数针对一个pod内的容器集而不是容器的个数。</p>
+</blockquote>
+<ol>
+<li>容器回收之 <code>--maximum-dead-containers</code> 参数</li>
+</ol>
+<p>启动kubelet设置容器回收相关参数如下：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--maximum-dead-containers-per-container=2</span> <span class="string">--minimum-container-ttl-duration=30s</span> <span class="string">--maximum-dead-containers=3</span></span><br></pre></td></tr></table></figure>
+
+<p>创建一个包含三个容器的pod，再删除该pod，再创建该pod，再删除该pod，这样就产生了8个已退出容器（包括两个pause容器）：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                              PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         1 seconds ago       Exited (0) Less than a second ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         2 seconds ago       Exited (0) 1 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         3 seconds ago       Exited (0) 2 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br><span class="line">12588fce1433        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            3 seconds ago       Exited (2) Less than a second ago                       k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_c9d4cbaa</span><br><span class="line">621ed207d452        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         4 seconds ago       Exited (0) 3 seconds ago                                k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_a91278cd</span><br><span class="line">023c10fad4fd        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_6cc03f37</span><br><span class="line">756eb7bb4b53        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_83312ec2</span><br><span class="line">d54bdc22773e        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            6 seconds ago       Exited (2) 3 seconds ago                                k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_ccb57220</span><br></pre></td></tr></table></figure>
+
+<p>GC的容器回收时间点到达时，可以看到已退出容器只剩下了三个，pause容器也被回收了：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS                     PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7   <span class="string">&quot;/bin/bash&quot;</span>         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7   <span class="string">&quot;/bin/bash&quot;</span>         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7   <span class="string">&quot;/bin/bash&quot;</span>         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的 <code>--maximum-dead-containers</code> 参数设置可正常工作；pause容器也作为可回收容器被管理着；Tips第11条第3）点。</p>
+</blockquote>
+<ol>
+<li><code>--maximum-dead-containers</code> 对于非kubelet管理的容器是否计数</li>
+</ol>
+<p>在第5个实验的基础上，手工创建一个container，等待GC的容器回收时间点到达，一分钟过去了，两分钟过去了，docker ps -a 显示的依然是4个容器：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker run -it 10.11.150.76:5000/openxxs/iperf:1.2 /bin/sh</span></span><br><span class="line">sh-4.2<span class="comment"># exit</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                 COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">939b932dc7db        10.11.150.76:5000/openxxs/iperf:1.2   <span class="string">&quot;/bin/sh&quot;</span>           2 minutes ago       Exited (0) 2 minutes ago                        backstabbing_aryabhata</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7            <span class="string">&quot;/bin/bash&quot;</span>         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7            <span class="string">&quot;/bin/bash&quot;</span>         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7            <span class="string">&quot;/bin/bash&quot;</span>         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>结论：Kubernetes容器垃圾回收的策略不适用于非kubelet管理的容器。</p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>kubernetes</category>
+        <category>Kubelet</category>
+      </categories>
+      <tags>
+        <tag>kubernetes</tag>
+        <tag>Kubelet</tag>
       </tags>
   </entry>
   <entry>
@@ -1584,116 +1620,101 @@
       </tags>
   </entry>
   <entry>
-    <title>kubelet垃圾回收机制</title>
-    <url>/2022/12/29/kubelet%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E6%9C%BA%E5%88%B6/</url>
-    <content><![CDATA[<h3 id="一、Tips"><a href="#一、Tips" class="headerlink" title="一、Tips"></a><strong>一、Tips</strong></h3><ol>
-<li>Kubernetes的垃圾回收由kubelet进行管理，每分钟会查询清理一次容器，每五分钟查询清理一次镜像。在kubelet刚启动时并不会立即进行GC，即第一次进行容器回收为kubelet启动一分钟后，第一次进行镜像回收为kubelet启动五分钟后。</li>
-<li>不推荐使用其它管理工具或手工进行容器和镜像的清理，因为kubelet需要通过容器来判断pod的运行状态，如果使用其它方式清除容器有可能影响kubelet的正常工作。</li>
-<li>镜像的回收针对node结点上由docker管理的所有镜像，无论该镜像是否是在创建pod时pull的。而容器的回收策略只应用于通过kubelet管理的容器。</li>
-<li>Kubernetes通过kubelet集成的cadvisor进行镜像的回收，有两个参数可以设置：<code>--image-gc-high-threshold</code>和<code>--image-gc-low-threshold</code>。当用于存储镜像的磁盘使用率达到百分之–image-gc-high-threshold时将触发镜像回收，删除最近最久未使用（LRU，Least Recently Used）的镜像直到磁盘使用率降为百分之<code>--image-gc-low-threshold</code>或无镜像可删为止。默认<code>--image-gc-high-threshold</code>为90，&#96;&#96;–image-gc-low-threshold&#96;为80。</li>
-<li>容器的回收有三个参数可设置：<code>--minimum-container-ttl-duration</code>，<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>。从容器停止运行时起经过<code>--minimum-container-ttl-duration</code>时间后，该容器标记为已过期将来可以被回收（只是标记，不是回收），默认值为1m0s。一般情况下每个pod最多可以保留<code>--maximum-dead-containers-per-container</code>个已停止运行的容器集，默认值为2。整个node节点可以保留<code>--maximum-dead-containers</code>个已停止运行的容器，默认值为100。</li>
-<li>如果需要关闭容器的垃圾回收策略，可以将<code>--minimum-container-ttl-duration</code>设为0（表示无限制），<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>设为负数。</li>
-<li><code>--minimum-container-ttl-duration</code>的值可以使用单位后缀，如h表示小时，m表示分钟，s表示秒。</li>
-<li>当<code>--maximum-dead-containers-per-container</code>和<code>--maximum-dead-containers</code>冲突时，&#96;&#96;–maximum-dead-containers&#96;优先考虑。</li>
-<li>对于那些由kubelet创建的但由于某些原因导致无名字（）的容器，会在到达GC时间点时被删除。</li>
-<li>回收容器时，按创建时间排序，优先删除那些创建时间最早的容器。</li>
-<li>到达GC时间点时，具体的GC过程如下：1）遍历所有pod，使其满足<code>--maximum-dead-containers-per-container</code>；2）经过上一步后如果不满足<code>--maximum-dead-containers</code>，计算值<code>X=（--maximum-dead-containers）/（pod总数）</code>，再遍历所有pod，使其满足已停止运行的容器集个数不大于X且至少为1；3）经过以上两步后如果还不满足<code>--maximum-dead-containers</code>，则对所有已停止的容器排序，优先删除创建时间最早的容器直到满足<code>--maximum-dead-containers</code>为止。</li>
-<li>当某个镜像重新pull或启动某个pod用到该镜像时，该镜像的最近使用时间都会被更新。</li>
-<li>Kubernetes的垃圾回收在1.1.4版本开始才渐渐完善，之前的版本存在比较多bug甚至不能发挥作用。</li>
-<li>关于容器的回收需要特别注意pod的概念，比如，通过同一个yaml文件create一个pod，再delete这个pod，然后再create这个pod，此时之前的那个pod对应的容器并不会作为新创建pod的已停止容器集，因为这两个pod虽然同名，但已经不是同一个pod了。只有同一个pod中在运行过程中由于意外或其它情况停止的容器才算是这个pod的已停止容器集。</li>
-</ol>
-<h3 id="二、Experiments"><a href="#二、Experiments" class="headerlink" title="二、Experiments"></a><strong>二、Experiments</strong></h3><ol>
-<li>镜像回收（使用docker默认 <code>--graph</code> 参数：<code>/var/lib/docker</code>）</li>
-</ol>
-<p>结点上运行的docker设置的参数 <code>--graph</code> 使用默认的<code>/var/lib/docker</code>，指向&#x2F;var文件系统，通过df -lh查看目前 &#x2F;var 磁盘使用率为30%，启动kubelet设置镜像回收相关参数如下：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--image-gc-high-threshold=40</span> <span class="string">--image-gc-low-threshold=35</span></span><br></pre></td></tr></table></figure>
-
-<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images（pause镜像是启动pod必需的）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
-
-<p>此时查看&#x2F;var磁盘使用率达到了41%，然后将使用<code>10.11.150.76:5000/centos:7</code>镜像的pod删除，等待GC的镜像回收时间点。然而五分钟过去了，什么事情也没有发生&#x3D;_&#x3D;!!。还记得 docker rmi 镜像时有个前提条件是什么吗？没错，要求使用该镜像的容器都已经被删除了才可以。前面删除pod只是停止了容器，并没有将容器删除。因此手工将对应的容器docker rm掉，再等待五分钟后，可以看到镜像已经被删除回收了：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：只有相关联的容器都被停止并删除回收后，才能将Kubernetes的镜像垃圾回收策略应用到该镜像上。</p>
+    <title>Kubernetes 的 hostNetwork 和 NetworkPolicy (网络策略)</title>
+    <url>/2022/12/29/Kubernetes%20%E7%9A%84%20hostNetwork%20%E5%92%8C%20NetworkPolicy%20(%E7%BD%91%E7%BB%9C%E7%AD%96%E7%95%A5)/</url>
+    <content><![CDATA[<h2 id="1-hostNetwork-介绍"><a href="#1-hostNetwork-介绍" class="headerlink" title="1. hostNetwork 介绍"></a>1. hostNetwork 介绍</h2><blockquote>
+<p>在 k8s 中，若 <strong>pod 使用主机网络</strong>，也就是<code>hostNetwork=true</code>。则该pod会使用主机的dns以及所有网络配置，<strong>默认情况下是无法使用 k8s 自带的 dns 解析服务</strong>，但是可以修改 DNS 策略或者修改主机上的域名解析（<code>/etc/resolv.conf</code>），使主机可以用 k8s 自身的 dns 服务。一般通过 DNS 策略（<code>ClusterFirstWithHostNet</code>）来使用 k8s DNS 内部域名解析，k8s DNS 策略如下：</p>
 </blockquote>
-<ol>
-<li>镜像回收（使用自定义docker <code>--graph</code> 参数：<code>/opt/docker</code>）</li>
-</ol>
-<p>结点上运行的docker设置的参数<code>--graph</code>指向 &#x2F;opt 磁盘，通过 df -lh 查看目前 &#x2F;opt 磁盘使用率为 48% ，启动 kubelet 设置镜像回收相关参数如下：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--image-gc-high-threshold=50</span> <span class="string">--image-gc-low-threshold=40</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>Default</code>：继承 Pod 所在宿主机的 DNS 设置，hostNetwork 的默认策略。</li>
+<li><code>ClusterFirst（默认DNS策略）</code>：优先使用 kubernetes 环境的 dns 服务，将无法解析的域名转发到从宿主机继承的 dns 服务器。</li>
+<li><code>ClusterFirstWithHostNet</code>：和 ClusterFirst 类似，对于以 <code>hostNetwork</code> 模式运行的 Pod 应明确知道使用该策略。也是可以同时解析内部和外部的域名。</li>
+<li><code>None</code>：忽略 kubernetes 环境的 dns 配置，通过 spec.dnsConfig 自定义 DNS 配置。</li>
+</ul>
+<p>一般使用主机网络就增加如下几行即可：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">dnsPolicy:</span> <span class="string">&quot;ClusterFirstWithHostNet&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>此时任意创建两个使用不同镜像的pod，在node节点上可以看到新pull了三个images：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /opt/domeos/openxxs/k8s-1.1.7-flannel]<span class="comment"># docker images</span></span><br><span class="line">REPOSITORY                        TAG                 IMAGE ID            CREATED             SIZE</span><br><span class="line">10.11.150.76:5000/openxxs/iperf   1.2                 1783511c56f8        3 months ago        279 MB</span><br><span class="line">10.11.150.76:5000/centos          7                   5ddf34d4d69b        8 months ago        172.2 MB</span><br><span class="line">pub.domeos.org/kubernetes/pause   latest              f9d5de079539        20 months ago       239.8 kB</span><br></pre></td></tr></table></figure>
+<p><strong>『示例』：<code>hostNetwork.yaml</code></strong></p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">apps/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Deployment</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">replicas:</span> <span class="number">1</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">template:</span></span><br><span class="line">    <span class="attr">metadata:</span></span><br><span class="line">      <span class="attr">labels:</span></span><br><span class="line">        <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">    <span class="attr">spec:</span></span><br><span class="line">      <span class="comment"># 使用主机网络</span></span><br><span class="line">      <span class="attr">hostNetwork:</span> <span class="literal">true</span></span><br><span class="line">      <span class="comment"># 该设置是使POD使用k8s的dns，dns配置在/etc/resolv.conf文件中</span></span><br><span class="line">      <span class="comment"># 如果不加，pod默认使用所在宿主主机使用的DNS，这样会导致容器</span></span><br><span class="line">      <span class="comment"># 内不能通过service name访问k8s集群中其他POD</span></span><br><span class="line">      <span class="attr">dnsPolicy:</span> <span class="string">ClusterFirstWithHostNet</span></span><br><span class="line">      <span class="attr">containers:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line">        <span class="attr">image:</span> <span class="string">nginx:1.7.9</span></span><br><span class="line">        <span class="attr">ports:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">metrics</span></span><br><span class="line">          <span class="comment"># 如果hostNetwork: true，hostPort必须跟containerPort一样，所以hostPort一般不写，端口也是占用宿主机上的端口。</span></span><br><span class="line">          <span class="attr">hostPort:</span> <span class="number">80</span></span><br><span class="line">          <span class="attr">containerPort:</span> <span class="number">80</span></span><br><span class="line"><span class="meta">---</span></span><br><span class="line"><span class="attr">apiVersion:</span> <span class="string">v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">Service</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">nginx</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">selector:</span></span><br><span class="line">    <span class="attr">app:</span> <span class="string">nginx</span></span><br><span class="line">  <span class="attr">type:</span> <span class="string">NodePort</span></span><br><span class="line">  <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">http</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">targetPort:</span> <span class="number">80</span></span><br><span class="line">      <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">nodePort:</span> <span class="number">31280</span></span><br></pre></td></tr></table></figure>
 
-<p>此时查看&#x2F;opt磁盘使用率达到了51%，然后将使用10.11.150.76:5000&#x2F;centos:7镜像的pod删除，手工将对应的容器docker rm掉，等待GC的镜像回收时间点。然而五分钟过去了，十分钟过去了，docker images时centos镜像依旧顽固地坚守在阵地。</p>
+<p><strong>hostPort 和 NodePort的区别：</strong></p>
 <blockquote>
-<p>结论：目前Kubernetes的镜像垃圾回收策略可以在docker  <code>--graph</code> 参数默认为 <code>/var/lib/docker</code> 时正常工作，当 <code>--graph</code> 设置为其它磁盘路径时还存在bug。</p>
+<p><code>hostPort</code> 只会在运行机器上开启端口， <code>NodePort</code> 是所有 Node 上都会开启端口。</p>
 </blockquote>
-<p>问题反馈在 Github 的相关 issue 里：<a href="https://github.com/kubernetes/kubernetes/issues/17994">https://github.com/kubernetes/kubernetes/issues/17994</a>，可以继续跟进。</p>
-<p>Append: 根据Github上的反馈，这个bug将在后续版本中解决，目前版本需要让设置了–graph的镜像垃圾回收生效，在启动kubelet时还需要加上参数 <code>--docker-root=&lt;docker --graph参数值&gt;</code>。</p>
-<ol>
-<li>容器回收之 <code>--maximum-dead-containers-per-container</code> 参数</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--maximum-dead-containers-per-container=1</span> <span class="string">--minimum-container-ttl-duration=30s</span> <span class="string">--maximum-dead-containers=100</span></span><br></pre></td></tr></table></figure>
-
-<p>创建一个只包含一个容器且该容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">2fe969499164        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         4 seconds ago       Exited (0) 2 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_68cc6f03</span><br><span class="line">555b5e7a8550        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         24 seconds ago      Exited (0) 22 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_ad4a5e39</span><br><span class="line">94b30a0b32c2        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         34 seconds ago      Exited (0) 32 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_4027e3e1</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            34 seconds ago      Up 33 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
-
-<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器只剩下一个（pause容器不计算），且先创建的容器被优先删除：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">5aae6157aeff        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         46 seconds ago      Exited (0) 45 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_f126d2a8</span><br><span class="line">d458e6a7d396        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            2 minutes ago       Up 2 minutes                                    k8s_POD.bdb2e1f5_test-gc-pod-exit_default_92e8bd05-e9e6-11e5-974c-782bcb2a316a_09798975</span><br></pre></td></tr></table></figure>
-
+<ul>
+<li>hostPort 是由 portmap 这个 cni 提供 portMapping 能力，同时如果想使用这个能力，在配置文件中一定需要开启 portmap。</li>
+<li>使用 hostPort 后，会在 iptables 的 nat 链中插入相应的规则，而且这些规则是在 KUBE-SERVICES 规则之前插入的，也就是说会优先匹配 hostPort 的规则，我们常用的 NodePort 规则其实是在 KUBE-SERVICES 之中，也排在其后。</li>
+<li>hostport 可以通过 iptables 命令查看到， 但是无法在 ipvsadm 中查看到。</li>
+<li>使用 lsof&#x2F;netstat 也查看不到这个端口,这是因为 hostport 是通过 iptables 对请求中的目的端口进行转发的，并不是在主机上通过端口监听。</li>
+<li><strong>在生产环境中不建议使用 hostPort</strong>。</li>
+</ul>
+<h2 id="2-K8s-网络策略-NetworkPolicy"><a href="#2-K8s-网络策略-NetworkPolicy" class="headerlink" title="2. K8s 网络策略 NetworkPolicy"></a>2. K8s 网络策略 NetworkPolicy</h2><p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290837401.png" alt="p"></p>
 <blockquote>
-<p>结论：Kubernetes容器垃圾回收的<code>--maximum-dead-containers-per-container</code>参数设置可正常工作。</p>
+<p>如果你希望在 IP 地址或端口层面（OSI 第 3 层或第 4 层）控制网络流量， 则你可以考虑为集群中特定应用使用 Kubernetes 网络策略（<code>NetworkPolicy</code>）。**<code>NetworkPolicy</code> 是一种以应用为中心的结构，允许你设置如何允许 Pod 与网络上的各类网络“实体”** 通信。官方文档</p>
 </blockquote>
-<ol>
-<li><code>--maximum-dead-containers-per-container</code> 针对容器还是容器集</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--maximum-dead-containers-per-container=1</span> <span class="string">--minimum-container-ttl-duration=30s</span> <span class="string">--maximum-dead-containers=100</span></span><br></pre></td></tr></table></figure>
+<p>网络策略是通过<strong>网络插件</strong>来实现，常用的网络插件<code>Flannel</code>和<code>Calico</code>：</p>
+<ul>
+<li><code>Flannel</code>：只能提供网络通讯，<strong>不提供网络策略</strong>，如果需要使用网络策略，建议使用下面的 Calico，关于 Flannel 更详细的介绍和安装可以参考我这篇文章：Kubernetes（k8s）CNI（flannel）网络模型原理。</li>
+<li><code>Calico</code>：<strong>支持丰富的网络策略</strong>，Calico以其性能、灵活性而闻名。后面也会出相关文章详细介绍 Calico。</li>
+</ul>
+<p>更多了解更多的网络策略，可以参考<a href="https://kubernetes.io/docs/concepts/cluster-administration/addons/">官方文档</a></p>
+<p>Pod 可以通信的 Pod 是通过如下三个标识符的组合来辩识的：</p>
+<ul>
+<li>其他被允许的 Pods（例外：Pod 无法阻塞对自身的访问）</li>
+<li>被允许的名字空间</li>
+<li>IP 组块（例外：与 Pod 运行所在的节点的通信总是被允许的， 无论 Pod 或节点的 IP 地址）</li>
+</ul>
+<h2 id="3-Pod-隔离的两种类型"><a href="#3-Pod-隔离的两种类型" class="headerlink" title="3. Pod 隔离的两种类型"></a>3. Pod 隔离的两种类型</h2><p>Pod 有两种隔离: <strong>出口的隔离</strong>和<strong>入口的隔离</strong>。默认情况下，出口和入口都是非隔离的。</p>
+<ul>
+<li><strong>网络策略是相加的</strong>，所以不会产生冲突。如果策略适用于 Pod 某一特定方向的流量， Pod 在对应方向所允许的连接是适用的网络策略所允许的集合。因此，评估的顺序不影响策略的结果。</li>
+<li>要允许从源 Pod 到目的 Pod 的连接，源 Pod 的出口策略和目的 Pod 的入口策略都需要允许连接。如果任何一方不允许连接，建立连接将会失败。</li>
+</ul>
+<h2 id="4-NetworkPolicy-资源"><a href="#4-NetworkPolicy-资源" class="headerlink" title="4. NetworkPolicy 资源"></a>4. NetworkPolicy 资源</h2><h3 id="4-1-NetworkPolicy-示例演示"><a href="#4-1-NetworkPolicy-示例演示" class="headerlink" title="4.1 NetworkPolicy 示例演示"></a>4.1 NetworkPolicy 示例演示</h3><figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">apiVersion:</span> <span class="string">networking.k8s.io/v1</span></span><br><span class="line"><span class="attr">kind:</span> <span class="string">NetworkPolicy</span></span><br><span class="line"><span class="attr">metadata:</span></span><br><span class="line">  <span class="attr">name:</span> <span class="string">test-network-policy</span></span><br><span class="line">  <span class="attr">namespace:</span> <span class="string">default</span></span><br><span class="line"><span class="attr">spec:</span></span><br><span class="line">  <span class="attr">podSelector:</span></span><br><span class="line">    <span class="attr">matchLabels:</span></span><br><span class="line">      <span class="attr">role:</span> <span class="string">db</span></span><br><span class="line">  <span class="attr">policyTypes:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Ingress</span></span><br><span class="line"> <span class="bullet">-</span> <span class="string">Egress</span></span><br><span class="line">  <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">172.17</span><span class="number">.0</span><span class="number">.0</span><span class="string">/16</span></span><br><span class="line">        <span class="attr">except:</span></span><br><span class="line">        <span class="bullet">-</span> <span class="number">172.17</span><span class="number">.1</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">project:</span> <span class="string">myproject</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">        <span class="attr">matchLabels:</span></span><br><span class="line">          <span class="attr">role:</span> <span class="string">frontend</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">  <span class="attr">egress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">to:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">ipBlock:</span></span><br><span class="line">        <span class="attr">cidr:</span> <span class="number">10.0</span><span class="number">.0</span><span class="number">.0</span><span class="string">/24</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">protocol:</span> <span class="string">TCP</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">5978</span></span><br></pre></td></tr></table></figure>
 
-<p>创建一个包含三个容器且这些容器一运行就退出的pod，此时在node节点上可以看到该pod中的容器不断的创建退出创建退出：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">dec04bd28a03        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_830a9375</span><br><span class="line">7c94d4a963a7        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         7 seconds ago       Exited (0) 6 seconds ago                        k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_975d44d3</span><br><span class="line">4f3e7e8ddfd5        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         8 seconds ago       Exited (0) 7 seconds ago                        k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_d024eb06</span><br><span class="line">cb48cf2ba133        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         12 seconds ago      Exited (0) 11 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b5ff7373</span><br><span class="line">ec2941f046f0        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_69b1a996</span><br><span class="line">f831e8ed5687        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         13 seconds ago      Exited (0) 12 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_fbc02e2e</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            14 seconds ago      Up 13 seconds                                   k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+<p>必需字段：与所有其他的 Kubernetes 配置一样，NetworkPolicy 需要 apiVersion、 kind 和 metadata 字段。关于配置文件操作的一般信息， 请参考配置 Pod 以使用 ConfigMap 和对象管理。</p>
+<ul>
+<li><code>spec</code>：NetworkPolicy 规约 中包含了在一个名字空间中定义特定网络策略所需的所有信息。</li>
+<li><code>podSelector</code>：每个 NetworkPolicy 都包括一个 podSelector， 它对该策略所适用的一组 Pod 进行选择。示例中的策略选择带有 “role&#x3D;db” 标签的 Pod。空的 podSelector 选择名字空间下的所有 Pod。</li>
+<li><code>policyTypes</code>：每个 NetworkPolicy 都包含一个 policyTypes 列表，其中包含 Ingress 或 Egress 或两者兼具。policyTypes 字段表示给定的策略是应用于进入所选 Pod 的入站流量还是来自所选 Pod 的出站流量，或两者兼有。如果 NetworkPolicy 未指定 policyTypes 则默认情况下始终设置 Ingress；如果 NetworkPolicy 有任何出口规则的话则设置 Egress。</li>
+<li><code>ingress</code>：每个 NetworkPolicy 可包含一个 ingress 规则的白名单列表。每个规则都允许同时匹配 from 和 ports 部分的流量。示例策略中包含一条简单的规则：它匹配某个特定端口，来自三个来源中的一个，第一个通过 ipBlock 指定，第二个通过 namespaceSelector 指定，第三个通过 podSelector 指定。</li>
+<li><code>egress</code>：每个 NetworkPolicy 可包含一个 egress 规则的白名单列表。每个规则都允许匹配 to 和 port 部分的流量。该示例策略包含一条规则， 该规则将指定端口上的流量匹配到 10.0.0.0&#x2F;24 中的任何目的地。</li>
+</ul>
+<p>所以，该网络策略示例:</p>
+<ul>
+<li><p>隔离 “default” 名字空间下 “role&#x3D;db” 的 Pod （如果它们不是已经被隔离的话）。</p>
+</li>
+<li><p>（Ingress 规则）允许以下 Pod 连接到 “default” 名字空间下的带有 “role&#x3D;db” 标签的所有 Pod 的 6379 TCP 端口：</p>
+<ul>
+<li>“default” 名字空间下带有 “role&#x3D;frontend” 标签的所有 Pod</li>
+<li>带有 “project&#x3D;myproject” 标签的所有名字空间中的 Pod</li>
+<li>IP 地址范围为 172.17.0.0–172.17.0.255 和 172.17.2.0–172.17.255.255 （即，除了 172.17.1.0&#x2F;24 之外的所有 172.17.0.0&#x2F;16）</li>
+</ul>
+</li>
+<li><p>（Egress 规则）允许 “default” 命名空间中任何带有标签 “role&#x3D;db” 的 Pod 到 CIDR 10.0.0.0&#x2F;24 下 5978 TCP 端口的连接。</p>
+</li>
+</ul>
+<h3 id="4-2-选择器-to-和-from-的行为"><a href="#4-2-选择器-to-和-from-的行为" class="headerlink" title="4.2 选择器 to 和 from 的行为"></a>4.2 选择器 to 和 from 的行为</h3><p>可以在 ingress 的 from 部分或 egress 的 to 部分中指定四种选择器：</p>
+<ul>
+<li><code>podSelector</code>：此选择器将在与 NetworkPolicy 相同的名字空间中选择特定的 Pod，应将其允许作为入站流量来源或出站流量目的地。</li>
+<li><code>namespaceSelector</code>：此选择器将选择特定的名字空间，应将所有 Pod 用作其入站流量来源或出站流量目的地。</li>
+<li><code>namespaceSelector</code> 和 <code>podSelector</code>：一个指定 namespaceSelector 和 podSelector 的 to&#x2F;from 条目选择特定名字空间中的特定 Pod。注意使用正确的 YAML 语法；下面的策略：</li>
+</ul>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"><span class="attr">ingress:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">    <span class="attr">podSelector:</span></span><br><span class="line">      <span class="attr">matchLabels:</span></span><br><span class="line">        <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"><span class="string">...</span></span><br></pre></td></tr></table></figure>
 
-<p>GC的容器回收时间点到达时，可以看到创建时间大于30秒的已退出容器剩下三个（pause容器不计算），且这三个容器正好是一组：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED              STATUS                      PORTS               NAMES</span><br><span class="line">e4351e6855ae        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         51 seconds ago       Exited (0) 50 seconds ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_263dd820</span><br><span class="line">990baa6e6a7a        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         52 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_b16b5eaa</span><br><span class="line">c6916fb06d65        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         53 seconds ago       Exited (0) 51 seconds ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_1d8ea284</span><br><span class="line">ee972a4537fc        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            About a minute ago   Up About a minute                               k8s_POD.bdb2e1f5_test-gc-pod-exit_default_d1677c09-e9e7-11e5-974c-782bcb2a316a_85b3c032</span><br></pre></td></tr></table></figure>
+<p>在 from 数组中仅包含一个元素，只允许来自标有 role&#x3D;client 的 Pod 且该 Pod 所在的名字空间中标有 user&#x3D;alice 的连接。但是 这项 策略：</p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">...</span></span><br><span class="line"> <span class="attr">ingress:</span></span><br><span class="line"> <span class="bullet">-</span> <span class="attr">from:</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">namespaceSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">user:</span> <span class="string">alice</span></span><br><span class="line">   <span class="bullet">-</span> <span class="attr">podSelector:</span></span><br><span class="line">       <span class="attr">matchLabels:</span></span><br><span class="line">         <span class="attr">role:</span> <span class="string">client</span></span><br><span class="line"> <span class="string">...</span></span><br></pre></td></tr></table></figure>
 
-<blockquote>
-<p>结论：<code>--maximum-dead-containers-per-container</code> 的计数针对一个pod内的容器集而不是容器的个数。</p>
-</blockquote>
-<ol>
-<li>容器回收之 <code>--maximum-dead-containers</code> 参数</li>
-</ol>
-<p>启动kubelet设置容器回收相关参数如下：</p>
-<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="string">--maximum-dead-containers-per-container=2</span> <span class="string">--minimum-container-ttl-duration=30s</span> <span class="string">--maximum-dead-containers=3</span></span><br></pre></td></tr></table></figure>
-
-<p>创建一个包含三个容器的pod，再删除该pod，再创建该pod，再删除该pod，这样就产生了8个已退出容器（包括两个pause容器）：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                    COMMAND             CREATED             STATUS                              PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         1 seconds ago       Exited (0) Less than a second ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         2 seconds ago       Exited (0) 1 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         3 seconds ago       Exited (0) 2 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br><span class="line">12588fce1433        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            3 seconds ago       Exited (2) Less than a second ago                       k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_c9d4cbaa</span><br><span class="line">621ed207d452        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         4 seconds ago       Exited (0) 3 seconds ago                                k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_a91278cd</span><br><span class="line">023c10fad4fd        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_6cc03f37</span><br><span class="line">756eb7bb4b53        10.11.150.76:5000/centos:7               <span class="string">&quot;/bin/bash&quot;</span>         5 seconds ago       Exited (0) 4 seconds ago                                k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_83312ec2</span><br><span class="line">d54bdc22773e        pub.domeos.org/kubernetes/pause:latest   <span class="string">&quot;/pause&quot;</span>            6 seconds ago       Exited (2) 3 seconds ago                                k8s_POD.bdb2e1f5_test-gc-pod-exit_default_c5cbddbb-e9ee-11e5-974c-782bcb2a316a_ccb57220</span><br></pre></td></tr></table></figure>
-
-<p>GC的容器回收时间点到达时，可以看到已退出容器只剩下了三个，pause容器也被回收了：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                        COMMAND             CREATED             STATUS                     PORTS               NAMES</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7   <span class="string">&quot;/bin/bash&quot;</span>         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7   <span class="string">&quot;/bin/bash&quot;</span>         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7   <span class="string">&quot;/bin/bash&quot;</span>         2 minutes ago       Exited (0) 2 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的 <code>--maximum-dead-containers</code> 参数设置可正常工作；pause容器也作为可回收容器被管理着；Tips第11条第3）点。</p>
-</blockquote>
-<ol>
-<li><code>--maximum-dead-containers</code> 对于非kubelet管理的容器是否计数</li>
-</ol>
-<p>在第5个实验的基础上，手工创建一个container，等待GC的容器回收时间点到达，一分钟过去了，两分钟过去了，docker ps -a 显示的依然是4个容器：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker run -it 10.11.150.76:5000/openxxs/iperf:1.2 /bin/sh</span></span><br><span class="line">sh-4.2<span class="comment"># exit</span></span><br><span class="line"><span class="built_in">exit</span></span><br><span class="line">[@tc-151-100 /home/domeos]<span class="comment"># docker ps -a</span></span><br><span class="line">CONTAINER ID        IMAGE                                 COMMAND             CREATED             STATUS                      PORTS               NAMES</span><br><span class="line">939b932dc7db        10.11.150.76:5000/openxxs/iperf:1.2   <span class="string">&quot;/bin/sh&quot;</span>           2 minutes ago       Exited (0) 2 minutes ago                        backstabbing_aryabhata</span><br><span class="line">a28625d189df        10.11.150.76:5000/centos:7            <span class="string">&quot;/bin/bash&quot;</span>         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf3.5c8de29f_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_48c11200</span><br><span class="line">97aca44f0deb        10.11.150.76:5000/centos:7            <span class="string">&quot;/bin/bash&quot;</span>         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf2.5a36e29e_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_df34f48d</span><br><span class="line">4e57b6c839ae        10.11.150.76:5000/centos:7            <span class="string">&quot;/bin/bash&quot;</span>         12 minutes ago      Exited (0) 12 minutes ago                       k8s_iperf1.57dfe29d_test-gc-pod-exit_default_c7612b59-e9ee-11e5-974c-782bcb2a316a_afd622b2</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>结论：Kubernetes容器垃圾回收的策略不适用于非kubelet管理的容器。</p>
-</blockquote>
+<p>这里只是把官网的摘了一部分，官网介绍的比较清楚，这里就不粘贴复制了，小伙伴可以参考<a href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/network-policies/">官方文档</a></p>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5.总结"></a>5.总结</h2><ul>
+<li>在 k8s 上网络策略是<strong>白名单机制</strong>，所谓白名单机制是指，只有明确定义的策略才会被允许放行，默认没有指定的规则就是拒绝的，即条件不匹配的都会被拒绝。</li>
+<li>其次对于 ingress 或 egress 来说，对应的 <code>from</code> 或 <code>to</code> 都是用来指定访问端或被访问端的信息。</li>
+<li>如果我们在对应的字段中<strong>没有定义 namespaceSelector 字段</strong>，<strong>默认 ingress 或 egrss 会匹配当前 netpol 所在名称空间</strong>，即在没有明确指定 namespaceSelector 字段时，对应的其他条件都是针对当前 netpol 所在名称空间。</li>
+<li><strong>多个条件组合</strong>使用，如果多个条件都在一个列表中，则表示多个条件间是与关系，即指定的条件需要同时满足对应策略才会放行。</li>
+<li>如果<strong>多个条件不再同一个列表中</strong>，则多个条件之间是或关系，即满足其中一个条件都会被对应策略放行。</li>
+</ul>
 ]]></content>
-      <categories>
-        <category>kubernetes</category>
-        <category>Kubelet</category>
-      </categories>
       <tags>
         <tag>kubernetes</tag>
-        <tag>Kubelet</tag>
       </tags>
   </entry>
   <entry>
@@ -3744,6 +3765,36 @@ NFS是一个网络文件存储系统，可以搭建一台NFS服务器，然后�
       </tags>
   </entry>
   <entry>
+    <title>（Docker）Alpine apk设置国内源</title>
+    <url>/2022/12/29/%EF%BC%88Docker%EF%BC%89Alpine%20apk%E8%AE%BE%E7%BD%AE%E5%9B%BD%E5%86%85%E6%BA%90/</url>
+    <content><![CDATA[<h2 id="运行容器xxx，示例"><a href="#运行容器xxx，示例" class="headerlink" title="运行容器xxx，示例"></a>运行容器xxx，示例</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d  \</span><br><span class="line">--name jk -u root \</span><br><span class="line">-p 9090:8080  \</span><br><span class="line">-v /var/jenkins_home:/var/jenkins_home  \</span><br><span class="line">jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
+
+<h2 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it jk bash <span class="comment">#这里的“jk”是指你创建的镜像容器</span></span><br></pre></td></tr></table></figure>
+
+<p>修改源</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
+
+<p>更新设置</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apk update</span><br></pre></td></tr></table></figure>
+
+<p>然后你就可以愉快的使用apk了：apk add maven</p>
+<p>附录</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#apk命令</span></span><br><span class="line"></span><br><span class="line">apk update <span class="comment">#更新最新本地镜像源</span></span><br><span class="line">apk upgrade <span class="comment">#升级软件</span></span><br><span class="line">apk add --upgrade busybox <span class="comment">#指定升级部分软件包</span></span><br><span class="line">apk search <span class="comment">#查找所以可用软件包</span></span><br><span class="line">apk search -v <span class="comment">#查找所有可用软件包及其描述内容</span></span><br><span class="line">apk search -v <span class="string">&#x27;acf*&#x27;</span> <span class="comment">#通过软件包名称查找软件包</span></span><br><span class="line">apk search -v -d <span class="string">&#x27;docker&#x27;</span> <span class="comment">#通过描述文件查找特定的软件包</span></span><br><span class="line">apk info <span class="comment">#列出所有已安装的软件包</span></span><br><span class="line">apk info -a zlib <span class="comment">#显示完整的软件包信息</span></span><br><span class="line">apk info --who-owns /sbin/lbu <span class="comment">#显示指定文件属于的包</span></span><br><span class="line">apk add --allow-untrusted /path/to/file.apk  <span class="comment">#本地安装</span></span><br></pre></td></tr></table></figure>
+
+<p>添加镜像地址</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">a. 编辑/etc/apk/repositories，在文件内添加对应的镜像源</span><br><span class="line">b. 使用sed命令，如：sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
+
+<p>常用apk镜像站<br>清华TUNA镜像源：<code>https://mirror.tuna.tsinghua.edu.cn/alpine/</code><br>中科大镜像源：<code>http://mirrors.ustc.edu.cn/alpine/</code><br>阿里云镜像源：<code>http://mirrors.aliyun.com/alpine/</code></p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">http://dl-cdn.alpinelinux.org/alpine/</span><br><span class="line">http://nl.alpinelinux.org/alpine/</span><br><span class="line">http://uk.alpinelinux.org/alpine/</span><br><span class="line">http://dl-2.alpinelinux.org/alpine/</span><br><span class="line">http://dl-3.alpinelinux.org/alpine/</span><br><span class="line">http://dl-4.alpinelinux.org/alpine/</span><br><span class="line">http://dl-5.alpinelinux.org/alpine/</span><br><span class="line">http://dl-8.alpinelinux.org/alpine/</span><br><span class="line">http://mirror.yandex.ru/mirrors/alpine/</span><br><span class="line">http://mirrors.gigenet.com/alpinelinux/</span><br><span class="line">http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/</span><br><span class="line">http://mirror.leaseweb.com/alpine/</span><br><span class="line">http://repository.fit.cvut.cz/mirrors/alpine/</span><br><span class="line">http://alpine.mirror.far.fi/</span><br><span class="line">http://alpine.mirror.wearetriple.com/</span><br><span class="line">http://mirror.clarkson.edu/alpine/</span><br><span class="line">http://linorg.usp.br/AlpineLinux/</span><br><span class="line">http://ftp.yzu.edu.tw/Linux/alpine/</span><br><span class="line">http://mirror.aarnet.edu.au/pub/alpine</span><br><span class="line">http://mirror.csclub.uwaterloo.ca/alpine</span><br><span class="line">http://ftp.acc.umu.se/mirror/alpinelinux.org</span><br><span class="line">http://ftp.halifax.rwth-aachen.de/alpine</span><br><span class="line">http://speglar.siminn.is/alpine</span><br><span class="line">http://mirrors.dotsrc.org/alpine</span><br><span class="line">http://ftp.tsukuba.wide.ad.jp/Linux/alpine</span><br><span class="line">http://mirror.rise.ph/alpine</span><br><span class="line">http://mirror.neostrada.nl/alpine/</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>Docker</category>
+      </categories>
+      <tags>
+        <tag>Docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>二进制部署一套完整的企业级K8s集群</title>
     <url>/2022/12/29/%E4%BA%8C%E8%BF%9B%E5%88%B6%E9%83%A8%E7%BD%B2%E4%B8%80%E5%A5%97%E5%AE%8C%E6%95%B4%E7%9A%84%E4%BC%81%E4%B8%9A%E7%BA%A7K8s%E9%9B%86%E7%BE%A4/</url>
     <content><![CDATA[<p><strong>v1.22</strong>**，二进制方式**</p>
@@ -4537,36 +4588,6 @@ NFS是一个网络文件存储系统，可以搭建一台NFS服务器，然后�
 <p>如果将这个 Dockerfile 进行构建镜像运行后，会发现找不到 &#x2F;app&#x2F;world.txt 文件，或者其内容不是 hello。原因其实很简单，在 Shell 中，连续两行是同一个进程执行环境，因此前一个命令修改的内存状态，会直接影响后一个命令；而在 Dockerfile 中，这两行 RUN 命令的执行环境根本不同，是两个完全不同的容器。这就是对 Dockerfile 构建分层存储的概念不了解所导致的错误。</p>
 <p>之前说过每一个 <code>RUN</code> 都是启动一个容器、执行命令、然后提交存储层文件变更。第一层 <code>RUN cd /app</code> 的执行仅仅是当前进程的工作目录变更，一个内存上的变化而已，其结果不会造成任何文件变更。而到第二层的时候，启动的是一个全新的容器，跟第一层的容器更完全没关系，自然不可能继承前一层构建过程中的内存变化。</p>
 <p>因此如果需要改变以后各层的工作目录的位置，那么应该使用 WORKDIR指令。</p>
-]]></content>
-      <categories>
-        <category>Docker</category>
-      </categories>
-      <tags>
-        <tag>Docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>（Docker）Alpine apk设置国内源</title>
-    <url>/2022/12/29/%EF%BC%88Docker%EF%BC%89Alpine%20apk%E8%AE%BE%E7%BD%AE%E5%9B%BD%E5%86%85%E6%BA%90/</url>
-    <content><![CDATA[<h2 id="运行容器xxx，示例"><a href="#运行容器xxx，示例" class="headerlink" title="运行容器xxx，示例"></a>运行容器xxx，示例</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker run -d  \</span><br><span class="line">--name jk -u root \</span><br><span class="line">-p 9090:8080  \</span><br><span class="line">-v /var/jenkins_home:/var/jenkins_home  \</span><br><span class="line">jenkinsci/blueocean</span><br></pre></td></tr></table></figure>
-
-<h2 id="进入容器"><a href="#进入容器" class="headerlink" title="进入容器"></a>进入容器</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">docker <span class="built_in">exec</span> -it jk bash <span class="comment">#这里的“jk”是指你创建的镜像容器</span></span><br></pre></td></tr></table></figure>
-
-<p>修改源</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
-
-<p>更新设置</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apk update</span><br></pre></td></tr></table></figure>
-
-<p>然后你就可以愉快的使用apk了：apk add maven</p>
-<p>附录</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment">#apk命令</span></span><br><span class="line"></span><br><span class="line">apk update <span class="comment">#更新最新本地镜像源</span></span><br><span class="line">apk upgrade <span class="comment">#升级软件</span></span><br><span class="line">apk add --upgrade busybox <span class="comment">#指定升级部分软件包</span></span><br><span class="line">apk search <span class="comment">#查找所以可用软件包</span></span><br><span class="line">apk search -v <span class="comment">#查找所有可用软件包及其描述内容</span></span><br><span class="line">apk search -v <span class="string">&#x27;acf*&#x27;</span> <span class="comment">#通过软件包名称查找软件包</span></span><br><span class="line">apk search -v -d <span class="string">&#x27;docker&#x27;</span> <span class="comment">#通过描述文件查找特定的软件包</span></span><br><span class="line">apk info <span class="comment">#列出所有已安装的软件包</span></span><br><span class="line">apk info -a zlib <span class="comment">#显示完整的软件包信息</span></span><br><span class="line">apk info --who-owns /sbin/lbu <span class="comment">#显示指定文件属于的包</span></span><br><span class="line">apk add --allow-untrusted /path/to/file.apk  <span class="comment">#本地安装</span></span><br></pre></td></tr></table></figure>
-
-<p>添加镜像地址</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">a. 编辑/etc/apk/repositories，在文件内添加对应的镜像源</span><br><span class="line">b. 使用sed命令，如：sed -i <span class="string">&#x27;s/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g&#x27;</span> /etc/apk/repositories</span><br></pre></td></tr></table></figure>
-
-<p>常用apk镜像站<br>清华TUNA镜像源：<code>https://mirror.tuna.tsinghua.edu.cn/alpine/</code><br>中科大镜像源：<code>http://mirrors.ustc.edu.cn/alpine/</code><br>阿里云镜像源：<code>http://mirrors.aliyun.com/alpine/</code></p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">http://dl-cdn.alpinelinux.org/alpine/</span><br><span class="line">http://nl.alpinelinux.org/alpine/</span><br><span class="line">http://uk.alpinelinux.org/alpine/</span><br><span class="line">http://dl-2.alpinelinux.org/alpine/</span><br><span class="line">http://dl-3.alpinelinux.org/alpine/</span><br><span class="line">http://dl-4.alpinelinux.org/alpine/</span><br><span class="line">http://dl-5.alpinelinux.org/alpine/</span><br><span class="line">http://dl-8.alpinelinux.org/alpine/</span><br><span class="line">http://mirror.yandex.ru/mirrors/alpine/</span><br><span class="line">http://mirrors.gigenet.com/alpinelinux/</span><br><span class="line">http://mirror1.hs-esslingen.de/pub/Mirrors/alpine/</span><br><span class="line">http://mirror.leaseweb.com/alpine/</span><br><span class="line">http://repository.fit.cvut.cz/mirrors/alpine/</span><br><span class="line">http://alpine.mirror.far.fi/</span><br><span class="line">http://alpine.mirror.wearetriple.com/</span><br><span class="line">http://mirror.clarkson.edu/alpine/</span><br><span class="line">http://linorg.usp.br/AlpineLinux/</span><br><span class="line">http://ftp.yzu.edu.tw/Linux/alpine/</span><br><span class="line">http://mirror.aarnet.edu.au/pub/alpine</span><br><span class="line">http://mirror.csclub.uwaterloo.ca/alpine</span><br><span class="line">http://ftp.acc.umu.se/mirror/alpinelinux.org</span><br><span class="line">http://ftp.halifax.rwth-aachen.de/alpine</span><br><span class="line">http://speglar.siminn.is/alpine</span><br><span class="line">http://mirrors.dotsrc.org/alpine</span><br><span class="line">http://ftp.tsukuba.wide.ad.jp/Linux/alpine</span><br><span class="line">http://mirror.rise.ph/alpine</span><br><span class="line">http://mirror.neostrada.nl/alpine/</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Docker</category>
