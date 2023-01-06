@@ -242,8 +242,8 @@ body::-webkit-scrollbar {
 /**
  * @description: 滚动条样式  跟猫二选一
  */
-@media screen and (max-width:992px) {
-    ::-webkit-scrollbar {
+/* @media screen and (max-width:992px) { */
+    /* ::-webkit-scrollbar {
         width: 8px !important;
         height: 8px !important
     }
@@ -261,4 +261,4 @@ body::-webkit-scrollbar {
     ::-webkit-scrollbar-corner {
         background-color: transparent
     }
-}
+} */
