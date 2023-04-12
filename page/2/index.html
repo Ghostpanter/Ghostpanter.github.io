@@ -1,0 +1,408 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>流水易寒の博客</title><meta name="author" content="姬岚忧"><meta name="copyright" content="姬岚忧"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="不想做开发的运维，不是好运维"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290947085.png"><link rel="canonical" href="https://blog.kkun.site/page/2/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="zEdV2SVm14BBjmysMbimJptVuSESoCKhQvg2KGyh3tM"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-5936787105308700',
+  enable_page_level_ads: 'true'
+});</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-RRJTLY81FN"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-RRJTLY81FN');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '流水易寒の博客',
+  isPost: false,
+  isHome: true,
+  isHighlightShrink: false,
+  isToc: false,
+  postUpdate: '2023-04-11 14:55:15'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><div id="myscoll"></div><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/logo.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">35</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 文章目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://github.com/Ghostpanter"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290952165.png')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">流水易寒の博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 文章目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://github.com/Ghostpanter"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="site-info"><h1 id="site-title">流水易寒の博客</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/Ghostpanter" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:18816230062qk@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left"><a href="/2023/03/22/Tempo-%E5%88%86%E5%B8%83%E5%BC%8FLoki%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E5%88%A9%E5%99%A8/" title="Tempo - 分布式Loki链路追踪利器"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75385594_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Tempo - 分布式Loki链路追踪利器"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/03/22/Tempo-%E5%88%86%E5%B8%83%E5%BC%8FLoki%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA%E5%88%A9%E5%99%A8/" title="Tempo - 分布式Loki链路追踪利器">Tempo - 分布式Loki链路追踪利器</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-03-22T01:52:55.000Z" title="发表于 2023-03-22 09:52:55">2023-03-22</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/kubernetes/">kubernetes</a><i class="fas fa-angle-right article-meta-link"></i><a class="article-meta__categories" href="/categories/kubernetes/Grafana/">Grafana</a><i class="fas fa-angle-right article-meta-link"></i><a class="article-meta__categories" href="/categories/kubernetes/Grafana/Tempo/">Tempo</a></span></div><div class="content">Tempo是Grafana Labs在ObservabilityCON 2020大会上新开源的一个用于做分布式式追踪的后端服务。它和Cortex、Loki一样，Tempo也是一个兼备高扩展和低成本效应的系统。
+关于TempoTempo本质上来说还是一个存储系统，它兼容一些开源的trace协议（包含Jaeger、Zipkin和OpenCensus等），将他们存在廉价的S3存储中，并利用TraceID与其他监控系统（比如Loki、Prometheus）进行协同工作。
+
+可以看到Tempo的架构仍然分为distributor、ingester、querier、tempo-query、compactor这几个架构，熟悉Loki和Cortex的朋友可能光看名字就知道他们大概是做什么的。不熟悉的同学也没关系，下面简单说下各模块的作用：
+
+distributor
+
+监听多个端口，分别接受来自Jaeger、Zipkin和OpenCensus协议的数据，按照TraceID进行哈希并映射到哈希环上，并交由ingester进行存储处理。当前distributor支持的trace协议如下：
+
+
+
+Protoc ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/03/03/Jenkins%20%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%AE%9E%E4%BE%8B/" title="Jenkins 自动化部署实例"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202303031041689.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Jenkins 自动化部署实例"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/03/03/Jenkins%20%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E5%AE%9E%E4%BE%8B/" title="Jenkins 自动化部署实例">Jenkins 自动化部署实例</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-03-03T02:43:13.000Z" title="发表于 2023-03-03 10:43:13">2023-03-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Linux/">Linux</a><i class="fas fa-angle-right article-meta-link"></i><a class="article-meta__categories" href="/categories/Linux/Jenkins/">Jenkins</a></span></div><div class="content">前言你平常在做自己的项目时，是否有过部署项目太麻烦的想法？如果你是单体项目，可能没什么感触，但如果你是微服务项目，相信你应该是有过这种感触的。
+这种情况下，我一般会劝你了解一下 Jenkins 这个玩意。
+本文分为两部分：
+
+第一部分为 Jenkins 安装教程，会教你如何在 Linux 上安装 Jenkins。
+第二部分为一个简单的 Jenkins 自动化构建部署实例讲解。
+
+你可以根据自己的意愿，选择性的跳过第一部分，因为第二部分才是重点。（通过目录可以快速翻到第二部分）
+
+Jenkins 安装当前环境
+CentOS 7.8
+Java 11（注意当前 jenkins 支持的 Java 版本最低为 Java11）
+FinalShell 3.9（操作环境）
+
+安装 Jenkins
+PS：不建议使用 Docker 安装 Jenkins，因为使用 Jenkins 的时候一般会调用外部程序，比如 Maven、Docker、JDK、Nodejs 等，所以我们最好直接安装在本机上，以避免不必要的麻烦。
+
+1. 添加 Jenkins 源执行下面两条命令：
+12sudo wget -O /etc/y ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2023/02/20/docker%20%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%20gosu%20%E5%92%8C%20su-exec/" title="Docker 实用工具 gosu 和 su-exec"><img class="post_bg" src="https://tenapi.cn/acg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Docker 实用工具 gosu 和 su-exec"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/20/docker%20%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%20gosu%20%E5%92%8C%20su-exec/" title="Docker 实用工具 gosu 和 su-exec">Docker 实用工具 gosu 和 su-exec</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-20T01:38:51.000Z" title="发表于 2023-02-20 09:38:51">2023-02-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Docker/">Docker</a></span></div><div class="content">volume 的权限问题在 Docker 中，需要把 host 的目录挂载到 container 中作为 volume 使用时，往往会发生文件权限问题。常见的现象是，container 对该路径并无写权限，以致其中服务的各种千奇百怪的问题。
+导致这类问题的原因，是 container 内外的 UID 不同。比如，host 当前使用 docker 的用户 UID 是 1000（这是默认第一个用户的 UID）。如果 container 内的 UID 是 2000，那么 host 创建的目录对 container 来说就并非 owner，默认情况下不可写入。
+此外还有一种情况，那就是挂载前，host 上不存在被挂载的目录。Docker 会以 root 权限，先创建该目录，再挂载。这就导致，即使 host 与 container 的 UID 都是 1000，也会出现无写权限的情况。这种现象，只会在初始化时出现，但也足够令新手困惑，令老手厌烦。
+为什么在 Dockerfile 中不能把 volume 的权限配置好？因为 Dockerfile 是对 image 的描述，而 volume 则是 co ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/02/20/%E5%9C%A8%20K8s%20%E4%B8%AD%E9%83%A8%E7%BD%B2%E4%B8%BB%E4%BB%8E%E7%BB%93%E6%9E%84%E7%9A%84%20MySQL%20%E6%9C%8D%E5%8A%A1/" title="在 K8s 中部署主从结构的 MySQL 服务"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202302200920475.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="在 K8s 中部署主从结构的 MySQL 服务"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/20/%E5%9C%A8%20K8s%20%E4%B8%AD%E9%83%A8%E7%BD%B2%E4%B8%BB%E4%BB%8E%E7%BB%93%E6%9E%84%E7%9A%84%20MySQL%20%E6%9C%8D%E5%8A%A1/" title="在 K8s 中部署主从结构的 MySQL 服务">在 K8s 中部署主从结构的 MySQL 服务</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-20T01:22:04.000Z" title="发表于 2023-02-20 09:22:04">2023-02-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/kubernetes/">kubernetes</a><i class="fas fa-angle-right article-meta-link"></i><a class="article-meta__categories" href="/categories/kubernetes/Mysql/">Mysql</a></span></div><div class="content">StatefulSet 旨在与有状态的应用及分布式系统一起使用。然而在 Kubernetes 上管理有状态应用和分布式系统是一个宽泛而复杂的话题。为了演示 StatefulSet 的基本特性，并且不使前后的主题混淆。本文使用 StatefulSet 控制器运行一个有状态的应用程序，主从结构的mysql8数据库。
+
+介绍RC、Deployment、DaemonSet都是面向无状态的服务，它们所管理的Pod的IP、名字、启停顺序等都是随机分配的，而StatefulSet，管理所有有状态的服务。
+StatefulSet为了解决有状态服务的问题，它所管理的Pod拥有固定的Pod名称，一定的启停顺序，在StatefulSet中，Pod名字称为网络标识(hostname)，还必须要用到共享存储。
+在Deployment中，与之对应的服务是service，而在StatefulSet中与之对应的headless service。headless service，即无头服务，与service的区别就是它没有Cluster IP，解析它的名称时将返回该Headless Service对应的全部Pod的节点 ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2023/02/14/%E4%BC%98%E5%8C%96Docker%E9%95%9C%E5%83%8F%E5%A4%A7%E5%B0%8F/" title="优化Docker镜像的10个技巧"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202302141438966.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="优化Docker镜像的10个技巧"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/14/%E4%BC%98%E5%8C%96Docker%E9%95%9C%E5%83%8F%E5%A4%A7%E5%B0%8F/" title="优化Docker镜像的10个技巧">优化Docker镜像的10个技巧</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-14T06:47:51.000Z" title="发表于 2023-02-14 14:47:51">2023-02-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Docker/">Docker</a></span></div><div class="content">什么是 docker？Docker 是一种容器引擎，可以在容器内运行一段代码。Docker 镜像是在任何地方运行您的应用程序而无需担心应用程序依赖性的方式。
+要构建镜像，docker 使用一个名为 Dockerfile 的文件。Dockerfile 是一个包含许多指令（RUN、COPY、EXPOSE 等）的文件。成功执行这些命令后，docker 将创建一个镜像供我们在任何地方使用。
+为什么要减小 docker 镜像大小？
+安装不必要的软件包会增加攻击面，从而增加安全风险。
+镜像传输需要更多时间。
+部署大镜像需要更多时间。
+
+我们必须以某种方式创建我们的 Dockerfile，以便从该 Dockerfile 构建的镜像在大小方面得到优化。
+在本文中，我们将讨论 10 种减少 docker 镜像大小的有效方法。
+1：最小化镜像层我们可以减少 Dockerfile 中的层数。
+dockerfile 中的每个 FROM、RUN、COPY 命令都会创建一个单独的层，并增加镜像的整体大小和构建时间。
+要减小 docker 镜像大小，请在单个 RUN 或 COPY 指令中执行多个命令来最小化 Doc ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/02/14/k8s%E7%BD%91%E7%BB%9C%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5%E6%80%9D%E8%B7%AF/" title="Kubernetes网络异常排查思路"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202301101650972.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Kubernetes网络异常排查思路"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/14/k8s%E7%BD%91%E7%BB%9C%E5%BC%82%E5%B8%B8%E6%8E%92%E6%9F%A5%E6%80%9D%E8%B7%AF/" title="Kubernetes网络异常排查思路">Kubernetes网络异常排查思路</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-14T05:45:33.000Z" title="发表于 2023-02-14 13:45:33">2023-02-14</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/kubernetes/">kubernetes</a></span></div><div class="content">Overview本文将引入一个思路：“在 Kubernetes 集群发生网络异常时如何排查”。文章将引入 Kubernetes 集群中网络排查的思路，包含网络异常模型，常用工具，并且提出一些案例以供学习。
+
+Pod 常见网络异常分类
+网络排查工具
+Pod 网络异常排查思路及流程模型
+CNI 网络异常排查步骤
+案例学习
+
+Pod 网络异常网络异常大概分为如下几类：
+
+网络不可达，主要现象为 ping 不通，其可能原因为：
+
+源端和目的端防火墙（iptables, selinux）限制
+网络路由配置不正确
+源端和目的端的系统负载过高，网络连接数满，网卡队列满
+网络链路故障
+
+
+端口不可达：主要现象为可以 ping 通，但 telnet 端口不通，其可能原因为：
+
+源端和目的端防火墙限制
+源端和目的端的系统负载过高，网络连接数满，网卡队列满，端口耗尽
+目的端应用未正常监听导致（应用未启动，或监听为 127.0.0.1 等）
+
+
+DNS 解析异常：主要现象为基础网络可以连通，访问域名报错无法解析，访问 IP 可以正常连通。其可能原因为
+
+Pod 的 DNS 配置不正确
+DNS 服务异常
+pod ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2023/02/14/kubectl%E7%9A%84%E5%A4%9A%E6%A0%B7%E7%94%A8%E6%B3%95/" title="kubectl的多样用法"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202301101650972.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kubectl的多样用法"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/14/kubectl%E7%9A%84%E5%A4%9A%E6%A0%B7%E7%94%A8%E6%B3%95/" title="kubectl的多样用法">kubectl的多样用法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-14T05:31:33.000Z" title="发表于 2023-02-14 13:31:33">2023-02-14</time></span></div><div class="content">简述kubectl是K8s官方附带的命令行工具, 可以方便的操作K8s集群. 这篇文章主要介绍一些kubectl的别样用法, 希望读者有基础的K8s使用经验.
+打印当前使用的API123# kubectl 的主要作用就是与ApiServer进行交互, 而交互的过程, 我们可以通过下面的方式来打印, # 这个命令尤其适合调试自己的api接口时使用.kubectl get ns -v=9
+
+
+按状态筛选容器以及删除1234567891011121314151617181920212223242526272829kubectl get pods --all-namespaces --field-selector status.phase=Pending -o json | \  jq &#x27;.items[] | &quot;kubectl delete pods \(.metadata.name) -n \(.metadata.namespace)&quot;&#x27; | \  xargs -n 1 bash -c# 这个命令要拆开来看# 首先, 获取所有ns中状态为Pending ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/02/07/K8S%20OOM%20%E5%92%8C%20CPU%20%E8%8A%82%E6%B5%81/" title="K8S OOM 和 CPU 节流"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202301101650972.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="K8S OOM 和 CPU 节流"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/07/K8S%20OOM%20%E5%92%8C%20CPU%20%E8%8A%82%E6%B5%81/" title="K8S OOM 和 CPU 节流">K8S OOM 和 CPU 节流</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-07T08:38:33.000Z" title="发表于 2023-02-07 16:38:33">2023-02-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/kubernetes/">kubernetes</a></span></div><div class="content">介绍使用 Kubernetes 时，内存不足 (OOM) 错误和 CPU 节流是云应用程序中资源处理的主要难题。
+这是为什么？
+云应用程序中的 CPU 和内存要求变得越来越重要，因为它们与您的云成本直接相关。
+通过 limits 和 requests ，您可以配置 pod 应如何分配内存和 CPU 资源，以防止资源匮乏并调整云成本。
+如果节点没有足够的资源， Pod 可能会通过抢占或节点压力被驱逐。
+当一个进程运行内存不足 (OOM) 时，它会被终止，因为它没有所需的资源。
+如果 CPU 消耗高于实际限制，进程将开始节流。
+但是，如何主动监控 Kubernetes Pod 到达 OOM 和 CPU 节流的距离有多近？
+Kubernetes OOMPod 中的每个容器都需要内存才能运行。
+Kubernetes limits 是在 Pod 定义或 Deployment 定义中为每个容器设置的。
+所有现代 Unix 系统都有一种方法来终止进程，以防它们需要回收内存。这将被标记为错误 137 或OOMKilled.
+1234567State:          Running   Starte ...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2023/02/07/CoreDNS%20%E5%9C%A8%20K8S%20%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8%E5%8F%8A%E7%9B%91%E6%8E%A7/" title="CoreDNS 在 K8S 中的作用及监控"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202302071505193.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CoreDNS 在 K8S 中的作用及监控"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/07/CoreDNS%20%E5%9C%A8%20K8S%20%E4%B8%AD%E7%9A%84%E4%BD%9C%E7%94%A8%E5%8F%8A%E7%9B%91%E6%8E%A7/" title="CoreDNS 在 K8S 中的作用及监控">CoreDNS 在 K8S 中的作用及监控</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-07T07:25:33.000Z" title="发表于 2023-02-07 15:25:33">2023-02-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/kubernetes/">kubernetes</a><i class="fas fa-angle-right article-meta-link"></i><a class="article-meta__categories" href="/categories/kubernetes/CoreDns/">CoreDns</a></span></div><div class="content">CoreDNS 在 K8S 中的作用CoreDNS 是 Kubernetes 环境的DNS add-on[1]组件。它是在控制平面节点中运行的组件之一，使其正常运行和响应是 Kubernetes 集群正常运行的关键。学习如何监控 CoreDNS，以及它最重要的指标是什么，对于运维团队来说是必须的。
+DNS 是每个体系结构中最敏感和最重要的服务之一。应用程序、微服务、服务、主机……如今，万物互联，并不一定意味着只用于内部服务。它也可以应用于外部服务。DNS 负责解析域名并关联内部或外部服务和 PodIP。维护 Pod 的 DNS 记录是一项关键任务，尤其是涉及到临时 Pod 时，IP 地址可以在没有警告的情况下随时更改。
+如果您在 Kubernetes 中运行您的工作负载，并且您不知道如何监控 CoreDNS，请继续阅读本文：如何使用 Prometheus 来抓取 CoreDNS 指标，您应该检查哪些指标，以及它们的含义。
+在本文中，我们将涵盖以下主题：
+
+什么是 Kubernetes CoreDNS？
+如何在 Kubernetes 中监控 CoreDNS？
+监控 Kubernetes  ...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/02/07/kubernetes%E5%90%8D%E8%AF%8D%E7%BC%A9%E5%86%99/" title="kubernetes各名词缩写"><img class="post_bg" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202301101650972.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="kubernetes各名词缩写"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/02/07/kubernetes%E5%90%8D%E8%AF%8D%E7%BC%A9%E5%86%99/" title="kubernetes各名词缩写">kubernetes各名词缩写</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-02-07T06:54:33.000Z" title="发表于 2023-02-07 14:54:33">2023-02-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/kubernetes/">kubernetes</a></span></div><div class="content">kubernetes各名词缩写
+
+
+NAME
+SHORTNAMES
+APIGROUP
+NAMESPACED
+KIND
+
+
+
+bindings
+
+
+true
+Binding
+
+
+componentstatuses
+cs
+
+false
+ComponentStatus
+
+
+configmaps
+cm
+
+true
+ConfigMap
+
+
+endpoints
+ep
+
+true
+Endpoints
+
+
+events
+ev
+
+true
+Event
+
+
+limitranges
+limits
+
+true
+LimitRange
+
+
+namespaces
+ns
+
+false
+Namespace
+
+
+nodes
+no
+
+false
+Node
+
+
+persistentvolumeclaims
+pvc
+
+true
+PersistentVolumeClaim
+
+
+persistentvolumes
+pv
+
+false
+PersistentVolume
+
+
+pods
+po
+
+true
+Pod
+
+
+podtemplates
+
+
+true
+PodTemplate
+
+
+replicationcontrollers
+rc
+
+ ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/#content-inner">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/#content-inner">6</a><a class="extend next" rel="next" href="/page/3/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/logo.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">姬岚忧</div><div class="author-info__description">不想做开发的运维，不是好运维</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">54</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">35</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">32</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Ghostpanter"><i class="fab fa-github"></i><span>Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Ghostpanter" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:18816230062qk@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/Kubernetes%20Pod%20%E5%A4%9A%E7%BD%91%E5%8D%A1-IP%20%E5%9B%BA%E5%AE%9AUnderlay%20%E7%BD%91%E7%BB%9C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" title="Kubernetes Pod 多网卡、IP 固定Underlay 网络解决方案"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202301101650972.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Kubernetes Pod 多网卡、IP 固定Underlay 网络解决方案"/></a><div class="content"><a class="title" href="/2023/04/11/Kubernetes%20Pod%20%E5%A4%9A%E7%BD%91%E5%8D%A1-IP%20%E5%9B%BA%E5%AE%9AUnderlay%20%E7%BD%91%E7%BB%9C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88/" title="Kubernetes Pod 多网卡、IP 固定Underlay 网络解决方案">Kubernetes Pod 多网卡、IP 固定Underlay 网络解决方案</a><time datetime="2023-04-11T06:50:33.000Z" title="发表于 2023-04-11 14:50:33">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/11/%E4%BD%BF%E7%94%A8Velero%E5%A4%87%E4%BB%BD%E9%83%A8%E7%BD%B2%E5%9C%A8kubernetes%E9%9B%86%E7%BE%A4%E4%B8%ADHarbor%E7%9A%84%E6%95%B0%E6%8D%AE/" title="使用Velero备份部署在kubernetes集群中Harbor的数据"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/640.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="使用Velero备份部署在kubernetes集群中Harbor的数据"/></a><div class="content"><a class="title" href="/2023/04/11/%E4%BD%BF%E7%94%A8Velero%E5%A4%87%E4%BB%BD%E9%83%A8%E7%BD%B2%E5%9C%A8kubernetes%E9%9B%86%E7%BE%A4%E4%B8%ADHarbor%E7%9A%84%E6%95%B0%E6%8D%AE/" title="使用Velero备份部署在kubernetes集群中Harbor的数据">使用Velero备份部署在kubernetes集群中Harbor的数据</a><time datetime="2023-04-11T00:40:51.000Z" title="发表于 2023-04-11 08:40:51">2023-04-11</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/10/%E4%BD%BF%E7%94%A8%20Linux%20%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96%E6%8A%80%E6%9C%AF%E6%8E%A2%E7%A9%B6%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86/" title="使用 Linux 网络虚拟化技术探究容器网络原理"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75385594_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="使用 Linux 网络虚拟化技术探究容器网络原理"/></a><div class="content"><a class="title" href="/2023/04/10/%E4%BD%BF%E7%94%A8%20Linux%20%E7%BD%91%E7%BB%9C%E8%99%9A%E6%8B%9F%E5%8C%96%E6%8A%80%E6%9C%AF%E6%8E%A2%E7%A9%B6%E5%AE%B9%E5%99%A8%E7%BD%91%E7%BB%9C%E5%8E%9F%E7%90%86/" title="使用 Linux 网络虚拟化技术探究容器网络原理">使用 Linux 网络虚拟化技术探究容器网络原理</a><time datetime="2023-04-10T06:38:51.000Z" title="发表于 2023-04-10 14:38:51">2023-04-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/10/%E4%BD%BF%E7%94%A8%20Go%20%E5%92%8C%20Linux%20Kernel%20%E6%8A%80%E6%9C%AF%E6%8E%A2%E7%A9%B6%E5%AE%B9%E5%99%A8%E5%8C%96%E5%8E%9F%E7%90%86/" title="使用 Go 和 Linux Kernel 技术探究容器化原理"><img src="https://img.xjh.me/random_img.php?type=bg&amp;return=302" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="使用 Go 和 Linux Kernel 技术探究容器化原理"/></a><div class="content"><a class="title" href="/2023/04/10/%E4%BD%BF%E7%94%A8%20Go%20%E5%92%8C%20Linux%20Kernel%20%E6%8A%80%E6%9C%AF%E6%8E%A2%E7%A9%B6%E5%AE%B9%E5%99%A8%E5%8C%96%E5%8E%9F%E7%90%86/" title="使用 Go 和 Linux Kernel 技术探究容器化原理">使用 Go 和 Linux Kernel 技术探究容器化原理</a><time datetime="2023-04-10T06:31:51.000Z" title="发表于 2023-04-10 14:31:51">2023-04-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/10/OpenCore%E6%9B%B4%E6%96%B0%E6%AD%A5%E9%AA%A4-%E4%BB%A5OCAuxiliaryTools%E4%B8%BE%E4%BE%8B/" title="OpenCore更新步骤-以OCAuxiliaryTools举例"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202301050959939.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="OpenCore更新步骤-以OCAuxiliaryTools举例"/></a><div class="content"><a class="title" href="/2023/04/10/OpenCore%E6%9B%B4%E6%96%B0%E6%AD%A5%E9%AA%A4-%E4%BB%A5OCAuxiliaryTools%E4%B8%BE%E4%BE%8B/" title="OpenCore更新步骤-以OCAuxiliaryTools举例">OpenCore更新步骤-以OCAuxiliaryTools举例</a><time datetime="2023-04-10T02:40:51.000Z" title="发表于 2023-04-10 10:40:51">2023-04-10</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            <a class="card-more-btn" href="/categories/" title="查看更多">
+    <i class="fas fa-angle-right"></i></a>
+            </div>
+            <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Ansible/"><span class="card-category-list-name">Ansible</span><span class="card-category-list-count">2</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Ansible/playbook/"><span class="card-category-list-name">playbook</span><span class="card-category-list-count">1</span></a></li></ul></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Ceph/"><span class="card-category-list-name">Ceph</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Docker/"><span class="card-category-list-name">Docker</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Linux/"><span class="card-category-list-name">Linux</span><span class="card-category-list-count">8</span></a><ul class="card-category-list child"><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Linux/DNS/"><span class="card-category-list-name">DNS</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Linux/Harbor/"><span class="card-category-list-name">Harbor</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Linux/Jenkins/"><span class="card-category-list-name">Jenkins</span><span class="card-category-list-count">1</span></a></li></ul></li>
+            </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/kubernetes/" style="font-size: 1.45em; color: rgb(133, 76, 58)">kubernetes</a><a href="/tags/CICD/" style="font-size: 1.2em; color: rgb(103, 111, 57)">CICD</a><a href="/tags/Gitlab/" style="font-size: 1.15em; color: rgb(71, 21, 57)">Gitlab</a><a href="/tags/Ansible/" style="font-size: 1.25em; color: rgb(67, 68, 45)">Ansible</a><a href="/tags/playbook/" style="font-size: 1.15em; color: rgb(36, 117, 126)">playbook</a><a href="/tags/etcd/" style="font-size: 1.2em; color: rgb(26, 189, 183)">etcd</a><a href="/tags/CoreDns/" style="font-size: 1.15em; color: rgb(133, 33, 103)">CoreDns</a><a href="/tags/Ceph/" style="font-size: 1.25em; color: rgb(143, 26, 127)">Ceph</a><a href="/tags/Grafana/" style="font-size: 1.3em; color: rgb(194, 162, 24)">Grafana</a><a href="/tags/Tempo/" style="font-size: 1.2em; color: rgb(189, 96, 163)">Tempo</a><a href="/tags/Linux/" style="font-size: 1.4em; color: rgb(41, 165, 88)">Linux</a><a href="/tags/Jenkins/" style="font-size: 1.15em; color: rgb(127, 184, 24)">Jenkins</a><a href="/tags/Docker/" style="font-size: 1.35em; color: rgb(26, 15, 158)">Docker</a><a href="/tags/Prometheus/" style="font-size: 1.15em; color: rgb(75, 102, 64)">Prometheus</a><a href="/tags/MAC/" style="font-size: 1.15em; color: rgb(37, 152, 35)">MAC</a><a href="/tags/OpenCore/" style="font-size: 1.15em; color: rgb(180, 185, 114)">OpenCore</a><a href="/tags/Helm/" style="font-size: 1.2em; color: rgb(124, 2, 1)">Helm</a><a href="/tags/Harbor/" style="font-size: 1.25em; color: rgb(104, 137, 7)">Harbor</a><a href="/tags/Minio/" style="font-size: 1.2em; color: rgb(48, 82, 12)">Minio</a><a href="/tags/NFS/" style="font-size: 1.2em; color: rgb(32, 94, 0)">NFS</a><a href="/tags/ingress/" style="font-size: 1.15em; color: rgb(64, 86, 171)">ingress</a><a href="/tags/kubectl/" style="font-size: 1.15em; color: rgb(160, 118, 10)">kubectl</a><a href="/tags/Kubelet/" style="font-size: 1.25em; color: rgb(33, 150, 192)">Kubelet</a><a href="/tags/Nginx/" style="font-size: 1.15em; color: rgb(47, 136, 190)">Nginx</a><a href="/tags/PVE/" style="font-size: 1.15em; color: rgb(23, 97, 32)">PVE</a><a href="/tags/PDNS/" style="font-size: 1.15em; color: rgb(161, 121, 101)">PDNS</a><a href="/tags/Kaniko/" style="font-size: 1.15em; color: rgb(8, 163, 56)">Kaniko</a><a href="/tags/containerd/" style="font-size: 1.15em; color: rgb(104, 25, 167)">containerd</a><a href="/tags/GO/" style="font-size: 1.15em; color: rgb(77, 85, 20)">GO</a><a href="/tags/Cilium/" style="font-size: 1.15em; color: rgb(95, 157, 0)">Cilium</a><a href="/tags/Kind/" style="font-size: 1.15em; color: rgb(67, 159, 142)">Kind</a><a href="/tags/Mysql/" style="font-size: 1.15em; color: rgb(193, 105, 124)">Mysql</a><a href="/tags/Loki/" style="font-size: 1.2em; color: rgb(177, 189, 8)">Loki</a><a href="/tags/Containerd/" style="font-size: 1.2em; color: rgb(160, 26, 144)">Containerd</a><a href="/tags/ArgoCD/" style="font-size: 1.15em; color: rgb(86, 135, 20)">ArgoCD</a></div></div><div class="card-widget card-archives"><div class="item-headline"><i class="fas fa-archive"></i><span>归档</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/04/"><span class="card-archive-list-date">四月 2023</span><span class="card-archive-list-count">7</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/03/"><span class="card-archive-list-date">三月 2023</span><span class="card-archive-list-count">5</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/02/"><span class="card-archive-list-date">二月 2023</span><span class="card-archive-list-count">9</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2023/01/"><span class="card-archive-list-date">一月 2023</span><span class="card-archive-list-count">18</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2022/12/"><span class="card-archive-list-date">十二月 2022</span><span class="card-archive-list-count">15</span></a></li></ul></div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站资讯</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">54</div></div><div class="webinfo-item"><div class="item-name">已运行时间 :</div><div class="item-count" id="runtimeshow" data-publishDate="2022-12-27T16:00:00.000Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总字数 :</div><div class="item-count">200.3k</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总访问量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2023-04-11T06:55:14.484Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290952165.png')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 姬岚忧</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>function subtitleType () {
+  fetch('https://v1.hitokoto.cn')
+    .then(response => response.json())
+    .then(data => {
+      if (true) {
+        const from = '出自 ' + data.from
+        const sub = []
+        sub.unshift(data.hitokoto, from)
+        window.typed = new Typed('#subtitle', {
+          strings: sub,
+          startDelay: 300,
+          typeSpeed: 150,
+          loop: true,
+          backSpeed: 50,
+        })
+      } else {
+        document.getElementById('subtitle').innerHTML = data.hitokoto
+      }
+    })
+}
+
+if (true) {
+  if (typeof Typed === 'function') {
+    subtitleType()
+  } else {
+    getScript('https://cdn.jsdelivr.net/npm/typed.js/lib/typed.min.js').then(subtitleType)
+  }
+} else {
+  subtitleType()
+}
+</script></div><div class="aplayer no-destroy" data-id="8017562763" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script defer data-pjax src="/js/cat.js"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '119.60681,31.99260';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --></body></html>
