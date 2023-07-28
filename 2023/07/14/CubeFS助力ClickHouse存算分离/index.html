@@ -1,0 +1,318 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"><title>CubeFS助力ClickHouse存算分离 | 流水易寒の博客</title><meta name="author" content="姬岚忧"><meta name="copyright" content="姬岚忧"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0d0d0d"><meta name="description" content="01.简介ClickHouse是一个用于关系型联机分析（ROLAP）的列式数据库管理系统（DBMS），擅长PB级数据量的交互式分析。自2016 年开源以来，ClickHouse 凭借其数倍于业界顶尖分析型数据库的极致性能，成为交互式分析领域的后起之秀。CubeFS，则独具创新的设计，与其他产品有较明"><link rel="shortcut icon" href="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202212290947085.png"><link rel="canonical" href="https://blog.kkun.site/2023/07/14/CubeFS%E5%8A%A9%E5%8A%9BClickHouse%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//www.google-analytics.com" crossorigin=""/><link rel="preconnect" href="//busuanzi.ibruce.info"/><meta name="google-site-verification" content="zEdV2SVm14BBjmysMbimJptVuSESoCKhQvg2KGyh3tM"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.min.css" media="print" onload="this.media='all'"><script async="async" src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script><script>(adsbygoogle = window.adsbygoogle || []).push({
+  google_ad_client: 'ca-pub-5936787105308700',
+  enable_page_level_ads: 'true'
+});</script><script async="async" src="https://www.googletagmanager.com/gtag/js?id=G-RRJTLY81FN"></script><script>window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-RRJTLY81FN');
+</script><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"languages":{"hits_empty":"找不到您查询的内容：${query}"}},
+  translate: {"defaultEncoding":2,"translateDelay":0,"msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '天',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/flickr-justified-gallery/dist/fjGallery.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'CubeFS助力ClickHouse存算分离',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2023-07-14 11:18:53'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><!-- hexo injector head_end start --><link rel="stylesheet" href="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.css" /><!-- hexo injector head_end end --><meta name="generator" content="Hexo 6.3.0"></head><body><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/logo.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">67</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">41</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">36</div></a></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 文章目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://github.com/Ghostpanter"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75385594_p0.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">流水易寒の博客</a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 文章目录</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友情链接</span></a></div><div class="menus_item"><a class="site-page" target="_blank" rel="noopener" href="https://github.com/Ghostpanter"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">CubeFS助力ClickHouse存算分离</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-07-14T03:12:51.000Z" title="发表于 2023-07-14 11:12:51">2023-07-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2023-07-14T03:18:53.798Z" title="更新于 2023-07-14 11:18:53">2023-07-14</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CubeFS/">CubeFS</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/CubeFS/ClickHouse/">ClickHouse</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">字数总计:</span><span class="word-count">3.9k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">阅读时长:</span><span>14分钟</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="CubeFS助力ClickHouse存算分离"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h2 id="01-简介"><a href="#01-简介" class="headerlink" title="01.简介"></a>01.简介</h2><p>ClickHouse是一个用于关系型联机分析（ROLAP）的列式数据库管理系统（DBMS），擅长PB级数据量的交互式分析。自2016 年开源以来，ClickHouse 凭借其数倍于业界顶尖分析型数据库的极致性能，成为交互式分析领域的后起之秀。<br>CubeFS，则独具创新的设计，与其他产品有较明显的区别：它支持水平扩展的强一致性的元数据服务，提供了副本数弹性可变的多副本存储以及可灵活编码的纠删码存储，此外还支持多级智能加速能力，支持标准S3、POSIX、HDFS三种访问协议，与K8S及容器生态亦有良好兼容性。作为CNCF首个国产开源存储产品，CubeFS吸引了众多社区用户及开发者参与共建，除在OPPO广泛使用外，也已在国内10余家头部企业如京东、网易、贝壳找房、360、魅族、LinkSure网络、Reconova的各个核心业务上落地；部分企业如OPPO、京东、网易、贝壳等使用CubeFS数据规模已达数十PB甚至百PB级。</p>
+<h2 id="02-为什么选择CubeFS"><a href="#02-为什么选择CubeFS" class="headerlink" title="02.为什么选择CubeFS"></a>02.为什么选择CubeFS</h2><p>我们选择CubeFS做冷热分离有以下考虑：</p>
+<ol>
+<li>CubeFS提供了比较丰富的接口，支持S3协议， 也可以本地部署client或者嵌入SDK，当作本地盘使用。社区版ClickHouse很早就支持了S3来做冷热分离，并在此基础上，演进了 zero_copy能力，减少冷盘读写的放大。</li>
+<li>CubeFS是一款安全可靠、扩展性强、易于运维的云原生分布式存储，提供了文件及对象存储能力。作为CNCF首个国产开源存储产品（孵化阶段），有优秀人员参与社区贡献，已在国内外数十家头部公司的生产环境上经历实际业务锤炼。</li>
+<li>CubeFS有较为丰富的配置，能为不同业务配置不同性能。比如可以给选择不同存储类型的集群， SSD集群主打性能，带宽可以达到4GB&#x2F;s以上，HDD集群主打性价比， 性能接近 SATA SSD，但价格便宜很多。同一个集群存储上可以配置单副本卷和多副本卷， 也可以配置EC卷来达成数据备份，并且 zone的概念也可以达成副本多机房的容灾能力。</li>
+<li>CubeFS可以支持多租户,并且有很好的租户隔离能力， 多个ClickHouse集群可以共享同一个CubeFS集群，方便维护。</li>
+</ol>
+<p>而ClickHouse方面通过CubeFS设置的数据分层，也能够达成以下方面的优势：</p>
+<ol>
+<li>超大容量：CubeFS提供了几乎无容量上限的存储空间，使ClickHouse的容量上限不再受本机资源限制。</li>
+<li>更高的性价比：相对于本地SSD存储阵列，CubeFS通过集群多机IO并发，同等价格下，SSD集群提供了远超SSD阵列的带宽， 而HDD集群提供了接近SSD的性能，成本更低。</li>
+<li>更高的稳定性：通过配置CubeFS冷盘后，将本地磁盘的带宽瓶颈转换成网卡的带宽瓶颈。网卡带宽要高于磁盘带宽很多，因此，采用CubeFS容器化后的ClickHouse受到同一物理机上其他容器影响更小。</li>
+</ol>
+<h2 id="03-冷热分离架构的演进"><a href="#03-冷热分离架构的演进" class="headerlink" title="03.冷热分离架构的演进"></a>03.冷热分离架构的演进</h2><p>▎初识冷热分离<br>我们当前线上的版本是20.8和22.3， ClickHouse已经可以支持 multi-volume storage这个功能，它允许将ClickHouse定义自己的存储策略，存储策略可以指定多个 volume和多个 disk。建表时通过指定表的 storage_policy参数，来实现表级别存储策略。利用这个特性，我们可以很容易的指定一些表实现冷热分离，甚至存算分离。</p>
+<p>以下是网站上关于 multi-volume storage的架构图。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202307141103572.png" alt="图片"></p>
+<p>我们冷热分离的架构如下</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202307141103418.png" alt="图片"></p>
+<ul>
+<li>每个ClickHouse实例都配置有一份热盘、一份冷盘，ClickHouse实例之间没有数据共享</li>
+<li>ClickHouse集群同一个分片的不同副本实例使用不同的 CubeFS卷，以保证ClickHouse实例副本的数据不会部署到CubeFS集群下的同一台机器，从而达成容灾能力。</li>
+<li>为了节约成本，冷数据都采用单副本存储。<br>我们ClickHouse集群一般采用双副本多分片的方式组织，也可以根据具体的业务需求配置三副本甚至更多。client通过SLB的下发策略将 query下发到对应的ClickHouse实例，ClickHouse 实例根据表指定的存储策略来进行数据读取。每个server端都有配置 cubefs_client用来连接到后端CubeFS存储。</li>
+</ul>
+<p>冷数据这里我们都采用单副本存储，在容灾能力上，可以配置成同集群双卷或者不同集群不同卷。前者具备CubeFS集群出现部分节点故障的容灾能力，后者具有CubeFS出现集群整体故障的容灾能力，后者还可以将CubeFS集群部署在不同城市，达成多地域的容灾能力。<br>▎共享数据的冷热分离<br>尽管初步的冷热分离架构已经能够在生产上使用，但面对业务越来越高的稳定性要求， 当前方案也面临着不少问题：</p>
+<ol>
+<li>ClickHouse单机出现故障，可能导致数据丢失。</li>
+<li>冷数据存储需要两个CubeFS集群，配置比较繁琐 ，如果配置一个集群又面临着cfs单副本批量坏盘的风险。</li>
+<li>单副本架构下稳定性欠佳，CubeFS单副本出现问题之后，虽然CK可以切到正常的副本进行业务读取，但切换过程中的请求仍会出错。如果CubeFS发生批量坏盘故障， 也会导致一段时间有一个副本不可用，这也会增加CK集群的稳定性风险。<br>因此，我们在原有基础上开发了共享存储的架构</li>
+</ol>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202307141104088.png" alt="图片"></p>
+<p>▎新框架的优势与不足<br>缺点：<br>新架构下，没有区分主从， 因此需要使用分布式锁来实现对同一份数据后台任务的互斥。目前这一块是通过ZK来实现的，相当于增加了ZK的压力。</p>
+<p>优点：</p>
+<ol>
+<li><p>数据因为共享，CubeFS可以采用EC卷， 理论上可以将热冷副本比例降低到1:0.75,进一步降低数据存储成本。当然EC卷本身也会带来一部分开销，这种只对部分场景适用。</p>
+</li>
+<li><p>冷数据采用CubeFS单一集群，配置起来更简单。</p>
+</li>
+<li><p>CubeFS可以根据需求配置成双副本或者三副本，和ClickHouse集群的副本数解藕， 也更容易配置存算分离。</p>
+</li>
+<li><p>稳定性更高。如果发生集群故障， 数据可以通过CubeFS自己的机制恢复， 不影响上层ClickHouse的数据读写， 也不需要ClickHouse运维介入到数据恢复。</p>
+</li>
+</ol>
+<p>▎存算分离演进<br>依托于数据共享的能力， 我们在此基础上，比较容易进一步演进成存算分离的架构。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202307141105406.png" alt="图片"></p>
+<p>存算分离因为面临着小文件的读取，因此，可以通过指定不同的存储策略来达成不同的效果。<br>利用TTL做数据搬迁的方式相当于本地盘做了cache，数据先落在本地合并一次之后才会迁移到CubeFS上。</p>
+<p>直接指定冷盘，则数据完全写入到CubeFS集群， 因此还需要打开cfs冷盘的数据合并开关。这种方式虽然加大了CubeFS的性能开销，但也减少了ClickHouse后台数据搬迁的压力。</p>
+<p>这两种方式可以分别对应不同的场景。小而快的数据写入用第一种比较合适， 而大批量的数据写入更适合用第二种。</p>
+<h2 id="04-配置冷热分离"><a href="#04-配置冷热分离" class="headerlink" title="04.配置冷热分离"></a>04.配置冷热分离</h2><p>▎本地挂载cfs磁盘<br>安装 fusermount</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://ocs-cn-north1.heytapcs.com/cubefs/fusermount &amp;&amp; <span class="built_in">chmod</span> 755 fusermount &amp;&amp; <span class="built_in">cp</span> -f fusermount /usr/bin</span><br></pre></td></tr></table></figure>
+
+<p>配置cfs客户端</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /home/service/app/cfs/</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">&quot;mountPoint&quot;:&quot;/mnt/cfs&quot;,</span></span><br><span class="line"><span class="string">&quot;subdir&quot;:&quot;&quot;,</span></span><br><span class="line"><span class="string">&quot;volName&quot;:&quot;xxxxx&quot;,</span></span><br><span class="line"><span class="string">&quot;owner&quot;:&quot;xxxxxx&quot;,</span></span><br><span class="line"><span class="string">&quot;accessKey&quot;:&quot;xxxx&quot;,</span></span><br><span class="line"><span class="string">&quot;secretKey&quot;:&quot;xxxxxx&quot;,</span></span><br><span class="line"><span class="string">&quot;masterAddr&quot;:&quot;xxxx&quot;,</span></span><br><span class="line"><span class="string">&quot;rdonly&quot;:&quot;false&quot;,</span></span><br><span class="line"><span class="string">&quot;logDir&quot;:&quot;/home/service/var/logs/cfs/log&quot;,</span></span><br><span class="line"><span class="string">&quot;logLevel&quot;:&quot;warn&quot;,</span></span><br><span class="line"><span class="string">&quot;pushAddr&quot;:&quot;cfs-push.oppo.local&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> &gt; /home/service/app/cfs/client.conf</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>安装并启动cfs客户端, 执行之后就会自动挂在上&#x2F;mnt&#x2F;cfs目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /mnt/cfs</span><br><span class="line"><span class="built_in">mkdir</span> -p /home/service/var/logs/cfs/log</span><br><span class="line"></span><br><span class="line">wget https://ocs-cn-south.oppoer.me/chubaofs-resource/cfsbin/cfs-client -O /home/service/app/cfs/cfs-client</span><br><span class="line"><span class="built_in">chmod</span> +x /home/service/app/cfs/cfs-client</span><br><span class="line">/home/service/app/cfs/cfs-client -c /home/service/app/cfs/client.conf</span><br></pre></td></tr></table></figure>
+
+<p>创建ClickHouse实例冷盘目录， cfs 目录规则是 &#x2F;mnt&#x2F;cfs&#x2F;集群名&#x2F;副本名， 例如为test集群 replica_01_01副本创建目录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /mnt/cfs/test/replica_01_01</span><br></pre></td></tr></table></figure>
+
+<p>▎ClickHouses配置冷热磁盘<br>在 config.d目录下（&#x2F;home&#x2F;service&#x2F;app&#x2F;clickhouse&#x2F;config.d）增加ClickHouse关于 storage policies的配置文件 Storage.xml<br>当前我们的配置如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">yandex</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">disks</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">localdisk</span>&gt;</span> <span class="comment">&lt;!-- disk name --&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">path</span>&gt;</span>/home/service/var/clickhouse/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">localdisk</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">cfs</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">path</span>&gt;</span>/mnt/cfs/test/replica_01_01/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">cfs</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">disks</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">policies</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">hot_cold_separation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">volumes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">default</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>default<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">default</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">cold</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>cfs<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">prefer_not_to_merge</span>&gt;</span>true<span class="tag">&lt;/<span class="name">prefer_not_to_merge</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">perform_ttl_move_on_insert</span>&gt;</span>false<span class="tag">&lt;/<span class="name">perform_ttl_move_on_insert</span>&gt;</span> </span><br><span class="line">                    <span class="tag">&lt;/<span class="name">cold</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">volumes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">hot_cold_separation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">policies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">yandex</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当前定义了两个盘：本地盘SSD和cfs盘。SSD作为热存储， cfs作为冷盘存储。<br>如要配置CFS数据共享的盘则需要更改磁盘类型成CubeFS, 因为数据要共享，因此同一shard的副本的cfs盘path配置相同。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">yandex</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">disks</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">localdisk</span>&gt;</span> <span class="comment">&lt;!-- disk name --&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">path</span>&gt;</span>/home/service/var/clickhouse/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">localdisk</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">cfs</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">type</span>&gt;</span>cubefs<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">path</span>&gt;</span>/mnt/cfs/test/01<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">cfs</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">disks</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">policies</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">hot_cold_separation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">volumes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">default</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>default<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">default</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">cold</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>cfs<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">prefer_not_to_merge</span>&gt;</span>true<span class="tag">&lt;/<span class="name">prefer_not_to_merge</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">perform_ttl_move_on_insert</span>&gt;</span>false<span class="tag">&lt;/<span class="name">perform_ttl_move_on_insert</span>&gt;</span> </span><br><span class="line">                    <span class="tag">&lt;/<span class="name">cold</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">volumes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">hot_cold_separation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">policies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">yandex</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置说明</p>
+<ul>
+<li><p>当前volumes没有指定 move_factor, 则默认 move_factor为0.1,即volume容量达到90%之后就会向下一个volume写入，避免volume爆满。</p>
+</li>
+<li><p>同时我们为冷盘配置了 prefer_not_to_merge， 避免冷盘数据的merge，造成不必要的性能浪费。</p>
+</li>
+<li><p>一个ClickHouse集群都会共用同一个CubeFS的卷， 我们通过path进行区分，path命令采用前缀+集群名+副本名的方式， 而共享数据模式下path要配置相同，一般采用前缀+集群名+shard分片号。</p>
+</li>
+<li><p>如果想默认现有的表都支持冷热分离，可以将 policies中的 hot_cold_separation名字改为default， ClickHouse默认表的存储策略就是default。</p>
+</li>
+</ul>
+<p>修改完配置文件之后，通过系统表 storage_policies就能看到新配置的磁盘策略。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202307141109930.png" alt="图片"></p>
+<p>▎创建冷热分离的表<br>建表语句举例，以mgbench的表schema举例</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> if <span class="keyword">not</span> <span class="keyword">exists</span> mgbench.logs2</span><br><span class="line">  log_time    DateTime,</span><br><span class="line">  client_ip   IPv4,</span><br><span class="line">  request     String,</span><br><span class="line">  status_code UInt16,</span><br><span class="line">  object_size UInt64</span><br><span class="line">)</span><br><span class="line">ENGINE <span class="operator">=</span> ReplicatedMergeTree(<span class="string">&#x27;/tables/mgbench/logs2&#x27;</span>, <span class="string">&#x27;&#123;replica&#125;&#x27;</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> log_time</span><br><span class="line">TTL toDateTime(toUnixTimestamp(<span class="type">timestamp</span>)) <span class="operator">+</span> toIntervalDay(<span class="number">30</span>), </span><br><span class="line">toDateTime(toUnixTimestamp(<span class="type">timestamp</span>)) <span class="operator">+</span> toIntervalDay(<span class="number">3</span>) <span class="keyword">TO</span> VOLUME <span class="string">&#x27;cold&#x27;</span></span><br><span class="line">SETTINGS storage_policy <span class="operator">=</span> <span class="string">&#x27;hot_cold_separation&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们通过SETTINGS storage_policy 来指定表的存储策略，通过TTL语句来达成数据的冷热分离。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TTL toDateTime(toUnixTimestamp(timestamp)) + toIntervalDay(30), toDateTime(toUnixTimestamp(timestamp)) + toIntervalDay(3) TO VOLUME <span class="string">&#x27;cold&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>即数据只保留30天， 三天前的数据都存放到冷盘上。</p>
+<p>▎演变成存算分离</p>
+<p>当我们要实现存算分离时，也很简单，基于TTL规则，直接指定数据存放在cold即可。需要注意的是，新写入的data part很小，需要打开冷盘的merge功能， 即去掉prefer_not_to_merge选项。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TTL toDateTime(toUnixTimestamp(timestamp)) + toIntervalDay(30), toDateTime(toUnixTimestamp(timestamp)) TO VOLUME <span class="string">&#x27;cold&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>除此之外，也可以定义新的 storage_policy， 这种方式不依赖表本身的TTL特性， 但也少了本地盘做cache的能力。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">yandex</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">disks</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">localdisk</span>&gt;</span> <span class="comment">&lt;!-- disk name --&gt;</span></span><br><span class="line">              <span class="tag">&lt;<span class="name">path</span>&gt;</span>/home/service/var/clickhouse/<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">localdisk</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">cfs</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">type</span>&gt;</span>cubefs<span class="tag">&lt;/<span class="name">type</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">path</span>&gt;</span>/mnt/cfs/test/01<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">cfs</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">disks</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">policies</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">storage_separation</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">volumes</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">default</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">disk</span>&gt;</span>cfs<span class="tag">&lt;/<span class="name">disk</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">default</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">volumes</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">storage_separation</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">policies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">storage_configuration</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">yandex</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>建表语句指定存储策略和UUID即可<br>ClickHouse表不指定UUID， 在不同副本上可能使用不同的UUID， 在共享模式下，造成两副本实际存储在CubeFS上的路径不一样。我们建表指定UUID，为了多副本在共享模式下，使用同一CubeFS存储路径。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> if <span class="keyword">not</span> <span class="keyword">exists</span> mgbench.logs2 UUID <span class="string">&#x27;fda38507-8fd4-45fa-8daa-1e37069da3ab&#x27;</span>(</span><br><span class="line">  log_time    DateTime,</span><br><span class="line">  client_ip   IPv4,</span><br><span class="line">  request     String,</span><br><span class="line">  status_code UInt16,</span><br><span class="line">  object_size UInt64</span><br><span class="line">)</span><br><span class="line">ENGINE <span class="operator">=</span> ReplicatedMergeTree(<span class="string">&#x27;/tables/mgbench/logs2&#x27;</span>, <span class="string">&#x27;&#123;replica&#125;&#x27;</span>)</span><br><span class="line"><span class="keyword">ORDER</span> <span class="keyword">BY</span> log_time</span><br><span class="line">SETTINGS storage_policy <span class="operator">=</span> <span class="string">&#x27;storage_separation&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="05-冷热分离之后的性能对比"><a href="#05-冷热分离之后的性能对比" class="headerlink" title="05.冷热分离之后的性能对比"></a>05.冷热分离之后的性能对比</h2><p>我们申请了1GB带宽的HDD CubeFS集群和4GB的SSD CubeFS与本地SSD磁盘阵列来进行性能对比。</p>
+<p>▎带宽对比<br>为了更直观的对比CubeFS和SSD的性能， 我们简化了测试的模型。</p>
+<p>分别创建两个表</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> A(a Int64, <span class="type">timestamp</span> <span class="type">Timestamp</span>) Engine<span class="operator">=</span>MergeTree <span class="keyword">order</span> <span class="keyword">by</span> a;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> B(a Int64, <span class="type">timestamp</span> <span class="type">Timestamp</span>) Engine<span class="operator">=</span>MergeTree  TTL toDateTime(<span class="type">timestamp</span>)  <span class="keyword">TO</span> VOLUME <span class="string">&#x27;cold&#x27;</span> <span class="keyword">order</span> <span class="keyword">by</span> a SETTINGS storage_policy <span class="operator">=</span> <span class="string">&#x27;hot_cold_separation&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>表A采用SSD存储，表B采用CubeFS存储， 我们向其中写入1亿条数据</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> A  <span class="keyword">select</span> <span class="operator">*</span>, now() <span class="keyword">from</span> system.numbers limit <span class="number">100000000</span>;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> B  <span class="keyword">select</span> <span class="operator">*</span>, now() <span class="keyword">from</span> system.numbers limit <span class="number">100000000</span>;</span><br></pre></td></tr></table></figure>
+
+<p>读取数据前10000行</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> A <span class="keyword">order</span> <span class="keyword">by</span> <span class="type">timestamp</span> limit <span class="number">10000</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> B <span class="keyword">order</span> <span class="keyword">by</span> <span class="type">timestamp</span> limit <span class="number">10000</span>;</span><br></pre></td></tr></table></figure>
+
+<p>测试结果如下</p>
+<p>读取数据量 100.00 million rows   读取数据大小 1.20GB</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202307141113156.png" alt="图片"></p>
+<p>由此可见CubeFS文件读取性能还可以，HDD集群基本可以到达达到本地SSD磁盘阵列的49%的性能。而CubeFS SSD 集群小文件读取则达到了3GB&#x2F;s，用时0.399s更是低于SSD阵列的0.497s，性能提升30%, CubeFS 小文件合并之后读，性能进一步提高，用时低至0.341s。<br>▎延迟对比<br>延迟对比我们仿造正常的业务查询， 采用官网mgbench的数据来进行对比, 相关的数据下载及对应query，可以查看链接（<a target="_blank" rel="noopener" href="https://clickhouse.com/docs/en/getting-started/example-datasets/brown-benchmark">https://clickhouse.com/docs/en/getting-started/example-datasets/brown-benchmark</a>）。<br>mgbench三个表分别情况说明：</p>
+<table>
+<thead>
+<tr>
+<th>表名</th>
+<th>数据行数</th>
+<th>csv数据大小</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>mgbench.logs1</td>
+<td>22023859</td>
+<td>7.0G</td>
+</tr>
+<tr>
+<td>mgbench.logs2</td>
+<td>75748118</td>
+<td>5.7G</td>
+</tr>
+<tr>
+<td>mgbench.logs3</td>
+<td>108957039</td>
+<td>7.7G</td>
+</tr>
+</tbody></table>
+<p>单data part大小为100w行。</p>
+<p>我们对这十多个case， 分别在SSD阵列和CubeFS（HDD）， CubeFS(SSD)上进行了500次查询取平均， 得出如下查询数据。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/202307141113399.png" alt="图片"></p>
+<p>由此可见， 在延迟上CubeFS并不高，在小文件读取上， 查询延迟也基本和SSD相当，完全可以满足业务需求，而在大文件大规模数据读取上，因为带宽的优势， CubeFS更容易获得比较满意的用时。</p>
+<h2 id="06-未来规划"><a href="#06-未来规划" class="headerlink" title="06.未来规划"></a>06.未来规划</h2><ol>
+<li>集群配置CubeFS需要挂载盘，比较繁琐。后续计划嵌入SDK代码到ClickHouse,绕过fuse，消除用户态到和内核态的多次切换。</li>
+<li>ClickHouse集群非常依赖ZK达成数据同步等特性，需要调研和使用性能更好的ClickHouse-Keeper。</li>
+<li>存算分离模式下， 支持ClickHouse计算资源弹性扩缩，做好计算资源租户隔离，实现降本增效。</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="https://blog.kkun.site">姬岚忧</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://blog.kkun.site/2023/07/14/CubeFS%E5%8A%A9%E5%8A%9BClickHouse%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/">https://blog.kkun.site/2023/07/14/CubeFS%E5%8A%A9%E5%8A%9BClickHouse%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://blog.kkun.site" target="_blank">流水易寒の博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CubeFS/">CubeFS</a><a class="post-meta__tags" href="/tags/ClickHouse/">ClickHouse</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75385594_p0.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2023/07/28/CGroups%E4%BB%A5%E5%8F%8A%E5%9C%A8K8s%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8-IO/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75075054_p0.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">CGroups 以及在 K8s 中的应用 - IO</div></div></a></div><div class="next-post pull-right"><a href="/2023/07/12/K8s%20%E5%A2%9E%E5%BC%BA%E7%89%88%E5%B7%A5%E4%BD%9C%E8%B4%9F%E8%BD%BD%20OpenKruise%20%E4%B9%8B%20CloneSet/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75368085_p0.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">K8s 增强版工作负载 OpenKruise 之 CloneSet</div></div></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/logo.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">姬岚忧</div><div class="author-info__description">不想做开发的运维，不是好运维</div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">67</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">41</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">36</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Ghostpanter"><i class="fab fa-github"></i><span>Github</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Ghostpanter" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:18816230062qk@gmail.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#01-%E7%AE%80%E4%BB%8B"><span class="toc-number">1.</span> <span class="toc-text">01.简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#02-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%80%89%E6%8B%A9CubeFS"><span class="toc-number">2.</span> <span class="toc-text">02.为什么选择CubeFS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#03-%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB%E6%9E%B6%E6%9E%84%E7%9A%84%E6%BC%94%E8%BF%9B"><span class="toc-number">3.</span> <span class="toc-text">03.冷热分离架构的演进</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#04-%E9%85%8D%E7%BD%AE%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB"><span class="toc-number">4.</span> <span class="toc-text">04.配置冷热分离</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#05-%E5%86%B7%E7%83%AD%E5%88%86%E7%A6%BB%E4%B9%8B%E5%90%8E%E7%9A%84%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94"><span class="toc-number">5.</span> <span class="toc-text">05.冷热分离之后的性能对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#06-%E6%9C%AA%E6%9D%A5%E8%A7%84%E5%88%92"><span class="toc-number">6.</span> <span class="toc-text">06.未来规划</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/07/28/%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86Docker%E5%AE%B9%E5%99%A8%E5%92%8CKubernetes%20Pod%E7%9A%84DNS/" title="如何管理 Docker 容器和 Kubernetes Pod 的 DNS"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/77495593_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="如何管理 Docker 容器和 Kubernetes Pod 的 DNS"/></a><div class="content"><a class="title" href="/2023/07/28/%E5%A6%82%E4%BD%95%E7%AE%A1%E7%90%86Docker%E5%AE%B9%E5%99%A8%E5%92%8CKubernetes%20Pod%E7%9A%84DNS/" title="如何管理 Docker 容器和 Kubernetes Pod 的 DNS">如何管理 Docker 容器和 Kubernetes Pod 的 DNS</a><time datetime="2023-07-28T03:40:33.000Z" title="发表于 2023-07-28 11:40:33">2023-07-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/28/%E4%BC%98%E5%8C%96Kubernetes%20VPA%E7%9A%84%E5%8F%8D%E5%BA%94/" title="优化Kubernetes VPA的反应"><img src="https://tenapi.cn/acg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="优化Kubernetes VPA的反应"/></a><div class="content"><a class="title" href="/2023/07/28/%E4%BC%98%E5%8C%96Kubernetes%20VPA%E7%9A%84%E5%8F%8D%E5%BA%94/" title="优化Kubernetes VPA的反应">优化Kubernetes VPA的反应</a><time datetime="2023-07-28T02:40:33.000Z" title="发表于 2023-07-28 10:40:33">2023-07-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/28/Pod%20%E5%8E%9F%E5%9C%B0%E5%9E%82%E7%9B%B4%E4%BC%B8%E7%BC%A9/" title="Pod 原地垂直伸缩 - 一个四年的KEP和两年的PR"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75368085_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Pod 原地垂直伸缩 - 一个四年的KEP和两年的PR"/></a><div class="content"><a class="title" href="/2023/07/28/Pod%20%E5%8E%9F%E5%9C%B0%E5%9E%82%E7%9B%B4%E4%BC%B8%E7%BC%A9/" title="Pod 原地垂直伸缩 - 一个四年的KEP和两年的PR">Pod 原地垂直伸缩 - 一个四年的KEP和两年的PR</a><time datetime="2023-07-28T01:50:33.000Z" title="发表于 2023-07-28 09:50:33">2023-07-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/28/CGroups%E4%BB%A5%E5%8F%8A%E5%9C%A8K8s%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8-IO/" title="CGroups 以及在 K8s 中的应用 - IO"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75075054_p0.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CGroups 以及在 K8s 中的应用 - IO"/></a><div class="content"><a class="title" href="/2023/07/28/CGroups%E4%BB%A5%E5%8F%8A%E5%9C%A8K8s%E4%B8%AD%E7%9A%84%E5%BA%94%E7%94%A8-IO/" title="CGroups 以及在 K8s 中的应用 - IO">CGroups 以及在 K8s 中的应用 - IO</a><time datetime="2023-07-28T01:40:33.000Z" title="发表于 2023-07-28 09:40:33">2023-07-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/07/14/CubeFS%E5%8A%A9%E5%8A%9BClickHouse%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/" title="CubeFS助力ClickHouse存算分离"><img src="https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75385594_p0.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CubeFS助力ClickHouse存算分离"/></a><div class="content"><a class="title" href="/2023/07/14/CubeFS%E5%8A%A9%E5%8A%9BClickHouse%E5%AD%98%E7%AE%97%E5%88%86%E7%A6%BB/" title="CubeFS助力ClickHouse存算分离">CubeFS助力ClickHouse存算分离</a><time datetime="2023-07-14T03:12:51.000Z" title="发表于 2023-07-14 11:12:51">2023-07-14</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url('https://cdn.jsdelivr.net/gh/Ghostpanter/tuchuang/img/75385594_p0.jpg')"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2023 By 姬岚忧</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="translateLink" type="button" title="简繁转换">简</button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div></div></div><div id="search-mask"></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui/dist/fancybox.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page/instantpage.min.js" type="module"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"></div><div class="aplayer no-destroy" data-id="8017562763" data-server="netease" data-type="playlist" data-fixed="true" data-autoplay="true"> </div><script defer src="https://npm.elemecdn.com/jquery@latest/dist/jquery.min.js"></script><script defer data-pjax src="/js/cat.js"></script><script defer="defer" id="fluttering_ribbon" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-fluttering-ribbon.min.js"></script><script id="canvas_nest" defer="defer" color="0,0,255" opacity="0.7" zIndex="-1" count="99" mobile="true" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/canvas-nest.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = true;
+document.body.addEventListener('input', POWERMODE);
+</script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/dist/click-show-text.min.js" data-mobile="true" data-text="富强,民主,文明,和谐,自由,平等,公正,法治,爱国,敬业,诚信,友善" data-fontsize="15px" data-random="true" async="async"></script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/aplayer/dist/APlayer.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc/metingjs/dist/Meting.min.js"></script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div><!-- hexo injector body_end start --><script data-pjax>
+  function butterfly_clock_anzhiyu_injector_config(){
+    var parent_div_git = document.getElementsByClassName('sticky_layout')[0];
+    var item_html = '<div class="card-widget card-clock"><div class="card-glass"><div class="card-background"><div class="card-content"><div id="hexo_electric_clock"><img class="entered loading" id="card-clock-loading" src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/loading.gif" style="height: 120px; width: 100%;" data-ll-status="loading"/></div></div></div></div></div>';
+    console.log('已挂载butterfly_clock_anzhiyu')
+    if(parent_div_git) {
+      parent_div_git.insertAdjacentHTML("afterbegin",item_html)
+    }
+  }
+  var elist = 'null'.split(',');
+  var cpage = location.pathname;
+  var epage = 'all';
+  var qweather_key = 'b16a1fa0e63c46a4b8f28abfb06ae3fe';
+  var gaud_map_key = 'e2b04289e870b005374ee030148d64fd&s=rsv3';
+  var baidu_ak_key = 'undefined';
+  var flag = 0;
+  var clock_rectangle = '119.60681,31.99260';
+  var clock_default_rectangle_enable = 'false';
+
+  for (var i=0;i<elist.length;i++){
+    if (cpage.includes(elist[i])){
+      flag++;
+    }
+  }
+
+  if ((epage ==='all')&&(flag == 0)){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  else if (epage === cpage){
+    butterfly_clock_anzhiyu_injector_config();
+  }
+  </script><script src="https://widget.qweather.net/simple/static/js/he-simple-common.js?v=2.0"></script><script data-pjax src="https://cdn.cbd.int/hexo-butterfly-clock-anzhiyu/lib/clock.min.js"></script><!-- hexo injector body_end end --></body></html>
